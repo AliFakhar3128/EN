@@ -1,189 +1,1096 @@
-<!DOCTYPE html><html><head>
-      <title>SQL_Cheat_Sheet</title>
-      <meta charset="utf-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      
-      <link rel="stylesheet" href="file:///c:\Users\comiser\.vscode\extensions\shd101wyy.markdown-preview-enhanced-0.8.18\crossnote\dependencies\katex\katex.min.css">
-      
-      
-      
-      
-      
-      <style>
-      code[class*=language-],pre[class*=language-]{color:#333;background:0 0;font-family:Consolas,"Liberation Mono",Menlo,Courier,monospace;text-align:left;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;line-height:1.4;-moz-tab-size:8;-o-tab-size:8;tab-size:8;-webkit-hyphens:none;-moz-hyphens:none;-ms-hyphens:none;hyphens:none}pre[class*=language-]{padding:.8em;overflow:auto;border-radius:3px;background:#f5f5f5}:not(pre)>code[class*=language-]{padding:.1em;border-radius:.3em;white-space:normal;background:#f5f5f5}.token.blockquote,.token.comment{color:#969896}.token.cdata{color:#183691}.token.doctype,.token.macro.property,.token.punctuation,.token.variable{color:#333}.token.builtin,.token.important,.token.keyword,.token.operator,.token.rule{color:#a71d5d}.token.attr-value,.token.regex,.token.string,.token.url{color:#183691}.token.atrule,.token.boolean,.token.code,.token.command,.token.constant,.token.entity,.token.number,.token.property,.token.symbol{color:#0086b3}.token.prolog,.token.selector,.token.tag{color:#63a35c}.token.attr-name,.token.class,.token.class-name,.token.function,.token.id,.token.namespace,.token.pseudo-class,.token.pseudo-element,.token.url-reference .token.variable{color:#795da3}.token.entity{cursor:help}.token.title,.token.title .token.punctuation{font-weight:700;color:#1d3e81}.token.list{color:#ed6a43}.token.inserted{background-color:#eaffea;color:#55a532}.token.deleted{background-color:#ffecec;color:#bd2c00}.token.bold{font-weight:700}.token.italic{font-style:italic}.language-json .token.property{color:#183691}.language-markup .token.tag .token.punctuation{color:#333}.language-css .token.function,code.language-css{color:#0086b3}.language-yaml .token.atrule{color:#63a35c}code.language-yaml{color:#183691}.language-ruby .token.function{color:#333}.language-markdown .token.url{color:#795da3}.language-makefile .token.symbol{color:#795da3}.language-makefile .token.variable{color:#183691}.language-makefile .token.builtin{color:#0086b3}.language-bash .token.keyword{color:#0086b3}pre[data-line]{position:relative;padding:1em 0 1em 3em}pre[data-line] .line-highlight-wrapper{position:absolute;top:0;left:0;background-color:transparent;display:block;width:100%}pre[data-line] .line-highlight{position:absolute;left:0;right:0;padding:inherit 0;margin-top:1em;background:hsla(24,20%,50%,.08);background:linear-gradient(to right,hsla(24,20%,50%,.1) 70%,hsla(24,20%,50%,0));pointer-events:none;line-height:inherit;white-space:pre}pre[data-line] .line-highlight:before,pre[data-line] .line-highlight[data-end]:after{content:attr(data-start);position:absolute;top:.4em;left:.6em;min-width:1em;padding:0 .5em;background-color:hsla(24,20%,50%,.4);color:#f4f1ef;font:bold 65%/1.5 sans-serif;text-align:center;vertical-align:.3em;border-radius:999px;text-shadow:none;box-shadow:0 1px #fff}pre[data-line] .line-highlight[data-end]:after{content:attr(data-end);top:auto;bottom:.4em}html body{font-family:'Helvetica Neue',Helvetica,'Segoe UI',Arial,freesans,sans-serif;font-size:16px;line-height:1.6;color:#333;background-color:#fff;overflow:initial;box-sizing:border-box;word-wrap:break-word}html body>:first-child{margin-top:0}html body h1,html body h2,html body h3,html body h4,html body h5,html body h6{line-height:1.2;margin-top:1em;margin-bottom:16px;color:#000}html body h1{font-size:2.25em;font-weight:300;padding-bottom:.3em}html body h2{font-size:1.75em;font-weight:400;padding-bottom:.3em}html body h3{font-size:1.5em;font-weight:500}html body h4{font-size:1.25em;font-weight:600}html body h5{font-size:1.1em;font-weight:600}html body h6{font-size:1em;font-weight:600}html body h1,html body h2,html body h3,html body h4,html body h5{font-weight:600}html body h5{font-size:1em}html body h6{color:#5c5c5c}html body strong{color:#000}html body del{color:#5c5c5c}html body a:not([href]){color:inherit;text-decoration:none}html body a{color:#08c;text-decoration:none}html body a:hover{color:#00a3f5;text-decoration:none}html body img{max-width:100%}html body>p{margin-top:0;margin-bottom:16px;word-wrap:break-word}html body>ol,html body>ul{margin-bottom:16px}html body ol,html body ul{padding-left:2em}html body ol.no-list,html body ul.no-list{padding:0;list-style-type:none}html body ol ol,html body ol ul,html body ul ol,html body ul ul{margin-top:0;margin-bottom:0}html body li{margin-bottom:0}html body li.task-list-item{list-style:none}html body li>p{margin-top:0;margin-bottom:0}html body .task-list-item-checkbox{margin:0 .2em .25em -1.8em;vertical-align:middle}html body .task-list-item-checkbox:hover{cursor:pointer}html body blockquote{margin:16px 0;font-size:inherit;padding:0 15px;color:#5c5c5c;background-color:#f0f0f0;border-left:4px solid #d6d6d6}html body blockquote>:first-child{margin-top:0}html body blockquote>:last-child{margin-bottom:0}html body hr{height:4px;margin:32px 0;background-color:#d6d6d6;border:0 none}html body table{margin:10px 0 15px 0;border-collapse:collapse;border-spacing:0;display:block;width:100%;overflow:auto;word-break:normal;word-break:keep-all}html body table th{font-weight:700;color:#000}html body table td,html body table th{border:1px solid #d6d6d6;padding:6px 13px}html body dl{padding:0}html body dl dt{padding:0;margin-top:16px;font-size:1em;font-style:italic;font-weight:700}html body dl dd{padding:0 16px;margin-bottom:16px}html body code{font-family:Menlo,Monaco,Consolas,'Courier New',monospace;font-size:.85em;color:#000;background-color:#f0f0f0;border-radius:3px;padding:.2em 0}html body code::after,html body code::before{letter-spacing:-.2em;content:'\00a0'}html body pre>code{padding:0;margin:0;word-break:normal;white-space:pre;background:0 0;border:0}html body .highlight{margin-bottom:16px}html body .highlight pre,html body pre{padding:1em;overflow:auto;line-height:1.45;border:#d6d6d6;border-radius:3px}html body .highlight pre{margin-bottom:0;word-break:normal}html body pre code,html body pre tt{display:inline;max-width:initial;padding:0;margin:0;overflow:initial;line-height:inherit;word-wrap:normal;background-color:transparent;border:0}html body pre code:after,html body pre code:before,html body pre tt:after,html body pre tt:before{content:normal}html body blockquote,html body dl,html body ol,html body p,html body pre,html body ul{margin-top:0;margin-bottom:16px}html body kbd{color:#000;border:1px solid #d6d6d6;border-bottom:2px solid #c7c7c7;padding:2px 4px;background-color:#f0f0f0;border-radius:3px}@media print{html body{background-color:#fff}html body h1,html body h2,html body h3,html body h4,html body h5,html body h6{color:#000;page-break-after:avoid}html body blockquote{color:#5c5c5c}html body pre{page-break-inside:avoid}html body table{display:table}html body img{display:block;max-width:100%;max-height:100%}html body code,html body pre{word-wrap:break-word;white-space:pre}}.markdown-preview{width:100%;height:100%;box-sizing:border-box}.markdown-preview ul{list-style:disc}.markdown-preview ul ul{list-style:circle}.markdown-preview ul ul ul{list-style:square}.markdown-preview ol{list-style:decimal}.markdown-preview ol ol,.markdown-preview ul ol{list-style-type:lower-roman}.markdown-preview ol ol ol,.markdown-preview ol ul ol,.markdown-preview ul ol ol,.markdown-preview ul ul ol{list-style-type:lower-alpha}.markdown-preview .newpage,.markdown-preview .pagebreak{page-break-before:always}.markdown-preview pre.line-numbers{position:relative;padding-left:3.8em;counter-reset:linenumber}.markdown-preview pre.line-numbers>code{position:relative}.markdown-preview pre.line-numbers .line-numbers-rows{position:absolute;pointer-events:none;top:1em;font-size:100%;left:0;width:3em;letter-spacing:-1px;border-right:1px solid #999;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.markdown-preview pre.line-numbers .line-numbers-rows>span{pointer-events:none;display:block;counter-increment:linenumber}.markdown-preview pre.line-numbers .line-numbers-rows>span:before{content:counter(linenumber);color:#999;display:block;padding-right:.8em;text-align:right}.markdown-preview .mathjax-exps .MathJax_Display{text-align:center!important}.markdown-preview:not([data-for=preview]) .code-chunk .code-chunk-btn-group{display:none}.markdown-preview:not([data-for=preview]) .code-chunk .status{display:none}.markdown-preview:not([data-for=preview]) .code-chunk .output-div{margin-bottom:16px}.markdown-preview .md-toc{padding:0}.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link{display:inline;padding:.25rem 0}.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link div,.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link p{display:inline}.markdown-preview .md-toc .md-toc-link-wrapper.highlighted .md-toc-link{font-weight:800}.scrollbar-style::-webkit-scrollbar{width:8px}.scrollbar-style::-webkit-scrollbar-track{border-radius:10px;background-color:transparent}.scrollbar-style::-webkit-scrollbar-thumb{border-radius:5px;background-color:rgba(150,150,150,.66);border:4px solid rgba(150,150,150,.66);background-clip:content-box}html body[for=html-export]:not([data-presentation-mode]){position:relative;width:100%;height:100%;top:0;left:0;margin:0;padding:0;overflow:auto}html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{position:relative;top:0;min-height:100vh}@media screen and (min-width:914px){html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{padding:2em calc(50% - 457px + 2em)}}@media screen and (max-width:914px){html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{padding:2em}}@media screen and (max-width:450px){html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{font-size:14px!important;padding:1em}}@media print{html body[for=html-export]:not([data-presentation-mode]) #sidebar-toc-btn{display:none}}html body[for=html-export]:not([data-presentation-mode]) #sidebar-toc-btn{position:fixed;bottom:8px;left:8px;font-size:28px;cursor:pointer;color:inherit;z-index:99;width:32px;text-align:center;opacity:.4}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] #sidebar-toc-btn{opacity:1}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc{position:fixed;top:0;left:0;width:300px;height:100%;padding:32px 0 48px 0;font-size:14px;box-shadow:0 0 4px rgba(150,150,150,.33);box-sizing:border-box;overflow:auto;background-color:inherit}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar{width:8px}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-track{border-radius:10px;background-color:transparent}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-thumb{border-radius:5px;background-color:rgba(150,150,150,.66);border:4px solid rgba(150,150,150,.66);background-clip:content-box}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc a{text-decoration:none}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc{padding:0 16px}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link{display:inline;padding:.25rem 0}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link div,html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link p{display:inline}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper.highlighted .md-toc-link{font-weight:800}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{left:300px;width:calc(100% - 300px);padding:2em calc(50% - 457px - 300px / 2);margin:0;box-sizing:border-box}@media screen and (max-width:1274px){html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{padding:2em}}@media screen and (max-width:450px){html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{width:100%}}html body[for=html-export]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .markdown-preview{left:50%;transform:translateX(-50%)}html body[for=html-export]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .md-sidebar-toc{display:none}
-/* Please visit the URL below for more information: */
-/*   https://shd101wyy.github.io/markdown-preview-enhanced/#/customize-css */
+<!DOCTYPE html>
+<html>
 
-      </style>
-      <!-- The content below will be included at the end of the <head> element. --><script type="text/javascript">
-  document.addEventListener("DOMContentLoaded", function () {
-    // your code here
-  });
-</script></head><body for="html-export">
-    
-    
-      <div class="crossnote markdown-preview  ">
-      
-<h1 id="چیت-شیت-جامع-sql">چیت شیت جامع SQL </h1>
-<h2 id="1-مبانی-و-اصول-اولیه">1. مبانی و اصول اولیه </h2>
-<h3 id="sql-چیست">SQL چیست؟ </h3>
-<p>SQL (زبان پرس‌وجوی ساختاریافته) یک زبان برنامه‌نویسی است که برای مدیریت و دستکاری پایگاه‌های داده رابطه‌ای استفاده می‌شود. این زبان به کاربران اجازه می‌دهد تا داده‌ها را در پایگاه داده ایجاد، خواندن، به‌روزرسانی و حذف کنند.</p>
-<h3 id="تاریخچه-و-تکامل-sql">تاریخچه و تکامل SQL </h3>
-<p>SQL در دهه 1970 توسط محققان IBM توسعه یافت و به یک زبان استاندارد برای پایگاه‌های داده رابطه‌ای تبدیل شد. استانداردهای مختلفی مانند SQL-86، SQL-92 و SQL:1999 در طول زمان معرفی شده‌اند که قابلیت‌های جدیدی را به این زبان اضافه کرده‌اند.</p>
-<h3 id="گویشهای-مختلف-sql">گویش‌های مختلف SQL </h3>
-<p>چندین گویش SQL وجود دارد، از جمله:</p>
-<ul>
-<li><strong>MySQL</strong>: محبوب برای برنامه‌های وب.</li>
-<li><strong>PostgreSQL</strong>: قدرتمند برای برنامه‌های پیچیده.</li>
-<li><strong>SQL Server</strong>: مناسب برای محیط‌های مایکروسافت.</li>
-<li><strong>Oracle</strong>: برای پایگاه‌های داده سازمانی.</li>
-<li><strong>SQLite</strong>: سبک و مناسب برای برنامه‌های کوچک.</li>
-</ul>
-<p>هر گویش ممکن است تفاوت‌های جزئی در نحو و ویژگی‌ها داشته باشد.</p>
-<h3 id="راهاندازی-محیط-sql">راه‌اندازی محیط SQL </h3>
-<p>برای شروع کار با SQL، به یک سیستم مدیریت پایگاه داده (DBMS) نیاز دارید. می‌توانید نرم‌افزارهایی مانند MySQL Workbench، pgAdmin یا SQL Server Management Studio را نصب کنید یا از ابزارهای آنلاین مانند <a href="http://sqlfiddle.com/">SQL Fiddle</a> استفاده کنید.</p>
-<h2 id="2-نحو-و-معانی">2. نحو و معانی </h2>
-<h3 id="انواع-داده-در-sql">انواع داده در SQL </h3>
-<p>انواع داده‌های رایج در SQL شامل موارد زیر هستند:</p>
-<ul>
-<li><strong>عددی</strong>: <code>INT</code>، <code>FLOAT</code>، <code>DECIMAL</code></li>
-<li><strong>رشته‌ای</strong>: <code>CHAR</code>، <code>VARCHAR</code>، <code>TEXT</code></li>
-<li><strong>تاریخ و زمان</strong>: <code>DATE</code>، <code>TIME</code>، <code>DATETIME</code></li>
-<li><strong>بولی</strong>: <code>BOOLEAN</code></li>
-</ul>
-<h3 id="عملگرها">عملگرها </h3>
-<ul>
-<li><strong>عملگرهای حسابی</strong>: <code>+</code>، <code>-</code>، <code>*</code>، <code>/</code></li>
-<li><strong>عملگرهای مقایسه‌ای</strong>: <code>=</code>، <code>&lt;&gt;</code>, <code>&gt;</code>، <code>&lt;</code>، <code>&gt;=</code>، <code>&lt;=</code></li>
-<li><strong>عملگرهای منطقی</strong>: <code>AND</code>، <code>OR</code>، <code>NOT</code></li>
-</ul>
-<h3 id="دستورات-dml-زبان-دستکاری-داده">دستورات DML (زبان دستکاری داده) </h3>
-<ul>
-<li><strong>SELECT</strong>: بازیابی داده‌ها از یک یا چند جدول<pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token keyword keyword-SELECT">SELECT</span> first_name<span class="token punctuation">,</span> last_name <span class="token keyword keyword-FROM">FROM</span> employees<span class="token punctuation">;</span>
-</code></pre></li>
-<li><strong>INSERT</strong>: درج رکوردهای جدید در جدول<pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token keyword keyword-INSERT">INSERT</span> <span class="token keyword keyword-INTO">INTO</span> employees <span class="token punctuation">(</span>first_name<span class="token punctuation">,</span> last_name<span class="token punctuation">)</span> <span class="token keyword keyword-VALUES">VALUES</span> <span class="token punctuation">(</span><span class="token string">'علی'</span><span class="token punctuation">,</span> <span class="token string">'محمدی'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-</code></pre></li>
-<li><strong>UPDATE</strong>: به‌روزرسانی رکوردهای موجود<pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token keyword keyword-UPDATE">UPDATE</span> employees <span class="token keyword keyword-SET">SET</span> salary <span class="token operator">=</span> <span class="token number">60000</span> <span class="token keyword keyword-WHERE">WHERE</span> employee_id <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span>
-</code></pre></li>
-<li><strong>DELETE</strong>: حذف رکوردهای موجود<pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token keyword keyword-DELETE">DELETE</span> <span class="token keyword keyword-FROM">FROM</span> employees <span class="token keyword keyword-WHERE">WHERE</span> employee_id <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span>
-</code></pre></li>
-</ul>
-<h3 id="دستورات-ddl-زبان-تعریف-داده">دستورات DDL (زبان تعریف داده) </h3>
-<ul>
-<li><strong>CREATE</strong>: ایجاد اشیاء جدید مانند جدول<pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token keyword keyword-CREATE">CREATE</span> <span class="token keyword keyword-TABLE">TABLE</span> employees <span class="token punctuation">(</span>employee_id <span class="token keyword keyword-INT">INT</span> <span class="token keyword keyword-PRIMARY">PRIMARY</span> <span class="token keyword keyword-KEY">KEY</span><span class="token punctuation">,</span> first_name <span class="token keyword keyword-VARCHAR">VARCHAR</span><span class="token punctuation">(</span><span class="token number">50</span><span class="token punctuation">)</span><span class="token punctuation">,</span> last_name <span class="token keyword keyword-VARCHAR">VARCHAR</span><span class="token punctuation">(</span><span class="token number">50</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-</code></pre></li>
-<li><strong>ALTER</strong>: تغییر ساختار جدول<pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token keyword keyword-ALTER">ALTER</span> <span class="token keyword keyword-TABLE">TABLE</span> employees <span class="token keyword keyword-ADD">ADD</span> email <span class="token keyword keyword-VARCHAR">VARCHAR</span><span class="token punctuation">(</span><span class="token number">100</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-</code></pre></li>
-<li><strong>DROP</strong>: حذف جدول یا پایگاه داده<pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token keyword keyword-DROP">DROP</span> <span class="token keyword keyword-TABLE">TABLE</span> employees<span class="token punctuation">;</span>
-</code></pre></li>
-<li><strong>TRUNCATE</strong>: حذف تمام رکوردها از جدول<pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token keyword keyword-TRUNCATE">TRUNCATE</span> <span class="token keyword keyword-TABLE">TABLE</span> employees<span class="token punctuation">;</span>
-</code></pre></li>
-</ul>
-<h3 id="دستورات-dcl-زبان-کنترل-داده">دستورات DCL (زبان کنترل داده) </h3>
-<ul>
-<li><strong>GRANT</strong>: اعطای دسترسی به کاربران<pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token keyword keyword-GRANT">GRANT</span> <span class="token keyword keyword-SELECT">SELECT</span><span class="token punctuation">,</span> <span class="token keyword keyword-INSERT">INSERT</span> <span class="token keyword keyword-ON">ON</span> employees <span class="token keyword keyword-TO">TO</span> <span class="token string">'user1'</span><span class="token punctuation">;</span>
-</code></pre></li>
-<li><strong>REVOKE</strong>: لغو دسترسی‌های اعطا شده<pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token keyword keyword-REVOKE">REVOKE</span> <span class="token keyword keyword-SELECT">SELECT</span><span class="token punctuation">,</span> <span class="token keyword keyword-INSERT">INSERT</span> <span class="token keyword keyword-ON">ON</span> employees <span class="token keyword keyword-FROM">FROM</span> <span class="token string">'user1'</span><span class="token punctuation">;</span>
-</code></pre></li>
-</ul>
-<h3 id="دستورات-کنترل-تراکنش">دستورات کنترل تراکنش </h3>
-<ul>
-<li><strong>BEGIN TRANSACTION</strong>: شروع یک تراکنش<pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token keyword keyword-BEGIN">BEGIN</span> <span class="token keyword keyword-TRANSACTION">TRANSACTION</span><span class="token punctuation">;</span>
-</code></pre></li>
-<li><strong>COMMIT</strong>: ذخیره دائمی تغییرات<pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token keyword keyword-COMMIT">COMMIT</span><span class="token punctuation">;</span>
-</code></pre></li>
-<li><strong>ROLLBACK</strong>: لغو تغییرات<pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token keyword keyword-ROLLBACK">ROLLBACK</span><span class="token punctuation">;</span>
-</code></pre></li>
-</ul>
-<h2 id="3-مفاهیم-اصلی">3. مفاهیم اصلی </h2>
-<h3 id="جداول-ردیفها-و-ستونها">جداول، ردیف‌ها و ستون‌ها </h3>
-<p>جدول در SQL مجموعه‌ای از داده‌ها است که در ردیف‌ها (رکوردها) و ستون‌ها (ویژگی‌ها) سازماندهی شده‌اند. هر ردیف یک موجودیت خاص و هر ستون یک ویژگی از آن موجودیت را نشان می‌دهد.</p>
-<h3 id="کلیدهای-اصلی-و-خارجی">کلیدهای اصلی و خارجی </h3>
-<ul>
-<li><strong>کلید اصلی (Primary Key)</strong>: ستونی که هر ردیف را به طور منحصر به فرد شناسایی می‌کند.<pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token keyword keyword-CREATE">CREATE</span> <span class="token keyword keyword-TABLE">TABLE</span> employees <span class="token punctuation">(</span>employee_id <span class="token keyword keyword-INT">INT</span> <span class="token keyword keyword-PRIMARY">PRIMARY</span> <span class="token keyword keyword-KEY">KEY</span><span class="token punctuation">,</span> first_name <span class="token keyword keyword-VARCHAR">VARCHAR</span><span class="token punctuation">(</span><span class="token number">50</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-</code></pre></li>
-<li><strong>کلید خارجی (Foreign Key)</strong>: ستونی که به کلید اصلی جدول دیگری اشاره می‌کند.<pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token keyword keyword-CREATE">CREATE</span> <span class="token keyword keyword-TABLE">TABLE</span> orders <span class="token punctuation">(</span>order_id <span class="token keyword keyword-INT">INT</span> <span class="token keyword keyword-PRIMARY">PRIMARY</span> <span class="token keyword keyword-KEY">KEY</span><span class="token punctuation">,</span> employee_id <span class="token keyword keyword-INT">INT</span><span class="token punctuation">,</span> <span class="token keyword keyword-FOREIGN">FOREIGN</span> <span class="token keyword keyword-KEY">KEY</span> <span class="token punctuation">(</span>employee_id<span class="token punctuation">)</span> <span class="token keyword keyword-REFERENCES">REFERENCES</span> employees<span class="token punctuation">(</span>employee_id<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-</code></pre></li>
-</ul>
-<h3 id="محدودیتها-constraints">محدودیت‌ها (Constraints) </h3>
-<p>محدودیت‌ها برای تضمین یکپارچگی داده‌ها استفاده می‌شوند:</p>
-<ul>
-<li><strong>NOT NULL</strong>: ستون نمی‌تواند مقدار NULL داشته باشد.</li>
-<li><strong>UNIQUE</strong>: مقادیر ستون باید منحصر به فرد باشند.</li>
-<li><strong>CHECK</strong>: مقادیر ستون باید شرط خاصی را برآورده کنند.</li>
-<li><strong>DEFAULT</strong>: مقدار پیش‌فرض برای ستون.<pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token keyword keyword-CREATE">CREATE</span> <span class="token keyword keyword-TABLE">TABLE</span> employees <span class="token punctuation">(</span>employee_id <span class="token keyword keyword-INT">INT</span> <span class="token keyword keyword-PRIMARY">PRIMARY</span> <span class="token keyword keyword-KEY">KEY</span><span class="token punctuation">,</span> salary <span class="token keyword keyword-DECIMAL">DECIMAL</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span> <span class="token keyword keyword-DEFAULT">DEFAULT</span> <span class="token number">50000</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-</code></pre></li>
-</ul>
-<h3 id="اتصالها-joins">اتصال‌ها (Joins) </h3>
-<p>اتصال‌ها برای ترکیب داده‌ها از چند جدول استفاده می‌شوند:</p>
-<ul>
-<li><strong>INNER JOIN</strong>: ردیف‌های تطابقی از هر دو جدول.<pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token keyword keyword-SELECT">SELECT</span> employees<span class="token punctuation">.</span>first_name<span class="token punctuation">,</span> departments<span class="token punctuation">.</span>name
+<head>
+    <title>SQL_Cheat_Sheet</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet"
+        href="file:///c:\Users\comiser\.vscode\extensions\shd101wyy.markdown-preview-enhanced-0.8.18\crossnote\dependencies\katex\katex.min.css">
+
+
+
+
+
+    <style>
+         @font-face {
+            font-family: vazir;
+             src: url(./fonts/vazir.ttf);
+           }
+
+         * {
+            font-family: vazir;
+            direction: rtl;
+         }
+
+         .sql {
+              direction: ltr;
+         }
+        code[class*=language-],
+        pre[class*=language-] {
+            color: #333;
+            background: 0 0;
+            font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+            text-align: left;
+            white-space: pre;
+            word-spacing: normal;
+            word-break: normal;
+            word-wrap: normal;
+            line-height: 1.4;
+            -moz-tab-size: 8;
+            -o-tab-size: 8;
+            tab-size: 8;
+            -webkit-hyphens: none;
+            -moz-hyphens: none;
+            -ms-hyphens: none;
+            hyphens: none
+        }
+
+        pre[class*=language-] {
+            padding: .8em;
+            overflow: auto;
+            border-radius: 3px;
+            background: #f5f5f5
+        }
+
+        :not(pre)>code[class*=language-] {
+            padding: .1em;
+            border-radius: .3em;
+            white-space: normal;
+            background: #f5f5f5
+        }
+
+        .token.blockquote,
+        .token.comment {
+            color: #969896
+        }
+
+        .token.cdata {
+            color: #183691
+        }
+
+        .token.doctype,
+        .token.macro.property,
+        .token.punctuation,
+        .token.variable {
+            color: #333
+        }
+
+        .token.builtin,
+        .token.important,
+        .token.keyword,
+        .token.operator,
+        .token.rule {
+            color: #a71d5d
+        }
+
+        .token.attr-value,
+        .token.regex,
+        .token.string,
+        .token.url {
+            color: #183691
+        }
+
+        .token.atrule,
+        .token.boolean,
+        .token.code,
+        .token.command,
+        .token.constant,
+        .token.entity,
+        .token.number,
+        .token.property,
+        .token.symbol {
+            color: #0086b3
+        }
+
+        .token.prolog,
+        .token.selector,
+        .token.tag {
+            color: #63a35c
+        }
+
+        .token.attr-name,
+        .token.class,
+        .token.class-name,
+        .token.function,
+        .token.id,
+        .token.namespace,
+        .token.pseudo-class,
+        .token.pseudo-element,
+        .token.url-reference .token.variable {
+            color: #795da3
+        }
+
+        .token.entity {
+            cursor: help
+        }
+
+        .token.title,
+        .token.title .token.punctuation {
+            font-weight: 700;
+            color: #1d3e81
+        }
+
+        .token.list {
+            color: #ed6a43
+        }
+
+        .token.inserted {
+            background-color: #eaffea;
+            color: #55a532
+        }
+
+        .token.deleted {
+            background-color: #ffecec;
+            color: #bd2c00
+        }
+
+        .token.bold {
+            font-weight: 700
+        }
+
+        .token.italic {
+            font-style: italic
+        }
+
+        .language-json .token.property {
+            color: #183691
+        }
+
+        .language-markup .token.tag .token.punctuation {
+            color: #333
+        }
+
+        .language-css .token.function,
+        code.language-css {
+            color: #0086b3
+        }
+
+        .language-yaml .token.atrule {
+            color: #63a35c
+        }
+
+        code.language-yaml {
+            color: #183691
+        }
+
+        .language-ruby .token.function {
+            color: #333
+        }
+
+        .language-markdown .token.url {
+            color: #795da3
+        }
+
+        .language-makefile .token.symbol {
+            color: #795da3
+        }
+
+        .language-makefile .token.variable {
+            color: #183691
+        }
+
+        .language-makefile .token.builtin {
+            color: #0086b3
+        }
+
+        .language-bash .token.keyword {
+            color: #0086b3
+        }
+
+        pre[data-line] {
+            position: relative;
+            padding: 1em 0 1em 3em
+        }
+
+        pre[data-line] .line-highlight-wrapper {
+            position: absolute;
+            top: 0;
+            left: 0;
+            background-color: transparent;
+            display: block;
+            width: 100%
+        }
+
+        pre[data-line] .line-highlight {
+            position: absolute;
+            left: 0;
+            right: 0;
+            padding: inherit 0;
+            margin-top: 1em;
+            background: hsla(24, 20%, 50%, .08);
+            background: linear-gradient(to right, hsla(24, 20%, 50%, .1) 70%, hsla(24, 20%, 50%, 0));
+            pointer-events: none;
+            line-height: inherit;
+            white-space: pre
+        }
+
+        pre[data-line] .line-highlight:before,
+        pre[data-line] .line-highlight[data-end]:after {
+            content: attr(data-start);
+            position: absolute;
+            top: .4em;
+            left: .6em;
+            min-width: 1em;
+            padding: 0 .5em;
+            background-color: hsla(24, 20%, 50%, .4);
+            color: #f4f1ef;
+            font: bold 65%/1.5 sans-serif;
+            text-align: center;
+            vertical-align: .3em;
+            border-radius: 999px;
+            text-shadow: none;
+            box-shadow: 0 1px #fff
+        }
+
+        pre[data-line] .line-highlight[data-end]:after {
+            content: attr(data-end);
+            top: auto;
+            bottom: .4em
+        }
+
+        html body {
+            font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+            color: #333;
+            background-color: #fff;
+            overflow: initial;
+            box-sizing: border-box;
+            word-wrap: break-word
+        }
+
+        html body>:first-child {
+            margin-top: 0
+        }
+
+        html body h1,
+        html body h2,
+        html body h3,
+        html body h4,
+        html body h5,
+        html body h6 {
+            line-height: 1.2;
+            margin-top: 1em;
+            margin-bottom: 16px;
+            color: #000
+        }
+
+        html body h1 {
+            font-size: 2.25em;
+            font-weight: 300;
+            padding-bottom: .3em
+        }
+
+        html body h2 {
+            font-size: 1.75em;
+            font-weight: 400;
+            padding-bottom: .3em
+        }
+
+        html body h3 {
+            font-size: 1.5em;
+            font-weight: 500
+        }
+
+        html body h4 {
+            font-size: 1.25em;
+            font-weight: 600
+        }
+
+        html body h5 {
+            font-size: 1.1em;
+            font-weight: 600
+        }
+
+        html body h6 {
+            font-size: 1em;
+            font-weight: 600
+        }
+
+        html body h1,
+        html body h2,
+        html body h3,
+        html body h4,
+        html body h5 {
+            font-weight: 600
+        }
+
+        html body h5 {
+            font-size: 1em
+        }
+
+        html body h6 {
+            color: #5c5c5c
+        }
+
+        html body strong {
+            color: #000
+        }
+
+        html body del {
+            color: #5c5c5c
+        }
+
+        html body a:not([href]) {
+            color: inherit;
+            text-decoration: none
+        }
+
+        html body a {
+            color: #08c;
+            text-decoration: none
+        }
+
+        html body a:hover {
+            color: #00a3f5;
+            text-decoration: none
+        }
+
+        html body img {
+            max-width: 100%
+        }
+
+        html body>p {
+            margin-top: 0;
+            margin-bottom: 16px;
+            word-wrap: break-word
+        }
+
+        html body>ol,
+        html body>ul {
+            margin-bottom: 16px
+        }
+
+        html body ol,
+        html body ul {
+            padding-left: 2em
+        }
+
+        html body ol.no-list,
+        html body ul.no-list {
+            padding: 0;
+            list-style-type: none
+        }
+
+        html body ol ol,
+        html body ol ul,
+        html body ul ol,
+        html body ul ul {
+            margin-top: 0;
+            margin-bottom: 0
+        }
+
+        html body li {
+            margin-bottom: 0
+        }
+
+        html body li.task-list-item {
+            list-style: none
+        }
+
+        html body li>p {
+            margin-top: 0;
+            margin-bottom: 0
+        }
+
+        html body .task-list-item-checkbox {
+            margin: 0 .2em .25em -1.8em;
+            vertical-align: middle
+        }
+
+        html body .task-list-item-checkbox:hover {
+            cursor: pointer
+        }
+
+        html body blockquote {
+            margin: 16px 0;
+            font-size: inherit;
+            padding: 0 15px;
+            color: #5c5c5c;
+            background-color: #f0f0f0;
+            border-left: 4px solid #d6d6d6
+        }
+
+        html body blockquote>:first-child {
+            margin-top: 0
+        }
+
+        html body blockquote>:last-child {
+            margin-bottom: 0
+        }
+
+        html body hr {
+            height: 4px;
+            margin: 32px 0;
+            background-color: #d6d6d6;
+            border: 0 none
+        }
+
+        html body table {
+            margin: 10px 0 15px 0;
+            border-collapse: collapse;
+            border-spacing: 0;
+            display: block;
+            width: 100%;
+            overflow: auto;
+            word-break: normal;
+            word-break: keep-all
+        }
+
+        html body table th {
+            font-weight: 700;
+            color: #000
+        }
+
+        html body table td,
+        html body table th {
+            border: 1px solid #d6d6d6;
+            padding: 6px 13px
+        }
+
+        html body dl {
+            padding: 0
+        }
+
+        html body dl dt {
+            padding: 0;
+            margin-top: 16px;
+            font-size: 1em;
+            font-style: italic;
+            font-weight: 700
+        }
+
+        html body dl dd {
+            padding: 0 16px;
+            margin-bottom: 16px
+        }
+
+        html body code {
+            font-family: Menlo, Monaco, Consolas, 'Courier New', monospace;
+            font-size: .85em;
+            color: #000;
+            background-color: #f0f0f0;
+            border-radius: 3px;
+            padding: .2em 0
+        }
+
+        html body code::after,
+        html body code::before {
+            letter-spacing: -.2em;
+            content: '\00a0'
+        }
+
+        html body pre>code {
+            padding: 0;
+            margin: 0;
+            word-break: normal;
+            white-space: pre;
+            background: 0 0;
+            border: 0
+        }
+
+        html body .highlight {
+            margin-bottom: 16px
+        }
+
+        html body .highlight pre,
+        html body pre {
+            padding: 1em;
+            overflow: auto;
+            line-height: 1.45;
+            border: #d6d6d6;
+            border-radius: 3px
+        }
+
+        html body .highlight pre {
+            margin-bottom: 0;
+            word-break: normal
+        }
+
+        html body pre code,
+        html body pre tt {
+            display: inline;
+            max-width: initial;
+            padding: 0;
+            margin: 0;
+            overflow: initial;
+            line-height: inherit;
+            word-wrap: normal;
+            background-color: transparent;
+            border: 0
+        }
+
+        html body pre code:after,
+        html body pre code:before,
+        html body pre tt:after,
+        html body pre tt:before {
+            content: normal
+        }
+
+        html body blockquote,
+        html body dl,
+        html body ol,
+        html body p,
+        html body pre,
+        html body ul {
+            margin-top: 0;
+            margin-bottom: 16px
+        }
+
+        html body kbd {
+            color: #000;
+            border: 1px solid #d6d6d6;
+            border-bottom: 2px solid #c7c7c7;
+            padding: 2px 4px;
+            background-color: #f0f0f0;
+            border-radius: 3px
+        }
+
+        @media print {
+            html body {
+                background-color: #fff
+            }
+
+            html body h1,
+            html body h2,
+            html body h3,
+            html body h4,
+            html body h5,
+            html body h6 {
+                color: #000;
+                page-break-after: avoid
+            }
+
+            html body blockquote {
+                color: #5c5c5c
+            }
+
+            html body pre {
+                page-break-inside: avoid
+            }
+
+            html body table {
+                display: table
+            }
+
+            html body img {
+                display: block;
+                max-width: 100%;
+                max-height: 100%
+            }
+
+            html body code,
+            html body pre {
+                word-wrap: break-word;
+                white-space: pre
+            }
+        }
+
+        .markdown-preview {
+            width: 100%;
+            height: 100%;
+            box-sizing: border-box
+        }
+
+        .markdown-preview ul {
+            list-style: disc
+        }
+
+        .markdown-preview ul ul {
+            list-style: circle
+        }
+
+        .markdown-preview ul ul ul {
+            list-style: square
+        }
+
+        .markdown-preview ol {
+            list-style: decimal
+        }
+
+        .markdown-preview ol ol,
+        .markdown-preview ul ol {
+            list-style-type: lower-roman
+        }
+
+        .markdown-preview ol ol ol,
+        .markdown-preview ol ul ol,
+        .markdown-preview ul ol ol,
+        .markdown-preview ul ul ol {
+            list-style-type: lower-alpha
+        }
+
+        .markdown-preview .newpage,
+        .markdown-preview .pagebreak {
+            page-break-before: always
+        }
+
+        .markdown-preview pre.line-numbers {
+            position: relative;
+            padding-left: 3.8em;
+            counter-reset: linenumber
+        }
+
+        .markdown-preview pre.line-numbers>code {
+            position: relative
+        }
+
+        .markdown-preview pre.line-numbers .line-numbers-rows {
+            position: absolute;
+            pointer-events: none;
+            top: 1em;
+            font-size: 100%;
+            left: 0;
+            width: 3em;
+            letter-spacing: -1px;
+            border-right: 1px solid #999;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none
+        }
+
+        .markdown-preview pre.line-numbers .line-numbers-rows>span {
+            pointer-events: none;
+            display: block;
+            counter-increment: linenumber
+        }
+
+        .markdown-preview pre.line-numbers .line-numbers-rows>span:before {
+            content: counter(linenumber);
+            color: #999;
+            display: block;
+            padding-right: .8em;
+            text-align: right
+        }
+
+        .markdown-preview .mathjax-exps .MathJax_Display {
+            text-align: center !important
+        }
+
+        .markdown-preview:not([data-for=preview]) .code-chunk .code-chunk-btn-group {
+            display: none
+        }
+
+        .markdown-preview:not([data-for=preview]) .code-chunk .status {
+            display: none
+        }
+
+        .markdown-preview:not([data-for=preview]) .code-chunk .output-div {
+            margin-bottom: 16px
+        }
+
+        .markdown-preview .md-toc {
+            padding: 0
+        }
+
+        .markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link {
+            display: inline;
+            padding: .25rem 0
+        }
+
+        .markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link div,
+        .markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link p {
+            display: inline
+        }
+
+        .markdown-preview .md-toc .md-toc-link-wrapper.highlighted .md-toc-link {
+            font-weight: 800
+        }
+
+        .scrollbar-style::-webkit-scrollbar {
+            width: 8px
+        }
+
+        .scrollbar-style::-webkit-scrollbar-track {
+            border-radius: 10px;
+            background-color: transparent
+        }
+
+        .scrollbar-style::-webkit-scrollbar-thumb {
+            border-radius: 5px;
+            background-color: rgba(150, 150, 150, .66);
+            border: 4px solid rgba(150, 150, 150, .66);
+            background-clip: content-box
+        }
+
+        html body[for=html-export]:not([data-presentation-mode]) {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            margin: 0;
+            padding: 0;
+            overflow: auto
+        }
+
+        html body[for=html-export]:not([data-presentation-mode]) .markdown-preview {
+            position: relative;
+            top: 0;
+            min-height: 100vh
+        }
+
+        @media screen and (min-width:914px) {
+            html body[for=html-export]:not([data-presentation-mode]) .markdown-preview {
+                padding: 2em calc(50% - 457px + 2em)
+            }
+        }
+
+        @media screen and (max-width:914px) {
+            html body[for=html-export]:not([data-presentation-mode]) .markdown-preview {
+                padding: 2em
+            }
+        }
+
+        @media screen and (max-width:450px) {
+            html body[for=html-export]:not([data-presentation-mode]) .markdown-preview {
+                font-size: 14px !important;
+                padding: 1em
+            }
+        }
+
+        @media print {
+            html body[for=html-export]:not([data-presentation-mode]) #sidebar-toc-btn {
+                display: none
+            }
+        }
+
+        html body[for=html-export]:not([data-presentation-mode]) #sidebar-toc-btn {
+            position: fixed;
+            bottom: 8px;
+            left: 8px;
+            font-size: 28px;
+            cursor: pointer;
+            color: inherit;
+            z-index: 99;
+            width: 32px;
+            text-align: center;
+            opacity: .4
+        }
+
+        html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] #sidebar-toc-btn {
+            opacity: 1
+        }
+
+        html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 300px;
+            height: 100%;
+            padding: 32px 0 48px 0;
+            font-size: 14px;
+            box-shadow: 0 0 4px rgba(150, 150, 150, .33);
+            box-sizing: border-box;
+            overflow: auto;
+            background-color: inherit
+        }
+
+        html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar {
+            width: 8px
+        }
+
+        html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-track {
+            border-radius: 10px;
+            background-color: transparent
+        }
+
+        html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-thumb {
+            border-radius: 5px;
+            background-color: rgba(150, 150, 150, .66);
+            border: 4px solid rgba(150, 150, 150, .66);
+            background-clip: content-box
+        }
+
+        html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc a {
+            text-decoration: none
+        }
+
+        html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc {
+            padding: 0 16px
+        }
+
+        html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link {
+            display: inline;
+            padding: .25rem 0
+        }
+
+        html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link div,
+        html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link p {
+            display: inline
+        }
+
+        html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper.highlighted .md-toc-link {
+            font-weight: 800
+        }
+
+        html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview {
+            left: 300px;
+            width: calc(100% - 300px);
+            padding: 2em calc(50% - 457px - 300px / 2);
+            margin: 0;
+            box-sizing: border-box
+        }
+
+        @media screen and (max-width:1274px) {
+            html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview {
+                padding: 2em
+            }
+        }
+
+        @media screen and (max-width:450px) {
+            html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview {
+                width: 100%
+            }
+        }
+
+        html body[for=html-export]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .markdown-preview {
+            left: 50%;
+            transform: translateX(-50%)
+        }
+
+        html body[for=html-export]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .md-sidebar-toc {
+            display: none
+        }
+
+        /* Please visit the URL below for more information: */
+        /*   https://shd101wyy.github.io/markdown-preview-enhanced/#/customize-css */
+    </style>
+    <!-- The content below will be included at the end of the <head> element. -->
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function () {
+            // your code here
+        });
+    </script>
+</head>
+
+<body for="html-export">
+
+
+    <div class="crossnote markdown-preview  ">
+
+        <h1 id="چیت-شیت-جامع-sql">چیت شیت جامع SQL </h1>
+        <h2 id="1-مبانی-و-اصول-اولیه">1. مبانی و اصول اولیه </h2>
+        <h3 id="sql-چیست">SQL چیست؟ </h3>
+        <p>SQL (زبان پرس‌وجوی ساختاریافته) یک زبان برنامه‌نویسی است که برای مدیریت و دستکاری پایگاه‌های داده رابطه‌ای
+            استفاده می‌شود. این زبان به کاربران اجازه می‌دهد تا داده‌ها را در پایگاه داده ایجاد، خواندن، به‌روزرسانی و
+            حذف کنند.</p>
+        <h3 id="تاریخچه-و-تکامل-sql">تاریخچه و تکامل SQL </h3>
+        <p>SQL در دهه 1970 توسط محققان IBM توسعه یافت و به یک زبان استاندارد برای پایگاه‌های داده رابطه‌ای تبدیل شد.
+            استانداردهای مختلفی مانند SQL-86، SQL-92 و SQL:1999 در طول زمان معرفی شده‌اند که قابلیت‌های جدیدی را به این
+            زبان اضافه کرده‌اند.</p>
+        <h3 id="گویشهای-مختلف-sql">گویش‌های مختلف SQL </h3>
+        <p>چندین گویش SQL وجود دارد، از جمله:</p>
+        <ul>
+            <li><strong>MySQL</strong>: محبوب برای برنامه‌های وب.</li>
+            <li><strong>PostgreSQL</strong>: قدرتمند برای برنامه‌های پیچیده.</li>
+            <li><strong>SQL Server</strong>: مناسب برای محیط‌های مایکروسافت.</li>
+            <li><strong>Oracle</strong>: برای پایگاه‌های داده سازمانی.</li>
+            <li><strong>SQLite</strong>: سبک و مناسب برای برنامه‌های کوچک.</li>
+        </ul>
+        <p>هر گویش ممکن است تفاوت‌های جزئی در نحو و ویژگی‌ها داشته باشد.</p>
+        <h3 id="راهاندازی-محیط-sql">راه‌اندازی محیط SQL </h3>
+        <p>برای شروع کار با SQL، به یک سیستم مدیریت پایگاه داده (DBMS) نیاز دارید. می‌توانید نرم‌افزارهایی مانند MySQL
+            Workbench، pgAdmin یا SQL Server Management Studio را نصب کنید یا از ابزارهای آنلاین مانند <a
+                href="http://sqlfiddle.com/">SQL Fiddle</a> استفاده کنید.</p>
+        <h2 id="2-نحو-و-معانی">2. نحو و معانی </h2>
+        <h3 id="انواع-داده-در-sql">انواع داده در SQL </h3>
+        <p>انواع داده‌های رایج در SQL شامل موارد زیر هستند:</p>
+        <ul>
+            <li><strong>عددی</strong>: <code>INT</code>، <code>FLOAT</code>، <code>DECIMAL</code></li>
+            <li><strong>رشته‌ای</strong>: <code>CHAR</code>، <code>VARCHAR</code>، <code>TEXT</code></li>
+            <li><strong>تاریخ و زمان</strong>: <code>DATE</code>، <code>TIME</code>، <code>DATETIME</code></li>
+            <li><strong>بولی</strong>: <code>BOOLEAN</code></li>
+        </ul>
+        <h3 id="عملگرها">عملگرها </h3>
+        <ul>
+            <li><strong>عملگرهای حسابی</strong>: <code>+</code>، <code>-</code>، <code>*</code>، <code>/</code></li>
+            <li><strong>عملگرهای مقایسه‌ای</strong>: <code>=</code>، <code>&lt;&gt;</code>, <code>&gt;</code>،
+                <code>&lt;</code>، <code>&gt;=</code>، <code>&lt;=</code>
+            </li>
+            <li><strong>عملگرهای منطقی</strong>: <code>AND</code>، <code>OR</code>، <code>NOT</code></li>
+        </ul>
+        <h3 id="دستورات-dml-زبان-دستکاری-داده">دستورات DML (زبان دستکاری داده) </h3>
+        <ul>
+            <li><strong>SELECT</strong>: بازیابی داده‌ها از یک یا چند جدول
+                <pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token keyword keyword-SELECT">SELECT</span> first_name<span class="token punctuation">,</span> last_name <span class="token keyword keyword-FROM">FROM</span> employees<span class="token punctuation">;</span>
+</code></pre>
+            </li>
+            <li><strong>INSERT</strong>: درج رکوردهای جدید در جدول
+                <pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token keyword keyword-INSERT">INSERT</span> <span class="token keyword keyword-INTO">INTO</span> employees <span class="token punctuation">(</span>first_name<span class="token punctuation">,</span> last_name<span class="token punctuation">)</span> <span class="token keyword keyword-VALUES">VALUES</span> <span class="token punctuation">(</span><span class="token string">'علی'</span><span class="token punctuation">,</span> <span class="token string">'محمدی'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+            </li>
+            <li><strong>UPDATE</strong>: به‌روزرسانی رکوردهای موجود
+                <pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token keyword keyword-UPDATE">UPDATE</span> employees <span class="token keyword keyword-SET">SET</span> salary <span class="token operator">=</span> <span class="token number">60000</span> <span class="token keyword keyword-WHERE">WHERE</span> employee_id <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span>
+</code></pre>
+            </li>
+            <li><strong>DELETE</strong>: حذف رکوردهای موجود
+                <pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token keyword keyword-DELETE">DELETE</span> <span class="token keyword keyword-FROM">FROM</span> employees <span class="token keyword keyword-WHERE">WHERE</span> employee_id <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span>
+</code></pre>
+            </li>
+        </ul>
+        <h3 id="دستورات-ddl-زبان-تعریف-داده">دستورات DDL (زبان تعریف داده) </h3>
+        <ul>
+            <li><strong>CREATE</strong>: ایجاد اشیاء جدید مانند جدول
+                <pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token keyword keyword-CREATE">CREATE</span> <span class="token keyword keyword-TABLE">TABLE</span> employees <span class="token punctuation">(</span>employee_id <span class="token keyword keyword-INT">INT</span> <span class="token keyword keyword-PRIMARY">PRIMARY</span> <span class="token keyword keyword-KEY">KEY</span><span class="token punctuation">,</span> first_name <span class="token keyword keyword-VARCHAR">VARCHAR</span><span class="token punctuation">(</span><span class="token number">50</span><span class="token punctuation">)</span><span class="token punctuation">,</span> last_name <span class="token keyword keyword-VARCHAR">VARCHAR</span><span class="token punctuation">(</span><span class="token number">50</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+            </li>
+            <li><strong>ALTER</strong>: تغییر ساختار جدول
+                <pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token keyword keyword-ALTER">ALTER</span> <span class="token keyword keyword-TABLE">TABLE</span> employees <span class="token keyword keyword-ADD">ADD</span> email <span class="token keyword keyword-VARCHAR">VARCHAR</span><span class="token punctuation">(</span><span class="token number">100</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+            </li>
+            <li><strong>DROP</strong>: حذف جدول یا پایگاه داده
+                <pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token keyword keyword-DROP">DROP</span> <span class="token keyword keyword-TABLE">TABLE</span> employees<span class="token punctuation">;</span>
+</code></pre>
+            </li>
+            <li><strong>TRUNCATE</strong>: حذف تمام رکوردها از جدول
+                <pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token keyword keyword-TRUNCATE">TRUNCATE</span> <span class="token keyword keyword-TABLE">TABLE</span> employees<span class="token punctuation">;</span>
+</code></pre>
+            </li>
+        </ul>
+        <h3 id="دستورات-dcl-زبان-کنترل-داده">دستورات DCL (زبان کنترل داده) </h3>
+        <ul>
+            <li><strong>GRANT</strong>: اعطای دسترسی به کاربران
+                <pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token keyword keyword-GRANT">GRANT</span> <span class="token keyword keyword-SELECT">SELECT</span><span class="token punctuation">,</span> <span class="token keyword keyword-INSERT">INSERT</span> <span class="token keyword keyword-ON">ON</span> employees <span class="token keyword keyword-TO">TO</span> <span class="token string">'user1'</span><span class="token punctuation">;</span>
+</code></pre>
+            </li>
+            <li><strong>REVOKE</strong>: لغو دسترسی‌های اعطا شده
+                <pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token keyword keyword-REVOKE">REVOKE</span> <span class="token keyword keyword-SELECT">SELECT</span><span class="token punctuation">,</span> <span class="token keyword keyword-INSERT">INSERT</span> <span class="token keyword keyword-ON">ON</span> employees <span class="token keyword keyword-FROM">FROM</span> <span class="token string">'user1'</span><span class="token punctuation">;</span>
+</code></pre>
+            </li>
+        </ul>
+        <h3 id="دستورات-کنترل-تراکنش">دستورات کنترل تراکنش </h3>
+        <ul>
+            <li><strong>BEGIN TRANSACTION</strong>: شروع یک تراکنش
+                <pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token keyword keyword-BEGIN">BEGIN</span> <span class="token keyword keyword-TRANSACTION">TRANSACTION</span><span class="token punctuation">;</span>
+</code></pre>
+            </li>
+            <li><strong>COMMIT</strong>: ذخیره دائمی تغییرات
+                <pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token keyword keyword-COMMIT">COMMIT</span><span class="token punctuation">;</span>
+</code></pre>
+            </li>
+            <li><strong>ROLLBACK</strong>: لغو تغییرات
+                <pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token keyword keyword-ROLLBACK">ROLLBACK</span><span class="token punctuation">;</span>
+</code></pre>
+            </li>
+        </ul>
+        <h2 id="3-مفاهیم-اصلی">3. مفاهیم اصلی </h2>
+        <h3 id="جداول-ردیفها-و-ستونها">جداول، ردیف‌ها و ستون‌ها </h3>
+        <p>جدول در SQL مجموعه‌ای از داده‌ها است که در ردیف‌ها (رکوردها) و ستون‌ها (ویژگی‌ها) سازماندهی شده‌اند. هر ردیف
+            یک موجودیت خاص و هر ستون یک ویژگی از آن موجودیت را نشان می‌دهد.</p>
+        <h3 id="کلیدهای-اصلی-و-خارجی">کلیدهای اصلی و خارجی </h3>
+        <ul>
+            <li><strong>کلید اصلی (Primary Key)</strong>: ستونی که هر ردیف را به طور منحصر به فرد شناسایی می‌کند.
+                <pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token keyword keyword-CREATE">CREATE</span> <span class="token keyword keyword-TABLE">TABLE</span> employees <span class="token punctuation">(</span>employee_id <span class="token keyword keyword-INT">INT</span> <span class="token keyword keyword-PRIMARY">PRIMARY</span> <span class="token keyword keyword-KEY">KEY</span><span class="token punctuation">,</span> first_name <span class="token keyword keyword-VARCHAR">VARCHAR</span><span class="token punctuation">(</span><span class="token number">50</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+            </li>
+            <li><strong>کلید خارجی (Foreign Key)</strong>: ستونی که به کلید اصلی جدول دیگری اشاره می‌کند.
+                <pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token keyword keyword-CREATE">CREATE</span> <span class="token keyword keyword-TABLE">TABLE</span> orders <span class="token punctuation">(</span>order_id <span class="token keyword keyword-INT">INT</span> <span class="token keyword keyword-PRIMARY">PRIMARY</span> <span class="token keyword keyword-KEY">KEY</span><span class="token punctuation">,</span> employee_id <span class="token keyword keyword-INT">INT</span><span class="token punctuation">,</span> <span class="token keyword keyword-FOREIGN">FOREIGN</span> <span class="token keyword keyword-KEY">KEY</span> <span class="token punctuation">(</span>employee_id<span class="token punctuation">)</span> <span class="token keyword keyword-REFERENCES">REFERENCES</span> employees<span class="token punctuation">(</span>employee_id<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+            </li>
+        </ul>
+        <h3 id="محدودیتها-constraints">محدودیت‌ها (Constraints) </h3>
+        <p>محدودیت‌ها برای تضمین یکپارچگی داده‌ها استفاده می‌شوند:</p>
+        <ul>
+            <li><strong>NOT NULL</strong>: ستون نمی‌تواند مقدار NULL داشته باشد.</li>
+            <li><strong>UNIQUE</strong>: مقادیر ستون باید منحصر به فرد باشند.</li>
+            <li><strong>CHECK</strong>: مقادیر ستون باید شرط خاصی را برآورده کنند.</li>
+            <li><strong>DEFAULT</strong>: مقدار پیش‌فرض برای ستون.
+                <pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token keyword keyword-CREATE">CREATE</span> <span class="token keyword keyword-TABLE">TABLE</span> employees <span class="token punctuation">(</span>employee_id <span class="token keyword keyword-INT">INT</span> <span class="token keyword keyword-PRIMARY">PRIMARY</span> <span class="token keyword keyword-KEY">KEY</span><span class="token punctuation">,</span> salary <span class="token keyword keyword-DECIMAL">DECIMAL</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span> <span class="token keyword keyword-DEFAULT">DEFAULT</span> <span class="token number">50000</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+            </li>
+        </ul>
+        <h3 id="اتصالها-joins">اتصال‌ها (Joins) </h3>
+        <p>اتصال‌ها برای ترکیب داده‌ها از چند جدول استفاده می‌شوند:</p>
+        <ul>
+            <li><strong>INNER JOIN</strong>: ردیف‌های تطابقی از هر دو جدول.
+                <pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token keyword keyword-SELECT">SELECT</span> employees<span class="token punctuation">.</span>first_name<span class="token punctuation">,</span> departments<span class="token punctuation">.</span>name
 <span class="token keyword keyword-FROM">FROM</span> employees
 <span class="token keyword keyword-INNER">INNER</span> <span class="token keyword keyword-JOIN">JOIN</span> departments <span class="token keyword keyword-ON">ON</span> employees<span class="token punctuation">.</span>department_id <span class="token operator">=</span> departments<span class="token punctuation">.</span>id<span class="token punctuation">;</span>
-</code></pre></li>
-<li><strong>LEFT JOIN</strong>: تمام ردیف‌های جدول چپ و ردیف‌های تطابقی از جدول راست.</li>
-<li><strong>RIGHT JOIN</strong>: تمام ردیف‌های جدول راست و ردیف‌های تطابقی از جدول چپ.</li>
-<li><strong>FULL JOIN</strong>: تمام ردیف‌ها از هر دو جدول.</li>
-</ul>
-<h3 id="زیرپرسوجوها-subqueries">زیرپرس‌وجوها (Subqueries) </h3>
-<p>زیرپرس‌وجوها پرس‌وجوهای تودرتو هستند که در بخش‌های مختلف پرس‌وجو استفاده می‌شوند.</p>
-<pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token keyword keyword-SELECT">SELECT</span> first_name <span class="token keyword keyword-FROM">FROM</span> employees <span class="token keyword keyword-WHERE">WHERE</span> department_id <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token keyword keyword-SELECT">SELECT</span> id <span class="token keyword keyword-FROM">FROM</span> departments <span class="token keyword keyword-WHERE">WHERE</span> name <span class="token operator">=</span> <span class="token string">'فروش'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-</code></pre><h3 id="ایندکسها">ایندکس‌ها </h3>
-<p>ایندکس‌ها سرعت بازیابی داده‌ها را بهبود می‌بخشند.</p>
-<pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token keyword keyword-CREATE">CREATE</span> <span class="token keyword keyword-INDEX">INDEX</span> idx_last_name <span class="token keyword keyword-ON">ON</span> employees <span class="token punctuation">(</span>last_name<span class="token punctuation">)</span><span class="token punctuation">;</span>
-</code></pre><h2 id="4-موضوعات-پیشرفته">4. موضوعات پیشرفته </h2>
-<h3 id="رویههای-ذخیرهشده-stored-procedures">رویه‌های ذخیره‌شده (Stored Procedures) </h3>
-<p>رویه‌های ذخیره‌شده مجموعه‌ای از دستورات SQL هستند که در پایگاه داده ذخیره شده و با یک فراخوانی اجرا می‌شوند.</p>
-<pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token keyword keyword-CREATE">CREATE</span> <span class="token keyword keyword-PROCEDURE">PROCEDURE</span> SelectAllEmployees
+</code></pre>
+            </li>
+            <li><strong>LEFT JOIN</strong>: تمام ردیف‌های جدول چپ و ردیف‌های تطابقی از جدول راست.</li>
+            <li><strong>RIGHT JOIN</strong>: تمام ردیف‌های جدول راست و ردیف‌های تطابقی از جدول چپ.</li>
+            <li><strong>FULL JOIN</strong>: تمام ردیف‌ها از هر دو جدول.</li>
+        </ul>
+        <h3 id="زیرپرسوجوها-subqueries">زیرپرس‌وجوها (Subqueries) </h3>
+        <p>زیرپرس‌وجوها پرس‌وجوهای تودرتو هستند که در بخش‌های مختلف پرس‌وجو استفاده می‌شوند.</p>
+        <pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token keyword keyword-SELECT">SELECT</span> first_name <span class="token keyword keyword-FROM">FROM</span> employees <span class="token keyword keyword-WHERE">WHERE</span> department_id <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token keyword keyword-SELECT">SELECT</span> id <span class="token keyword keyword-FROM">FROM</span> departments <span class="token keyword keyword-WHERE">WHERE</span> name <span class="token operator">=</span> <span class="token string">'فروش'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+        <h3 id="ایندکسها">ایندکس‌ها </h3>
+        <p>ایندکس‌ها سرعت بازیابی داده‌ها را بهبود می‌بخشند.</p>
+        <pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token keyword keyword-CREATE">CREATE</span> <span class="token keyword keyword-INDEX">INDEX</span> idx_last_name <span class="token keyword keyword-ON">ON</span> employees <span class="token punctuation">(</span>last_name<span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+        <h2 id="4-موضوعات-پیشرفته">4. موضوعات پیشرفته </h2>
+        <h3 id="رویههای-ذخیرهشده-stored-procedures">رویه‌های ذخیره‌شده (Stored Procedures) </h3>
+        <p>رویه‌های ذخیره‌شده مجموعه‌ای از دستورات SQL هستند که در پایگاه داده ذخیره شده و با یک فراخوانی اجرا می‌شوند.
+        </p>
+        <pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token keyword keyword-CREATE">CREATE</span> <span class="token keyword keyword-PROCEDURE">PROCEDURE</span> SelectAllEmployees
 <span class="token keyword keyword-AS">AS</span>
 <span class="token keyword keyword-SELECT">SELECT</span> <span class="token operator">*</span> <span class="token keyword keyword-FROM">FROM</span> employees
 GO<span class="token punctuation">;</span>
 <span class="token keyword keyword-EXEC">EXEC</span> SelectAllEmployees<span class="token punctuation">;</span>
-</code></pre><h3 id="تریگرها-triggers">تریگرها (Triggers) </h3>
-<p>تریگرها دستوراتی هستند که به طور خودکار در پاسخ به رویدادهای خاص (مانند INSERT، UPDATE، DELETE) اجرا می‌شوند.</p>
-<pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token keyword keyword-CREATE">CREATE</span> <span class="token keyword keyword-TRIGGER">TRIGGER</span> trg_after_insert
+</code></pre>
+        <h3 id="تریگرها-triggers">تریگرها (Triggers) </h3>
+        <p>تریگرها دستوراتی هستند که به طور خودکار در پاسخ به رویدادهای خاص (مانند INSERT، UPDATE، DELETE) اجرا می‌شوند.
+        </p>
+        <pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token keyword keyword-CREATE">CREATE</span> <span class="token keyword keyword-TRIGGER">TRIGGER</span> trg_after_insert
 <span class="token keyword keyword-ON">ON</span> employees
 <span class="token keyword keyword-FOR">FOR</span> <span class="token keyword keyword-INSERT">INSERT</span>
 <span class="token keyword keyword-AS">AS</span>
 <span class="token keyword keyword-INSERT">INSERT</span> <span class="token keyword keyword-INTO">INTO</span> audit_table <span class="token punctuation">(</span><span class="token keyword keyword-action">action</span><span class="token punctuation">,</span> employee_id<span class="token punctuation">)</span>
 <span class="token keyword keyword-VALUES">VALUES</span> <span class="token punctuation">(</span><span class="token string">'INSERT'</span><span class="token punctuation">,</span> NEW<span class="token punctuation">.</span>employee_id<span class="token punctuation">)</span><span class="token punctuation">;</span>
-</code></pre><h3 id="ویوها-views">ویوها (Views) </h3>
-<p>ویوها جداول مجازی هستند که بر اساس نتیجه یک پرس‌وجو ایجاد می‌شوند.</p>
-<pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token keyword keyword-CREATE">CREATE</span> <span class="token keyword keyword-VIEW">VIEW</span> vw_employees <span class="token keyword keyword-AS">AS</span>
+</code></pre>
+        <h3 id="ویوها-views">ویوها (Views) </h3>
+        <p>ویوها جداول مجازی هستند که بر اساس نتیجه یک پرس‌وجو ایجاد می‌شوند.</p>
+        <pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token keyword keyword-CREATE">CREATE</span> <span class="token keyword keyword-VIEW">VIEW</span> vw_employees <span class="token keyword keyword-AS">AS</span>
 <span class="token keyword keyword-SELECT">SELECT</span> employee_id<span class="token punctuation">,</span> first_name<span class="token punctuation">,</span> last_name
 <span class="token keyword keyword-FROM">FROM</span> employees
 <span class="token keyword keyword-WHERE">WHERE</span> department_id <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span>
-</code></pre><h3 id="تراکنشها-transactions">تراکنش‌ها (Transactions) </h3>
-<p>تراکنش‌ها مجموعه‌ای از عملیات هستند که به عنوان یک واحد اتمی اجرا می‌شوند و از خواص ACID پیروی می‌کنند.</p>
-<pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token keyword keyword-BEGIN">BEGIN</span> <span class="token keyword keyword-TRANSACTION">TRANSACTION</span><span class="token punctuation">;</span>
+</code></pre>
+        <h3 id="تراکنشها-transactions">تراکنش‌ها (Transactions) </h3>
+        <p>تراکنش‌ها مجموعه‌ای از عملیات هستند که به عنوان یک واحد اتمی اجرا می‌شوند و از خواص ACID پیروی می‌کنند.</p>
+        <pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token keyword keyword-BEGIN">BEGIN</span> <span class="token keyword keyword-TRANSACTION">TRANSACTION</span><span class="token punctuation">;</span>
 <span class="token keyword keyword-UPDATE">UPDATE</span> accounts <span class="token keyword keyword-SET">SET</span> balance <span class="token operator">=</span> balance <span class="token operator">-</span> <span class="token number">100</span> <span class="token keyword keyword-WHERE">WHERE</span> account_id <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span>
 <span class="token keyword keyword-UPDATE">UPDATE</span> accounts <span class="token keyword keyword-SET">SET</span> balance <span class="token operator">=</span> balance <span class="token operator">+</span> <span class="token number">100</span> <span class="token keyword keyword-WHERE">WHERE</span> account_id <span class="token operator">=</span> <span class="token number">2</span><span class="token punctuation">;</span>
 <span class="token keyword keyword-COMMIT">COMMIT</span><span class="token punctuation">;</span>
-</code></pre><h3 id="نرمالسازی-normalization">نرمال‌سازی (Normalization) </h3>
-<p>نرمال‌سازی فرآیندی است برای کاهش افزونگی داده‌ها و بهبود یکپارچگی. فرم‌های نرمال شامل 1NF، 2NF و 3NF هستند.</p>
-<h3 id="تزریق-sql-sql-injection">تزریق SQL (SQL Injection) </h3>
-<p>تزریق SQL یک حمله امنیتی است که در آن کد مخرب به پرس‌وجوها وارد می‌شود. برای جلوگیری، از پارامترهای پرس‌وجو استفاده کنید.</p>
-<pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token comment">-- به جای:</span>
+</code></pre>
+        <h3 id="نرمالسازی-normalization">نرمال‌سازی (Normalization) </h3>
+        <p>نرمال‌سازی فرآیندی است برای کاهش افزونگی داده‌ها و بهبود یکپارچگی. فرم‌های نرمال شامل 1NF، 2NF و 3NF هستند.
+        </p>
+        <h3 id="تزریق-sql-sql-injection">تزریق SQL (SQL Injection) </h3>
+        <p>تزریق SQL یک حمله امنیتی است که در آن کد مخرب به پرس‌وجوها وارد می‌شود. برای جلوگیری، از پارامترهای پرس‌وجو
+            استفاده کنید.</p>
+        <pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token comment">-- به جای:</span>
 <span class="token keyword keyword-SELECT">SELECT</span> <span class="token operator">*</span> <span class="token keyword keyword-FROM">FROM</span> users <span class="token keyword keyword-WHERE">WHERE</span> username <span class="token operator">=</span> <span class="token string">'user_input'</span><span class="token punctuation">;</span>
 <span class="token comment">-- استفاده کنید:</span>
 <span class="token keyword keyword-SELECT">SELECT</span> <span class="token operator">*</span> <span class="token keyword keyword-FROM">FROM</span> users <span class="token keyword keyword-WHERE">WHERE</span> username <span class="token operator">=</span> ?<span class="token punctuation">;</span>
-</code></pre><h2 id="5-اشکالزدایی-و-بهینهسازی">5. اشکال‌زدایی و بهینه‌سازی </h2>
-<ul>
-<li><strong>بهینه‌سازی پرس‌وجوها</strong>: از ایندکس‌ها استفاده کنید، از <code>SELECT *</code> اجتناب کنید و JOINهای مناسب را به کار ببرید.</li>
-<li><strong>استفاده از EXPLAIN</strong>: برای تحلیل نحوه اجرای پرس‌وجو.<pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token keyword keyword-EXPLAIN">EXPLAIN</span> <span class="token keyword keyword-SELECT">SELECT</span> <span class="token operator">*</span> <span class="token keyword keyword-FROM">FROM</span> employees <span class="token keyword keyword-WHERE">WHERE</span> department_id <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span>
-</code></pre></li>
-<li><strong>استراتژی‌های ایندکس‌گذاری</strong>: ایندکس‌ها را روی ستون‌های پرکاربرد در WHERE، JOIN و ORDER BY ایجاد کنید.</li>
-</ul>
-<h2 id="6-بهترین-روشها">6. بهترین روش‌ها </h2>
-<ul>
-<li><strong>کد خوانا</strong>: از فرمت‌بندی مناسب و نام‌گذاری معنی‌دار استفاده کنید.</li>
-<li><strong>نام‌گذاری منسجم</strong>: برای جداول و ستون‌ها از نام‌های واضح استفاده کنید.</li>
-<li>**اجتناب از SELECT *** : فقط ستون‌های مورد نیاز را انتخاب کنید.</li>
-<li><strong>استفاده از تراکنش‌ها</strong>: برای عملیات حساس از تراکنش‌ها استفاده کنید.</li>
-</ul>
-<h2 id="7-موارد-استفاده-واقعی">7. موارد استفاده واقعی </h2>
-<ul>
-<li><strong>عملیات CRUD</strong>:<pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token comment">-- Create</span>
+</code></pre>
+        <h2 id="5-اشکالزدایی-و-بهینهسازی">5. اشکال‌زدایی و بهینه‌سازی </h2>
+        <ul>
+            <li><strong>بهینه‌سازی پرس‌وجوها</strong>: از ایندکس‌ها استفاده کنید، از <code>SELECT *</code> اجتناب کنید و
+                JOINهای مناسب را به کار ببرید.</li>
+            <li><strong>استفاده از EXPLAIN</strong>: برای تحلیل نحوه اجرای پرس‌وجو.
+                <pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token keyword keyword-EXPLAIN">EXPLAIN</span> <span class="token keyword keyword-SELECT">SELECT</span> <span class="token operator">*</span> <span class="token keyword keyword-FROM">FROM</span> employees <span class="token keyword keyword-WHERE">WHERE</span> department_id <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span>
+</code></pre>
+            </li>
+            <li><strong>استراتژی‌های ایندکس‌گذاری</strong>: ایندکس‌ها را روی ستون‌های پرکاربرد در WHERE، JOIN و ORDER BY
+                ایجاد کنید.</li>
+        </ul>
+        <h2 id="6-بهترین-روشها">6. بهترین روش‌ها </h2>
+        <ul>
+            <li><strong>کد خوانا</strong>: از فرمت‌بندی مناسب و نام‌گذاری معنی‌دار استفاده کنید.</li>
+            <li><strong>نام‌گذاری منسجم</strong>: برای جداول و ستون‌ها از نام‌های واضح استفاده کنید.</li>
+            <li>**اجتناب از SELECT *** : فقط ستون‌های مورد نیاز را انتخاب کنید.</li>
+            <li><strong>استفاده از تراکنش‌ها</strong>: برای عملیات حساس از تراکنش‌ها استفاده کنید.</li>
+        </ul>
+        <h2 id="7-موارد-استفاده-واقعی">7. موارد استفاده واقعی </h2>
+        <ul>
+            <li><strong>عملیات CRUD</strong>:
+                <pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token comment">-- Create</span>
 <span class="token keyword keyword-INSERT">INSERT</span> <span class="token keyword keyword-INTO">INTO</span> employees <span class="token punctuation">(</span>first_name<span class="token punctuation">,</span> last_name<span class="token punctuation">)</span> <span class="token keyword keyword-VALUES">VALUES</span> <span class="token punctuation">(</span><span class="token string">'سارا'</span><span class="token punctuation">,</span> <span class="token string">'احمدی'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token comment">-- Read</span>
 <span class="token keyword keyword-SELECT">SELECT</span> <span class="token operator">*</span> <span class="token keyword keyword-FROM">FROM</span> employees <span class="token keyword keyword-WHERE">WHERE</span> department_id <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span>
@@ -191,76 +1098,86 @@ GO<span class="token punctuation">;</span>
 <span class="token keyword keyword-UPDATE">UPDATE</span> employees <span class="token keyword keyword-SET">SET</span> salary <span class="token operator">=</span> <span class="token number">70000</span> <span class="token keyword keyword-WHERE">WHERE</span> employee_id <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span>
 <span class="token comment">-- Delete</span>
 <span class="token keyword keyword-DELETE">DELETE</span> <span class="token keyword keyword-FROM">FROM</span> employees <span class="token keyword keyword-WHERE">WHERE</span> employee_id <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span>
-</code></pre></li>
-<li><strong>گزارش‌دهی</strong>: جمع‌آوری داده‌ها برای گزارش‌های مدیریتی.<pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token keyword keyword-SELECT">SELECT</span> department_id<span class="token punctuation">,</span> <span class="token function">COUNT</span><span class="token punctuation">(</span><span class="token operator">*</span><span class="token punctuation">)</span> <span class="token keyword keyword-AS">AS</span> employee_count
+</code></pre>
+            </li>
+            <li><strong>گزارش‌دهی</strong>: جمع‌آوری داده‌ها برای گزارش‌های مدیریتی.
+                <pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token keyword keyword-SELECT">SELECT</span> department_id<span class="token punctuation">,</span> <span class="token function">COUNT</span><span class="token punctuation">(</span><span class="token operator">*</span><span class="token punctuation">)</span> <span class="token keyword keyword-AS">AS</span> employee_count
 <span class="token keyword keyword-FROM">FROM</span> employees
 <span class="token keyword keyword-GROUP">GROUP</span> <span class="token keyword keyword-BY">BY</span> department_id<span class="token punctuation">;</span>
-</code></pre></li>
-<li><strong>تحلیل داده</strong>: استفاده از توابع تجمیعی.<pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token keyword keyword-SELECT">SELECT</span> department_id<span class="token punctuation">,</span> <span class="token function">AVG</span><span class="token punctuation">(</span>salary<span class="token punctuation">)</span> <span class="token keyword keyword-AS">AS</span> avg_salary
+</code></pre>
+            </li>
+            <li><strong>تحلیل داده</strong>: استفاده از توابع تجمیعی.
+                <pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token keyword keyword-SELECT">SELECT</span> department_id<span class="token punctuation">,</span> <span class="token function">AVG</span><span class="token punctuation">(</span>salary<span class="token punctuation">)</span> <span class="token keyword keyword-AS">AS</span> avg_salary
 <span class="token keyword keyword-FROM">FROM</span> employees
 <span class="token keyword keyword-GROUP">GROUP</span> <span class="token keyword keyword-BY">BY</span> department_id
 <span class="token keyword keyword-HAVING">HAVING</span> <span class="token function">AVG</span><span class="token punctuation">(</span>salary<span class="token punctuation">)</span> <span class="token operator">&gt;</span> <span class="token number">50000</span><span class="token punctuation">;</span>
-</code></pre></li>
-</ul>
-<h2 id="8-خطاهای-رایج-و-عیبیابی">8. خطاهای رایج و عیب‌یابی </h2>
-<ul>
-<li><strong>خطاهای نحوی</strong>: بررسی دقیق دستورات برای اشتباهات تایپی.</li>
-<li><strong>خطاهای منطقی</strong>: اطمینان از صحت شرایط در WHERE.</li>
-<li><strong>مسائل عملکرد</strong>: بررسی ایندکس‌ها و استفاده از EXPLAIN برای شناسایی گلوگاه‌ها.</li>
-</ul>
-<h2 id="9-جداول-مرجع-و-نمودارها">9. جداول مرجع و نمودارها </h2>
-<table>
-<thead>
-<tr>
-<th><strong>دسته‌بندی</strong></th>
-<th><strong>دستور</strong></th>
-<th><strong>توضیح</strong></th>
-<th><strong>مثال</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>DML</td>
-<td>SELECT</td>
-<td>بازیابی داده‌ها</td>
-<td><code>SELECT * FROM employees;</code></td>
-</tr>
-<tr>
-<td>DML</td>
-<td>INSERT</td>
-<td>درج داده‌ها</td>
-<td><code>INSERT INTO employees (first_name) VALUES ('علی');</code></td>
-</tr>
-<tr>
-<td>DDL</td>
-<td>CREATE</td>
-<td>ایجاد جدول</td>
-<td><code>CREATE TABLE employees (id INT PRIMARY KEY);</code></td>
-</tr>
-<tr>
-<td>DCL</td>
-<td>GRANT</td>
-<td>اعطای دسترسی</td>
-<td><code>GRANT SELECT ON employees TO 'user1';</code></td>
-</tr>
-</tbody>
-</table>
-<h2 id="10-پیشنهادات-مسیر-یادگیری">10. پیشنهادات مسیر یادگیری </h2>
-<ul>
-<li><strong>منابع آنلاین</strong>: <a href="https://www.w3schools.com/sql/">W3Schools</a>, <a href="https://sqlzoo.net/">SQLZoo</a>, <a href="https://www.khanacademy.org/computing/computer-programming/sql">Khan Academy</a>.</li>
-<li><strong>کتاب‌ها</strong>: "SQL in 10 Minutes"، "Learning SQL" نوشته Alan Beaulieu.</li>
-<li><strong>دوره‌های آموزشی</strong>: پلتفرم‌هایی مانند Coursera، Udemy و edX.</li>
-<li><strong>تمرین</strong>: حل مسائل در <a href="https://www.hackerrank.com/domains/sql">HackerRank</a> یا کار با پایگاه‌های داده نمونه مانند Northwind.</li>
-</ul>
+</code></pre>
+            </li>
+        </ul>
+        <h2 id="8-خطاهای-رایج-و-عیبیابی">8. خطاهای رایج و عیب‌یابی </h2>
+        <ul>
+            <li><strong>خطاهای نحوی</strong>: بررسی دقیق دستورات برای اشتباهات تایپی.</li>
+            <li><strong>خطاهای منطقی</strong>: اطمینان از صحت شرایط در WHERE.</li>
+            <li><strong>مسائل عملکرد</strong>: بررسی ایندکس‌ها و استفاده از EXPLAIN برای شناسایی گلوگاه‌ها.</li>
+        </ul>
+        <h2 id="9-جداول-مرجع-و-نمودارها">9. جداول مرجع و نمودارها </h2>
+        <table>
+            <thead>
+                <tr>
+                    <th><strong>دسته‌بندی</strong></th>
+                    <th><strong>دستور</strong></th>
+                    <th><strong>توضیح</strong></th>
+                    <th><strong>مثال</strong></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>DML</td>
+                    <td>SELECT</td>
+                    <td>بازیابی داده‌ها</td>
+                    <td><code>SELECT * FROM employees;</code></td>
+                </tr>
+                <tr>
+                    <td>DML</td>
+                    <td>INSERT</td>
+                    <td>درج داده‌ها</td>
+                    <td><code>INSERT INTO employees (first_name) VALUES ('علی');</code></td>
+                </tr>
+                <tr>
+                    <td>DDL</td>
+                    <td>CREATE</td>
+                    <td>ایجاد جدول</td>
+                    <td><code>CREATE TABLE employees (id INT PRIMARY KEY);</code></td>
+                </tr>
+                <tr>
+                    <td>DCL</td>
+                    <td>GRANT</td>
+                    <td>اعطای دسترسی</td>
+                    <td><code>GRANT SELECT ON employees TO 'user1';</code></td>
+                </tr>
+            </tbody>
+        </table>
+        <h2 id="10-پیشنهادات-مسیر-یادگیری">10. پیشنهادات مسیر یادگیری </h2>
+        <ul>
+            <li><strong>منابع آنلاین</strong>: <a href="https://www.w3schools.com/sql/">W3Schools</a>, <a
+                    href="https://sqlzoo.net/">SQLZoo</a>, <a
+                    href="https://www.khanacademy.org/computing/computer-programming/sql">Khan Academy</a>.</li>
+            <li><strong>کتاب‌ها</strong>: "SQL in 10 Minutes"، "Learning SQL" نوشته Alan Beaulieu.</li>
+            <li><strong>دوره‌های آموزشی</strong>: پلتفرم‌هایی مانند Coursera، Udemy و edX.</li>
+            <li><strong>تمرین</strong>: حل مسائل در <a href="https://www.hackerrank.com/domains/sql">HackerRank</a> یا
+                کار با پایگاه‌های داده نمونه مانند Northwind.</li>
+        </ul>
 
-      </div>
-      
-      
-    
-    
-    
-    
-    
-    
-  
-    </body></html>
+    </div>
+
+
+
+
+
+
+
+
+
+</body>
+
+</html>
