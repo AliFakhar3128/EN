@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Code Editor - pycod.ir</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#21C55D',
+                        'primary-dark': '#16A34A',
+                        'primary-light': '#4ADE80'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Vazir Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Vazir:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Roboto Mono for code -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- CodeMirror CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/default.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/show-hint.min.css">
+
+    <style>
+        body {
+            font-family: 'Vazir', sans-serif;
+        }
+
+        .CodeMirror {
+            font-family: 'Roboto Mono', 'Courier New', monospace !important;
+            font-size: 14px;
+            line-height: 1.5;
+            height: 400px;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .dark .CodeMirror {
+            border-color: #374151;
+        }
+
+        .CodeMirror-hints {
+            font-family: 'Roboto Mono', 'Courier New', monospace !important;
+            z-index: 1000;
+        }
+
+        .error-line {
+            background-color: rgba(239, 68, 68, 0.2) !important;
+        }
+
+        .dark .error-line {
+            background-color: rgba(239, 68, 68, 0.3) !important;
+        }
+
+        .fullscreen-editor {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            z-index: 9999 !important;
+            background: white;
+        }
+
+        .dark .fullscreen-editor {
+            background: #111827;
+        }
+
+        .fullscreen-editor .CodeMirror {
+            height: calc(100vh - 120px) !important;
+        }
+
+        /* Custom scrollbar */
+        .output-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .output-container::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+
+        .dark .output-container::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+
+        .output-container::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        .dark .output-container::-webkit-scrollbar-thumb {
+            background: #475569;
+        }
+
+        .tooltip {
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tooltip.show {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .mobile-toolbar {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-toolbar {
+                display: flex;
+            }
+        }
+
+        .tab-active {
+            background-color: #21C55D !important;
+            color: white !important;
+        }
+
+        .dark .tab-active {
+            background-color: #21C55D !important;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300 min-h-screen">
+    <div class="container mx-auto px-4 py-6 max-w-7xl" id="mainContainer">
+        <!-- Header -->
+        <header
+            class="flex flex-col sm:flex-row justify-between items-center mb-8 bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 transition-colors duration-300">
+            <div class="flex items-center space-x-4 space-x-reverse mb-4 sm:mb-0">
+                <div
+                    class="w-10 h-10 bg-gradient-to-br from-primary to-primary-dark rounded-lg flex items-center justify-center">
+                    <i class="fab fa-python text-white text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Python Code Editor</h1>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">pycod.ir - Python 3.13.5</p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-3 space-x-reverse">
+                <!-- Info Button -->
+                <div class="relative">
+                    <button id="infoButton"
+                        class="flex items-center justify-center w-10 h-10 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors duration-200">
+                        <i class="fas fa-info-circle text-gray-600 dark:text-gray-300"></i>
+                    </button>
+                    <div id="shortcutsTooltip"
+                        class="tooltip absolute bottom-12 right-0 bg-gray-800 dark:bg-gray-700 text-white text-xs rounded-lg p-3 w-64 shadow-lg">
+                        <div class="font-semibold mb-2">میانبرهای کیبورد:</div>
+                        <div class="space-y-1">
+                            <div>Ctrl+Enter: اجرای کد</div>
+                            <div>Ctrl+S: ذخیره دستی</div>
+                            <div>Ctrl+Space: تکمیل خودکار</div>
+                            <div>F11: حالت تمام صفحه</div>
+                            <div>ESC: خروج از تمام صفحه</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Theme Toggle -->
+                <button id="themeToggle"
+                    class="flex items-center space-x-2 space-x-reverse bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 px-4 py-2 rounded-lg transition-colors duration-200">
+                    <i id="sunIcon" class="fas fa-sun text-yellow-500 dark:hidden"></i>
+                    <i id="moonIcon" class="fas fa-moon text-blue-400 hidden dark:block"></i>
+                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">تغییر تم</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Sample Codes Dropdown -->
+        <div class="mb-6">
+            <select id="sampleCodes"
+                class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white text-sm rounded-lg focus:ring-primary focus:border-primary block w-full sm:w-auto p-2.5">
+                <option value="">انتخاب کد نمونه...</option>
+                <option value="hello">سلام دنیا</option>
+                <option value="loop">حلقه for</option>
+                <option value="function">تابع ساده</option>
+                <option value="list">کار با لیست</option>
+                <option value="class">کلاس ساده</option>
+                <option value="matplotlib">نمودار Matplotlib</option>
+            </select>
+        </div>
+
+        <!-- File Tabs -->
+        <div class="mb-6">
+            <div class="flex flex-wrap items-center space-x-2 space-x-reverse mb-4">
+                <div id="fileTabs" class="flex space-x-1 space-x-reverse"></div>
+                <button id="addFileBtn"
+                    class="flex items-center space-x-1 space-x-reverse bg-primary hover:bg-primary-dark text-white px-3 py-1 rounded-lg text-sm transition-colors duration-200">
+                    <i class="fas fa-plus"></i>
+                    <span>فایل جدید</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="grid grid-cols-1 gap-6">
+            <!-- Code Editor Section -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 transition-colors duration-300"
+                id="editorContainer">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
+                    <h2 class="text-lg font-semibold text-gray-800 dark:text-white mb-2 sm:mb-0">ادیتور کد</h2>
+                    <div class="flex items-center space-x-2 space-x-reverse">
+                        <button id="fullscreenBtn"
+                            class="flex items-center space-x-1 space-x-reverse bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 px-3 py-1 rounded-lg text-sm transition-colors duration-200">
+                            <i class="fas fa-expand"></i>
+                            <span class="text-gray-700 dark:text-gray-300">تمام صفحه</span>
+                        </button>
+                        <button id="downloadBtn"
+                            class="flex items-center space-x-1 space-x-reverse bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-lg text-sm transition-colors duration-200">
+                            <i class="fas fa-download"></i>
+                            <span>دانلود</span>
+                        </button>
+                    </div>
+                </div>
+                <div id="editor" class="border border-gray-200 dark:border-gray-600 rounded-lg overflow-hidden"></div>
+
+                <!-- Mobile Toolbar -->
+                <div class="mobile-toolbar flex-wrap gap-2 mt-4 p-3 bg-gray-100 dark:bg-gray-700 rounded-lg">
+                    <button
+                        class="mobile-char-btn bg-white dark:bg-gray-600 hover:bg-gray-50 dark:hover:bg-gray-500 px-3 py-2 rounded text-sm font-mono"
+                        data-char="{">{</button>
+                    <button
+                        class="mobile-char-btn bg-white dark:bg-gray-600 hover:bg-gray-50 dark:hover:bg-gray-500 px-3 py-2 rounded text-sm font-mono"
+                        data-char="}">}</button>
+                    <button
+                        class="mobile-char-btn bg-white dark:bg-gray-600 hover:bg-gray-50 dark:hover:bg-gray-500 px-3 py-2 rounded text-sm font-mono"
+                        data-char="(">(</button>
+                    <button
+                        class="mobile-char-btn bg-white dark:bg-gray-600 hover:bg-gray-50 dark:hover:bg-gray-500 px-3 py-2 rounded text-sm font-mono"
+                        data-char=")">)</button>
+                    <button
+                        class="mobile-char-btn bg-white dark:bg-gray-600 hover:bg-gray-50 dark:hover:bg-gray-500 px-3 py-2 rounded text-sm font-mono"
+                        data-char="[">[</button>
+                    <button
+                        class="mobile-char-btn bg-white dark:bg-gray-600 hover:bg-gray-50 dark:hover:bg-gray-500 px-3 py-2 rounded text-sm font-mono"
+                        data-char="]">]</button>
+                    <button
+                        class="mobile-char-btn bg-white dark:bg-gray-600 hover:bg-gray-50 dark:hover:bg-gray-500 px-3 py-2 rounded text-sm font-mono"
+                        data-char=",">,</button>
+                    <button
+                        class="mobile-char-btn bg-white dark:bg-gray-600 hover:bg-gray-50 dark:hover:bg-gray-500 px-3 py-2 rounded text-sm font-mono"
+                        data-char=":">:</button>
+                    <button
+                        class="mobile-char-btn bg-white dark:bg-gray-600 hover:bg-gray-50 dark:hover:bg-gray-500 px-3 py-2 rounded text-sm font-mono"
+                        data-char=";"">;</button>
+                    <button class=" mobile-char-btn bg-white dark:bg-gray-600 hover:bg-gray-50 dark:hover:bg-gray-500
+                        px-3 py-2 rounded text-sm font-mono" data-char='"'>"</button>
+                    <button
+                        class="mobile-char-btn bg-white dark:bg-gray-600 hover:bg-gray-50 dark:hover:bg-gray-500 px-3 py-2 rounded text-sm font-mono"
+                        data-char="'">'</button>
+                    <button
+                        class="mobile-char-btn bg-white dark:bg-gray-600 hover:bg-gray-50 dark:hover:bg-gray-500 px-3 py-2 rounded text-sm font-mono"
+                        data-char="=">=</button>
+                </div>
+            </div>
+
+            <!-- Control Buttons -->
+            <div
+                class="flex flex-col sm:flex-row justify-center items-center space-y-3 sm:space-y-0 sm:space-x-4 sm:space-x-reverse">
+                <button id="runButton"
+                    class="flex items-center space-x-3 space-x-reverse bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary text-white px-8 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none w-full sm:w-auto">
+                    <i class="fas fa-play"></i>
+                    <span id="runButtonText">اجرای کد</span>
+                </button>
+
+                <button id="togglePreview"
+                    class="flex items-center space-x-3 space-x-reverse bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 w-full sm:w-auto">
+                    <i class="fas fa-chart-line"></i>
+                    <span>پیش‌نمایش گرافیک</span>
+                </button>
+            </div>
+
+            <!-- Canvas for Graphics -->
+            <div id="canvasContainer"
+                class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 transition-colors duration-300 hidden">
+                <h2 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">پیش‌نمایش گرافیکی</h2>
+                <div id="graphicsOutput"
+                    class="border border-gray-200 dark:border-gray-600 rounded-lg p-4 min-h-64 flex items-center justify-center">
+                    <span class="text-gray-500 dark:text-gray-400">خروجی گرافیکی اینجا نمایش داده می‌شود</span>
+                </div>
+            </div>
+
+            <!-- Output Section -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 transition-colors duration-300">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-lg font-semibold text-gray-800 dark:text-white">خروجی</h2>
+                    <button id="clearOutput"
+                        class="text-sm text-gray-500 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-400 transition-colors duration-200">
+                        <i class="fas fa-trash-alt mr-1"></i>
+                        پاک کردن
+                    </button>
+                </div>
+                <div id="output"
+                    class="output-container bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-600 rounded-lg p-4 h-48 overflow-auto font-mono text-sm transition-colors duration-300">
+                    <div class="text-gray-500 dark:text-gray-400 italic">خروجی کد اینجا نمایش داده می‌شود...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="mt-12 text-center py-6 border-t border-gray-200 dark:border-gray-700">
+            <p class="text-gray-600 dark:text-gray-400 text-sm">
+                © 2025 pycod.ir - All Rights Reserved
+            </p>
+        </footer>
+
+        <!-- Loading Indicator -->
+        <div id="loadingIndicator"
+            class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+            <div
+                class="bg-white dark:bg-gray-800 rounded-xl p-6 flex items-center space-x-4 space-x-reverse shadow-2xl">
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                <span class="text-gray-700 dark:text-gray-300 font-medium">در حال بارگذاری Pyodide...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- CodeMirror JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/show-hint.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/python-hint.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+
+    <!-- Pyodide -->
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+
+    <script>
+        let editor;
+        let pyodide;
+        let isDarkMode = false;
+        let isFullscreen = false;
+        let currentFileIndex = 0;
+        let files = [
+            {
+                name: 'main.py', content: `# خوش آمدید به ادیتور Python pycod.ir!
+# کد خود را اینجا بنویسید و دکمه "اجرای کد" را فشار دهید
+
+def greet(name):
+    return f"سلام {name}!"
+
+# مثال استفاده
+name = "دنیا"
+message = greet(name)
+print(message)
+
+# محاسبه مجموع اعداد
+numbers = [1, 2, 3, 4, 5]
+total = sum(numbers)
+print(f"مجموع اعداد: {total}")
+
+# حلقه for
+for i in range(3):
+    print(f"شمارش: {i + 1}")
+` }
+        ];
+
+        // Sample codes
+        const sampleCodes = {
+            hello: `# سلام دنیا
+print("سلام دنیا!")
+print("خوش آمدید به pycod.ir")`,
+
+            loop: `# حلقه for
+for i in range(5):
+    print(f"شماره: {i + 1}")
+
+# حلقه while
+count = 0
+while count < 3:
+    print(f"شمارش: {count}")
+    count += 1`,
+
+            function: `# تابع ساده
+def calculate_area(length, width):
+    """محاسبه مساحت مستطیل"""
+    return length * width
+
+def factorial(n):
+    """محاسبه فاکتوریل"""
+    if n <= 1:
+        return 1
+    return n * factorial(n - 1)
+
+# استفاده از توابع
+area = calculate_area(5, 3)
+print(f"مساحت: {area}")
+
+fact = factorial(5)
+print(f"فاکتوریل 5: {fact}")`,
+
+            list: `# کار با لیست
+numbers = [1, 2, 3, 4, 5]
+fruits = ["سیب", "موز", "پرتقال"]
+
+# اضافه کردن عنصر
+fruits.append("انگور")
+print("میوه‌ها:", fruits)
+
+# حذف عنصر
+fruits.remove("موز")
+print("بعد از حذف موز:", fruits)
+
+# فیلتر کردن اعداد زوج
+even_numbers = [x for x in numbers if x % 2 == 0]
+print("اعداد زوج:", even_numbers)`,
+
+            class: `# کلاس ساده
+class Person:
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+    
+    def introduce(self):
+        return f"سلام، من {self.name} هستم و {self.age} سال دارم"
+    
+    def have_birthday(self):
+        self.age += 1
+        print(f"تولدت مبارک! حالا {self.age} سال داری")
+
+# ایجاد شیء
+person = Person("علی", 25)
+print(person.introduce())
+person.have_birthday()`,
+
+            matplotlib: `# نمودار با Matplotlib
+import matplotlib.pyplot as plt
+import numpy as np
+
+# داده‌ها
+x = np.linspace(0, 10, 100)
+y = np.sin(x)
+
+# ایجاد نمودار
+plt.figure(figsize=(10, 6))
+plt.plot(x, y, 'b-', linewidth=2, label='sin(x)')
+plt.title('نمودار تابع سینوس')
+plt.xlabel('x')
+plt.ylabel('sin(x)')
+plt.grid(True, alpha=0.3)
+plt.legend()
+plt.show()
+
+print("نمودار ایجاد شد!")`
+        };
+
+        // Python keywords and built-ins for autocomplete
+        const pythonKeywords = [
+            'and', 'as', 'assert', 'break', 'class', 'continue', 'def', 'del', 'elif', 'else',
+            'except', 'finally', 'for', 'from', 'global', 'if', 'import', 'in', 'is', 'lambda',
+            'nonlocal', 'not', 'or', 'pass', 'raise', 'return', 'try', 'while', 'with', 'yield',
+            'True', 'False', 'None', 'print', 'len', 'range', 'str', 'int', 'float', 'list',
+            'dict', 'tuple', 'set', 'bool', 'type', 'isinstance', 'hasattr', 'getattr', 'setattr',
+            'input', 'open', 'abs', 'max', 'min', 'sum', 'sorted', 'reversed', 'enumerate', 'zip',
+            'map', 'filter', 'any', 'all', 'round', 'pow', 'divmod', 'bin', 'hex', 'oct'
+        ];
+
+        // Custom hint function
+        function pythonHint(editor, options) {
+            const cursor = editor.getCursor();
+            const token = editor.getTokenAt(cursor);
+            const start = token.start;
+            const end = cursor.ch;
+            const line = cursor.line;
+            const currentWord = token.string;
+
+            const list = pythonKeywords.filter(keyword =>
+                keyword.toLowerCase().startsWith(currentWord.toLowerCase())
+            );
+
+            return {
+                list: list,
+                from: CodeMirror.Pos(line, start),
+                to: CodeMirror.Pos(line, end)
+            };
+        }
+
+        // Initialize CodeMirror
+        function initializeEditor() {
+            editor = CodeMirror(document.getElementById('editor'), {
+                mode: 'python',
+                theme: isDarkMode ? 'monokai' : 'default',
+                lineNumbers: true,
+                autoCloseBrackets: true,
+                matchBrackets: true,
+                indentUnit: 4,
+                indentWithTabs: false,
+                lineWrapping: true,
+                extraKeys: {
+                    'Ctrl-Space': 'autocomplete',
+                    'Ctrl-Enter': () => runCode(),
+                    'Ctrl-S': (cm) => { saveToLocalStorage(); showOutput('کد ذخیره شد', 'success'); },
+                    'F11': () => toggleFullscreen(),
+                    'Esc': () => { if (isFullscreen) toggleFullscreen(); },
+                    'Tab': function (cm) {
+                        if (cm.somethingSelected()) {
+                            cm.indentSelection('add');
+                        } else {
+                            cm.replaceSelection('    ');
+                        }
+                    }
+                },
+                hintOptions: {
+                    hint: pythonHint,
+                    completeSingle: false
+                },
+                value: files[currentFileIndex].content
+            });
+
+            // Auto-save on change
+            editor.on('change', function () {
+                files[currentFileIndex].content = editor.getValue();
+                saveToLocalStorage();
+            });
+
+            // Enable autocomplete on typing
+            editor.on('inputRead', function (cm, change) {
+                if (change.text[0].match(/[a-zA-Z]/)) {
+                    cm.showHint();
+                }
+            });
+
+            loadFromLocalStorage();
+        }
+
+        // File management
+        function renderFileTabs() {
+            const tabsContainer = document.getElementById('fileTabs');
+            tabsContainer.innerHTML = '';
+
+            files.forEach((file, index) => {
+                const tab = document.createElement('button');
+                tab.className = `px-3 py-1 rounded-lg text-sm transition-colors duration-200 ${index === currentFileIndex
+                        ? 'tab-active'
+                        : 'bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300'
+                    }`;
+                tab.innerHTML = `
+                    <span>${file.name}</span>
+                    ${files.length > 1 ? `<i class="fas fa-times mr-1 hover:text-red-500" onclick="removeFile(${index}, event)"></i>` : ''}
+                `;
+                tab.onclick = () => switchToFile(index);
+                tabsContainer.appendChild(tab);
+            });
+        }
+
+        function switchToFile(index) {
+            if (index >= 0 && index < files.length) {
+                files[currentFileIndex].content = editor.getValue();
+                currentFileIndex = index;
+                editor.setValue(files[currentFileIndex].content);
+                renderFileTabs();
+                saveToLocalStorage();
+            }
+        }
+
+        function addNewFile() {
+            if (files.length >= 5) {
+                showOutput('حداکثر 5 فایل مجاز است', 'error');
+                return;
+            }
+
+            const newFileName = `file${files.length + 1}.py`;
+            files.push({ name: newFileName, content: '# فایل جدید\nprint("سلام از فایل جدید!")' });
+            switchToFile(files.length - 1);
+        }
+
+        function removeFile(index, event) {
+            event.stopPropagation();
+            if (files.length <= 1) return;
+
+            files.splice(index, 1);
+            if (currentFileIndex >= index && currentFileIndex > 0) {
+                currentFileIndex--;
+            }
+            if (currentFileIndex >= files.length) {
+                currentFileIndex = files.length - 1;
+            }
+
+            editor.setValue(files[currentFileIndex].content);
+            renderFileTabs();
+            saveToLocalStorage();
+        }
+
+        // Local Storage functions
+        function saveToLocalStorage() {
+            localStorage.setItem('pycod_files', JSON.stringify(files));
+            localStorage.setItem('pycod_current_file', currentFileIndex.toString());
+        }
+
+        function loadFromLocalStorage() {
+            const savedFiles = localStorage.getItem('pycod_files');
+            const savedCurrentFile = localStorage.getItem('pycod_current_file');
+
+            if (savedFiles) {
+                try {
+                    files = JSON.parse(savedFiles);
+                    currentFileIndex = savedCurrentFile ? parseInt(savedCurrentFile) : 0;
+                    if (currentFileIndex >= files.length) currentFileIndex = 0;
+
+                    editor.setValue(files[currentFileIndex].content);
+                    renderFileTabs();
+                } catch (e) {
+                    console.error('Error loading from localStorage:', e);
+                }
+            } else {
+                renderFileTabs();
+            }
+        }
+
+        // Initialize Pyodide
+        async function initializePyodide() {
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            loadingIndicator.classList.remove('hidden');
+
+            try {
+                pyodide = await loadPyodide();
+
+                // Install matplotlib for graphics
+                await pyodide.loadPackage(['matplotlib', 'numpy']);
+
+                console.log('Pyodide loaded successfully with Python 3.13.5 support');
+            } catch (error) {
+                console.error('Failed to load Pyodide:', error);
+                showOutput('خطا در بارگذاری Pyodide: ' + error.message, 'error');
+            } finally {
+                loadingIndicator.classList.add('hidden');
+            }
+        }
+
+        // Run Python code
+        async function runCode() {
+            if (!pyodide) {
+                showOutput('Pyodide هنوز بارگذاری نشده است. لطفاً صبر کنید...', 'error');
+                return;
+            }
+
+            const code = editor.getValue();
+            if (!code.trim()) {
+                showOutput('لطفاً کدی برای اجرا وارد کنید.', 'error');
+                return;
+            }
+
+            const runButton = document.getElementById('runButton');
+            const runButtonText = document.getElementById('runButtonText');
+
+            // Clear previous error highlights
+            clearErrorHighlights();
+
+            // Disable button and show loading
+            runButton.disabled = true;
+            runButtonText.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>در حال اجرا...';
+
+            try {
+                // Capture stdout and stderr
+                pyodide.runPython(`
+import sys
+from io import StringIO
+sys.stdout = StringIO()
+sys.stderr = StringIO()
+`);
+
+                // Run user code
+                pyodide.runPython(code);
+
+                // Get output
+                const stdout = pyodide.runPython('sys.stdout.getvalue()');
+                const stderr = pyodide.runPython('sys.stderr.getvalue()');
+
+                // Reset stdout and stderr
+                pyodide.runPython(`
+sys.stdout = sys.__stdout__
+sys.stderr = sys.__stderr__
+`);
+
+                let output = '';
+                if (stdout) output += stdout;
+                if (stderr) {
+                    output += stderr;
+                    highlightErrors(stderr);
+                }
+
+                if (output) {
+                    showOutput(output, stderr ? 'error' : 'success');
+                } else {
+                    showOutput('کد با موفقیت اجرا شد (بدون خروجی)', 'success');
+                }
+
+            } catch (error) {
+                const errorMessage = error.message;
+                showOutput('خطا در اجرای کد:\n' + errorMessage, 'error');
+                highlightErrors(errorMessage);
+            } finally {
+                // Re-enable button
+                runButton.disabled = false;
+                runButtonText.innerHTML = '<i class="fas fa-play mr-2"></i>اجرای کد';
+            }
+        }
+
+        // Error highlighting
+        function highlightErrors(errorText) {
+            const lines = errorText.split('\n');
+            for (const line of lines) {
+                const match = line.match(/line (\d+)/);
+                if (match) {
+                    const lineNumber = parseInt(match[1]) - 1;
+                    if (lineNumber >= 0 && lineNumber < editor.lineCount()) {
+                        editor.addLineClass(lineNumber, 'background', 'error-line');
+                    }
+                }
+            }
+        }
+
+        function clearErrorHighlights() {
+            for (let i = 0; i < editor.lineCount(); i++) {
+                editor.removeLineClass(i, 'background', 'error-line');
+            }
+        }
+
+        // Show output
+        function showOutput(text, type = 'normal') {
+            const outputDiv = document.getElementById('output');
+            const timestamp = new Date().toLocaleTimeString('fa-IR');
+
+            let className = 'text-gray-800 dark:text-gray-200';
+            let icon = '';
+
+            if (type === 'error') {
+                className = 'text-red-600 dark:text-red-400';
+                icon = '❌ ';
+            } else if (type === 'success') {
+                className = 'text-green-600 dark:text-green-400';
+                icon = '✅ ';
+            }
+
+            outputDiv.innerHTML = `
+                <div class="mb-2 text-xs text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-600 pb-1">
+                    ${icon}اجرا شده در ${timestamp}
+                </div>
+                <pre class="${className} whitespace-pre-wrap">${text}</pre>
+            `;
+
+            // Scroll to bottom
+            outputDiv.scrollTop = outputDiv.scrollHeight;
+        }
+
+        // Clear output
+        function clearOutput() {
+            const outputDiv = document.getElementById('output');
+            outputDiv.innerHTML = '<div class="text-gray-500 dark:text-gray-400 italic">خروجی کد اینجا نمایش داده می‌شود...</div>';
+            clearErrorHighlights();
+        }
+
+        // Toggle theme
+        function toggleTheme() {
+            isDarkMode = !isDarkMode;
+            const html = document.documentElement;
+            const sunIcon = document.getElementById('sunIcon');
+            const moonIcon = document.getElementById('moonIcon');
+
+            if (isDarkMode) {
+                html.classList.add('dark');
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+                if (editor) {
+                    editor.setOption('theme', 'monokai');
+                }
+            } else {
+                html.classList.remove('dark');
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
+                if (editor) {
+                    editor.setOption('theme', 'default');
+                }
+            }
+
+            // Save theme preference
+            localStorage.setItem('pycod_theme', isDarkMode ? 'dark' : 'light');
+        }
+
+        // Load theme preference
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('pycod_theme');
+            if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                isDarkMode = true;
+                document.documentElement.classList.add('dark');
+                document.getElementById('sunIcon').classList.add('hidden');
+                document.getElementById('moonIcon').classList.remove('hidden');
+            }
+        }
+
+        // Fullscreen mode
+        function toggleFullscreen() {
+            const editorContainer = document.getElementById('editorContainer');
+            const fullscreenBtn = document.getElementById('fullscreenBtn');
+
+            isFullscreen = !isFullscreen;
+
+            if (isFullscreen) {
+                editorContainer.classList.add('fullscreen-editor');
+                fullscreenBtn.innerHTML = '<i class="fas fa-compress mr-1"></i><span class="text-gray-700 dark:text-gray-300">خروج از تمام صفحه</span>';
+                editor.setSize(null, 'calc(100vh - 120px)');
+            } else {
+                editorContainer.classList.remove('fullscreen-editor');
+                fullscreenBtn.innerHTML = '<i class="fas fa-expand mr-1"></i><span class="text-gray-700 dark:text-gray-300">تمام صفحه</span>';
+                editor.setSize(null, '400px');
+            }
+
+            setTimeout(() => editor.refresh(), 100);
+        }
+
+        // Download code
+        function downloadCode() {
+            const code = editor.getValue();
+            const filename = files[currentFileIndex].name;
+            const blob = new Blob([code], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            showOutput(`فایل ${filename} دانلود شد`, 'success');
+        }
+
+        // Toggle graphics preview
+        function toggleGraphicsPreview() {
+            const canvasContainer = document.getElementById('canvasContainer');
+            canvasContainer.classList.toggle('hidden');
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function () {
+            loadTheme();
+            initializeEditor();
+            initializePyodide();
+
+            // Button event listeners
+            document.getElementById('runButton').addEventListener('click', runCode);
+            document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+            document.getElementById('clearOutput').addEventListener('click', clearOutput);
+            document.getElementById('fullscreenBtn').addEventListener('click', toggleFullscreen);
+            document.getElementById('downloadBtn').addEventListener('click', downloadCode);
+            document.getElementById('addFileBtn').addEventListener('click', addNewFile);
+            document.getElementById('togglePreview').addEventListener('click', toggleGraphicsPreview);
+
+            // Info button tooltip
+            const infoButton = document.getElementById('infoButton');
+            const tooltip = document.getElementById('shortcutsTooltip');
+
+            infoButton.addEventListener('mouseenter', () => {
+                tooltip.classList.add('show');
+            });
+
+            infoButton.addEventListener('mouseleave', () => {
+                tooltip.classList.remove('show');
+            });
+
+            // Sample codes dropdown
+            document.getElementById('sampleCodes').addEventListener('change', function () {
+                const selectedCode = this.value;
+                if (selectedCode && sampleCodes[selectedCode]) {
+                    editor.setValue(sampleCodes[selectedCode]);
+                    files[currentFileIndex].content = sampleCodes[selectedCode];
+                    saveToLocalStorage();
+                }
+                this.value = '';
+            });
+
+            // Mobile character buttons
+            document.querySelectorAll('.mobile-char-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const char = btn.getAttribute('data-char');
+                    const cursor = editor.getCursor();
+                    editor.replaceRange(char, cursor);
+                    editor.focus();
+                });
+            });
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function (e) {
+                if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                    e.preventDefault();
+                    runCode();
+                }
+
+                if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                    e.preventDefault();
+                    saveToLocalStorage();
+                    showOutput('کد ذخیره شد', 'success');
+                }
+
+                if (e.key === 'F11') {
+                    e.preventDefault();
+                    toggleFullscreen();
+                }
+
+                if (e.key === 'Escape' && isFullscreen) {
+                    toggleFullscreen();
+                }
+            });
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', function () {
+            if (editor) {
+                editor.refresh();
+            }
+        });
+
+        // Service Worker for offline support
+        if ('serviceWorker' in navigator) {
+            const swCode = `
+                const CACHE_NAME = 'pycod-editor-v1';
+                const urlsToCache = [
+                    '/',
+                    'https://cdn.tailwindcss.com',
+                    'https://fonts.googleapis.com/css2?family=Vazir:wght@300;400;500;600;700&display=swap',
+                    'https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;500&display=swap',
+                    'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
+                    'https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css',
+                    'https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js',
+                    'https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js'
+                ];
+
+                self.addEventListener('install', event => {
+                    event.waitUntil(
+                        caches.open(CACHE_NAME)
+                            .then(cache => cache.addAll(urlsToCache))
+                    );
+                });
+
+                self.addEventListener('fetch', event => {
+                    event.respondWith(
+                        caches.match(event.request)
+                            .then(response => {
+                                if (response) {
+                                    return response;
+                                }
+                                return fetch(event.request);
+                            })
+                    );
+                });
+            `;
+
+            const blob = new Blob([swCode], { type: 'application/javascript' });
+            const swUrl = URL.createObjectURL(blob);
+
+            navigator.serviceWorker.register(swUrl)
+                .then(registration => console.log('SW registered'))
+                .catch(error => console.log('SW registration failed'));
+        }
+    </script>
+    <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'96af7608c68f8dd7',t:'MTc1NDQ5MzAyNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
+</body>
+
+</html>
