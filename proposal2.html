@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>پروپوزال اپلیکیشن کار پرداز - سیستم حسابداری نوین</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Vazirmatn', sans-serif;
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #227DB2 0%, #227DB2 50%, #227DB2 100%);
+        }
+
+        .card-shadow {
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.15);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            transition: all 0.3s ease;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            right: -8px;
+            top: 24px;
+            width: 16px;
+            height: 16px;
+            background: ##227DB2;
+            border-radius: 50%;
+            border: 3px solid white;
+        }
+
+        .timeline-line {
+            position: absolute;
+            right: -1px;
+            top: 40px;
+            width: 2px;
+            height: calc(100% - 40px);
+            background: #e5e7eb;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in {
+            animation: fadeInUp 0.6s ease-out;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-800">
+    <!-- Header -->
+    <header class="gradient-bg text-white py-16">
+        <div class="container flex justify-center align-center flex-col mx-auto px-6 text-center">
+            <div class="flex justify-center align-center pb-2">
+                <img src="./kp.png" class="w-32" alt="">
+            </div>
+            <div class="animate-fade-in">
+                <h1 class="text-5xl font-bold mb-4">کار پرداز</h1>
+                <p class="text-xl mb-8 opacity-90">سیستم حسابداری هوشمند برای عصر دیجیتال</p>
+                <div class="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-6 py-3">
+                    <span class="material-icons ml-2">trending_up</span>
+                    <span class="font-medium">نسل جدید مدیریت مالی</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-6">
+            <div class="flex justify-center space-x-reverse space-x-8 py-4">
+                <a href="#overview" class="text-blue-600 hover:text-blue-800 font-medium transition-colors">نگاه کلی</a>
+                <a href="#features" class="text-gray-600 hover:text-blue-600 font-medium transition-colors">امکانات</a>
+                <a href="#technology" class="text-gray-600 hover:text-blue-600 font-medium transition-colors">فناوری</a>
+                <a href="#timeline"
+                    class="text-gray-600 hover:text-blue-600 font-medium transition-colors">زمان‌بندی</a>
+                <a href="#investment"
+                    class="text-gray-600 hover:text-blue-600 font-medium transition-colors">سرمایه‌گذاری</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Overview Section -->
+    <section id="overview" class="py-16">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-gray-800 mb-4">چرا کار پرداز؟</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">در دنیای امروز که سرعت و دقت در مدیریت مالی
+                    تعیین‌کننده موفقیت است، کار پرداز راه‌حلی نوآورانه و جامع برای تمامی نیازهای حسابداری شما ارائه
+                    می‌دهد.</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8 mb-16">
+                <div class="bg-white rounded-2xl p-8 card-shadow feature-card">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-6 mx-auto">
+                        <span class="material-icons text-blue-600 text-2xl">groups</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-center mb-4">برای همه</h3>
+                    <p class="text-gray-600 text-center">از کسب‌وکار خانگی تا شرکت‌های بزرگ، کار پرداز با شما رشد می‌کند
+                    </p>
+                </div>
+
+                <div class="bg-white rounded-2xl p-8 card-shadow feature-card">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-6 mx-auto">
+                        <span class="material-icons text-green-600 text-2xl">security</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-center mb-4">امن و قابل اعتماد</h3>
+                    <p class="text-gray-600 text-center">با بالاترین استانداردهای امنیتی، اطلاعات شما در امان است</p>
+                </div>
+
+                <div class="bg-white rounded-2xl p-8 card-shadow feature-card">
+                    <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mb-6 mx-auto">
+                        <span class="material-icons text-purple-600 text-2xl">psychology</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-center mb-4">هوشمند و یادگیرنده</h3>
+                    <p class="text-gray-600 text-center">سیستم با شما یاد می‌گیرد و تجربه کاربری را بهبود می‌بخشد</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-16 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-gray-800 mb-4">امکانات پیشرفته</h2>
+                <p class="text-xl text-gray-600">هر آنچه برای مدیریت حرفه‌ای مالی نیاز دارید</p>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-12 items-center mb-16">
+                <div>
+                    <h3 class="text-2xl font-bold mb-6">مدیریت جامع مالی</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-start">
+                            <span class="material-icons text-blue-600 ml-3 mt-1">receipt_long</span>
+                            <div>
+                                <h4 class="font-semibold mb-1">مدیریت فاکتورها</h4>
+                                <p class="text-gray-600">صدور، ویرایش و پیگیری فاکتورهای فروش و خرید با امکان شخصی‌سازی
+                                    کامل</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="material-icons text-green-600 ml-3 mt-1">analytics</span>
+                            <div>
+                                <h4 class="font-semibold mb-1">گزارش‌گیری پیشرفته</h4>
+                                <p class="text-gray-600">تولید گزارش‌های مالی تفصیلی با نمودارهای تعاملی و قابلیت صادرات
+                                </p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="material-icons text-purple-600 ml-3 mt-1">dashboard</span>
+                            <div>
+                                <h4 class="font-semibold mb-1">داشبورد هوشمند</h4>
+                                <p class="text-gray-600">نمای کلی از وضعیت مالی با ویجت‌های قابل تنظیم و اطلاعات زنده
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-2xl p-8">
+                    <div class="bg-white rounded-xl p-6 shadow-lg">
+                        <div class="flex items-center justify-between mb-4">
+                            <h4 class="font-bold">داشبورد مالی</h4>
+                            <span class="text-sm text-gray-500">امروز</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 mb-6">
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-green-600">۱۲,۵۰۰,۰۰۰</div>
+                                <div class="text-sm text-gray-600">درآمد ماه</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-blue-600">۸,۲۰۰,۰۰۰</div>
+                                <div class="text-sm text-gray-600">هزینه‌ها</div>
+                            </div>
+                        </div>
+                        <div class="h-2 bg-gray-200 rounded-full">
+                            <div class="h-2 bg-gradient-to-r from-green-400 to-blue-500 rounded-full"
+                                style="width: 65%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-blue-50 rounded-xl p-6 text-center">
+                    <span class="material-icons text-blue-600 text-3xl mb-3 block">language</span>
+                    <h4 class="font-bold mb-2">چند زبانه</h4>
+                    <p class="text-sm text-gray-600">فارسی، انگلیسی، عربی و قابلیت افزودن زبان‌های جدید</p>
+                </div>
+                <div class="bg-green-50 rounded-xl p-6 text-center">
+                    <span class="material-icons text-green-600 text-3xl mb-3 block">phone_android</span>
+                    <h4 class="font-bold mb-2">PWA</h4>
+                    <p class="text-sm text-gray-600">قابل نصب روی موبایل و تبلت با تجربه اپلیکیشن بومی</p>
+                </div>
+                <div class="bg-purple-50 rounded-xl p-6 text-center">
+                    <span class="material-icons text-purple-600 text-3xl mb-3 block">extension</span>
+                    <h4 class="font-bold mb-2">ماژولار</h4>
+                    <p class="text-sm text-gray-600">امکان افزودن ماژول‌های جدید و سفارشی‌سازی</p>
+                </div>
+                <div class="bg-orange-50 rounded-xl p-6 text-center">
+                    <span class="material-icons text-orange-600 text-3xl mb-3 block">cloud_off</span>
+                    <h4 class="font-bold mb-2">آفلاین</h4>
+                    <p class="text-sm text-gray-600">قابلیت کار بدون اینترنت و همگام‌سازی خودکار</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technology Section -->
+    <section id="technology" class="py-16 bg-gray-50">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-gray-800 mb-4">فناوری‌های پیشرفته</h2>
+                <p class="text-xl text-gray-600">بر پایه جدیدترین استانداردهای وب</p>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h3 class="text-2xl font-bold mb-6">معماری مدرن و قابل اعتماد</h3>
+                    <div class="space-y-6">
+                        <div class="flex items-start">
+                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center ml-4">
+                                <span class="material-icons text-blue-600">code</span>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold mb-2">HTML5 & Modern JavaScript</h4>
+                                <p class="text-gray-600">استفاده از جدیدترین استانداردهای وب برای عملکرد بهینه</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center ml-4">
+                                <span class="material-icons text-green-600">palette</span>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold mb-2">Material Design 3</h4>
+                                <p class="text-gray-600">طراحی مدرن و کاربرپسند با رنگ‌بندی آبی و فونت Vazir Matn</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center ml-4">
+                                <span class="material-icons text-purple-600">speed</span>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold mb-2">Tailwind CSS</h4>
+                                <p class="text-gray-600">فریمورک CSS سریع و قابل تنظیم برای طراحی ریسپانسیو</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl p-8 card-shadow">
+                    <h4 class="font-bold mb-6 text-center">ویژگی‌های فنی</h4>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                            <span class="text-gray-600">رابط کاربری</span>
+                            <span class="font-semibold text-blue-600">Material Design 3</span>
+                        </div>
+                        <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                            <span class="text-gray-600">فونت</span>
+                            <span class="font-semibold text-blue-600">Vazir Matn</span>
+                        </div>
+                        <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                            <span class="text-gray-600">ریسپانسیو</span>
+                            <span class="font-semibold text-green-600">✓ کامل</span>
+                        </div>
+                        <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                            <span class="text-gray-600">PWA</span>
+                            <span class="font-semibold text-green-600">✓ پشتیبانی</span>
+                        </div>
+                        <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                            <span class="text-gray-600">امنیت</span>
+                            <span class="font-semibold text-green-600">✓ HTTPS + رمزنگاری</span>
+                        </div>
+                        <div class="flex justify-between items-center py-2">
+                            <span class="text-gray-600">پشتیبانی مرورگر</span>
+                            <span class="font-semibold text-green-600">✓ همه مرورگرها</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Timeline Section -->
+    <section id="timeline" class="py-16 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-gray-800 mb-4">مراحل پیاده‌سازی</h2>
+                <p class="text-xl text-gray-600">برنامه زمانی دقیق و قابل پیگیری</p>
+            </div>
+
+            <div class="max-w-4xl mx-auto">
+                <div class="relative">
+                    <div class="absolute right-4 top-0 w-0.5 h-full bg-gray-200"></div>
+
+                    <div class="relative timeline-item mb-12 pr-16">
+                        <div class="bg-blue-50 rounded-xl p-6">
+                            <div class="flex items-center mb-3">
+                                <span class="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium ml-3">فاز
+                                    ۱</span>
+                                <span class="text-gray-600">هفته‌های ۱-۴</span>
+                            </div>
+                            <h4 class="font-bold text-lg mb-2">طراحی و برنامه‌ریزی</h4>
+                            <p class="text-gray-600">تحلیل نیازمندی‌ها، طراحی UI/UX، و معماری سیستم</p>
+                        </div>
+                    </div>
+
+                    <div class="relative timeline-item mb-12 pr-16">
+                        <div class="bg-green-50 rounded-xl p-6">
+                            <div class="flex items-center mb-3">
+                                <span
+                                    class="bg-green-600 text-white px-3 py-1 rounded-full text-sm font-medium ml-3">فاز
+                                    ۲</span>
+                                <span class="text-gray-600">هفته‌های ۵-۱۰</span>
+                            </div>
+                            <h4 class="font-bold text-lg mb-2">توسعه هسته اصلی</h4>
+                            <p class="text-gray-600">پیاده‌سازی ماژول‌های اصلی، مدیریت فاکتور و داشبورد</p>
+                        </div>
+                    </div>
+
+                    <div class="relative timeline-item mb-12 pr-16">
+                        <div class="bg-purple-50 rounded-xl p-6">
+                            <div class="flex items-center mb-3">
+                                <span
+                                    class="bg-purple-600 text-white px-3 py-1 rounded-full text-sm font-medium ml-3">فاز
+                                    ۳</span>
+                                <span class="text-gray-600">هفته‌های ۱۱-۱۴</span>
+                            </div>
+                            <h4 class="font-bold text-lg mb-2">ویژگی‌های پیشرفته</h4>
+                            <p class="text-gray-600">گزارش‌گیری، چند زبانه، PWA و امکانات امنیتی</p>
+                        </div>
+                    </div>
+
+                    <div class="relative timeline-item pr-16">
+                        <div class="bg-orange-50 rounded-xl p-6">
+                            <div class="flex items-center mb-3">
+                                <span
+                                    class="bg-orange-600 text-white px-3 py-1 rounded-full text-sm font-medium ml-3">فاز
+                                    ۴</span>
+                                <span class="text-gray-600">هفته‌های ۱۵-۱۶</span>
+                            </div>
+                            <h4 class="font-bold text-lg mb-2">تست و راه‌اندازی</h4>
+                            <p class="text-gray-600">تست کامل، بهینه‌سازی عملکرد و راه‌اندازی نهایی</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Investment Section -->
+    <section id="investment" class="py-16 bg-gray-50">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-gray-800 mb-4">سرمایه‌گذاری هوشمندانه</h2>
+                <p class="text-xl text-gray-600">بازگشت سرمایه تضمین شده با کیفیت بی‌نظیر</p>
+            </div>
+
+            <div class="grid lg:grid-cols-3 gap-8 mb-12">
+                <div class="bg-white rounded-2xl p-8 card-shadow text-center">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span class="material-icons text-blue-600 text-2xl">savings</span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">صرفه‌جویی در هزینه</h3>
+                    <p class="text-gray-600 mb-4">تا ۷۰٪ کاهش هزینه‌های حسابداری نسبت به روش‌های سنتی</p>
+                    <div class="text-3xl font-bold text-green-600">۷۰٪</div>
+                </div>
+
+                <div class="bg-white rounded-2xl p-8 card-shadow text-center">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span class="material-icons text-green-600 text-2xl">schedule</span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">صرفه‌جویی در زمان</h3>
+                    <p class="text-gray-600 mb-4">کاهش ۸۰٪ زمان صرف شده برای کارهای حسابداری</p>
+                    <div class="text-3xl font-bold text-blue-600">۸۰٪</div>
+                </div>
+
+                <div class="bg-white rounded-2xl p-8 card-shadow text-center">
+                    <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span class="material-icons text-purple-600 text-2xl">trending_up</span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">افزایش بهره‌وری</h3>
+                    <p class="text-gray-600 mb-4">بهبود ۹۰٪ در دقت و سرعت گزارش‌گیری مالی</p>
+                    <div class="text-3xl font-bold text-purple-600">۹۰٪</div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl p-8 card-shadow max-w-4xl mx-auto">
+                <h3 class="text-2xl font-bold text-center mb-8">مزایای کلیدی سرمایه‌گذاری</h3>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="space-y-4">
+                        <div class="flex items-center">
+                            <span class="material-icons text-green-600 ml-3">check_circle</span>
+                            <span>کاهش چشمگیر خطاهای انسانی</span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="material-icons text-green-600 ml-3">check_circle</span>
+                            <span>دسترسی ۲۴/۷ از هر مکان</span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="material-icons text-green-600 ml-3">check_circle</span>
+                            <span>به‌روزرسانی‌های رایگان مادام‌العمر</span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="material-icons text-green-600 ml-3">check_circle</span>
+                            <span>پشتیبانی فنی تخصصی</span>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="flex items-center">
+                            <span class="material-icons text-green-600 ml-3">check_circle</span>
+                            <span>امنیت بالا و حفاظت از داده‌ها</span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="material-icons text-green-600 ml-3">check_circle</span>
+                            <span>قابلیت سفارشی‌سازی کامل</span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="material-icons text-green-600 ml-3">check_circle</span>
+                            <span>گزارش‌های تحلیلی پیشرفته</span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="material-icons text-green-600 ml-3">check_circle</span>
+                            <span>رشد همراه با کسب‌وکار شما</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="container mx-auto px-6">
+            <div class="grid md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-2xl font-bold mb-4">کار پرداز</h3>
+                    <p class="text-gray-300">سیستم حسابداری هوشمند برای عصر دیجیتال</p>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">تماس با ما</h4>
+                    <div class="space-y-2 text-gray-300">
+                        <p>تلفن: ۰۲۱-۱۲۳۴۵۶۷۸</p>
+                        <p>ایمیل: info@karpardaz.com</p>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">پیوندهای مفید</h4>
+                    <div class="space-y-2">
+                        <a href="#" class="block text-gray-300 hover:text-white transition-colors">درباره ما</a>
+                        <a href="#" class="block text-gray-300 hover:text-white transition-colors">پشتیبانی</a>
+                        <a href="#" class="block text-gray-300 hover:text-white transition-colors">حریم خصوصی</a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; ۱۴۰۳ کار پرداز. تمامی حقوق محفوظ است.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fade-in');
+                }
+            });
+        }, observerOptions);
+
+        // Observe all feature cards and timeline items
+        document.querySelectorAll('.feature-card, .timeline-item').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Interactive buttons
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('click', function () {
+                // Add click animation
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 150);
+
+                // Show alert for demo purposes
+                if (this.textContent.includes('مشاوره')) {
+                    alert('با تشکر از علاقه شما! تیم ما در اسرع وقت با شما تماس خواهد گرفت.');
+                } else if (this.textContent.includes('نمونه')) {
+                    alert('نمونه کار در حال آماده‌سازی است و به زودی در دسترس قرار خواهد گرفت.');
+                }
+            });
+        });
+    </script>
+    <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'96ca47d2c2f99957',t:'MTc1NDc3NDI0OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
+</body>
+
+</html>
