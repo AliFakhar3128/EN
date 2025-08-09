@@ -1,0 +1,1935 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>کارپرداز - نرم‌افزار حسابداری</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap');
+
+        * {
+            font-family: 'Vazirmatn', sans-serif;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .slide-up {
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+            }
+
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        .fab {
+            position: fixed;
+            bottom: 24px;
+            left: 24px;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .fab:hover {
+            transform: scale(1.1);
+        }
+
+        .card {
+            transition: all 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1001;
+            min-width: 300px;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    <!-- Navigation -->
+    <nav class="bg-white dark:bg-gray-800 shadow-lg border-b border-gray-200 dark:border-gray-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <h1 class="text-2xl font-bold text-primary-600 dark:text-primary-400">کارپرداز</h1>
+                    </div>
+                    <div class="hidden md:ml-6 md:flex md:space-x-8 md:space-x-reverse">
+                        <button onclick="showSection('dashboard')"
+                            class="nav-btn text-gray-900 dark:text-gray-100 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium">داشبورد</button>
+                        <button onclick="showSection('accounts')"
+                            class="nav-btn text-gray-500 dark:text-gray-400 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium">حساب‌ها</button>
+                        <button onclick="showSection('customers')"
+                            class="nav-btn text-gray-500 dark:text-gray-400 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium">مشتریان</button>
+                        <button onclick="showSection('suppliers')"
+                            class="nav-btn text-gray-500 dark:text-gray-400 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium">تامین‌کنندگان</button>
+                        <button onclick="showSection('products')"
+                            class="nav-btn text-gray-500 dark:text-gray-400 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium">محصولات</button>
+                        <button onclick="showSection('invoices')"
+                            class="nav-btn text-gray-500 dark:text-gray-400 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium">فاکتورها</button>
+                        <button onclick="showSection('transactions')"
+                            class="nav-btn text-gray-500 dark:text-gray-400 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium">تراکنش‌ها</button>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4 space-x-reverse">
+                    <button onclick="toggleTheme()" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <svg class="w-5 h-5 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z">
+                            </path>
+                        </svg>
+                    </button>
+                    <div class="text-sm text-gray-600 dark:text-gray-300">
+                        <span id="userRole">ادمین</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <!-- Dashboard Section -->
+        <div id="dashboard" class="section fade-in">
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">داشبورد</h2>
+                <p class="text-gray-600 dark:text-gray-400">نمای کلی از وضعیت مالی</p>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="card bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-full bg-green-100 dark:bg-green-900">
+                            <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1">
+                                </path>
+                            </svg>
+                        </div>
+                        <div class="mr-4">
+                            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">کل درآمد</p>
+                            <p class="text-2xl font-bold text-gray-900 dark:text-gray-100" id="totalIncome">0 تومان</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-full bg-red-100 dark:bg-red-900">
+                            <svg class="w-6 h-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z">
+                                </path>
+                            </svg>
+                        </div>
+                        <div class="mr-4">
+                            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">کل هزینه</p>
+                            <p class="text-2xl font-bold text-gray-900 dark:text-gray-100" id="totalExpense">0 تومان</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-full bg-blue-100 dark:bg-blue-900">
+                            <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 00-2-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                                </path>
+                            </svg>
+                        </div>
+                        <div class="mr-4">
+                            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">سود خالص</p>
+                            <p class="text-2xl font-bold text-gray-900 dark:text-gray-100" id="netProfit">0 تومان</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-full bg-purple-100 dark:bg-purple-900">
+                            <svg class="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
+                                </path>
+                            </svg>
+                        </div>
+                        <div class="mr-4">
+                            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">تعداد مشتریان</p>
+                            <p class="text-2xl font-bold text-gray-900 dark:text-gray-100" id="totalCustomers">0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">روند درآمد و هزینه</h3>
+                    <canvas id="incomeExpenseChart"></canvas>
+                </div>
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">توزیع درآمد</h3>
+                    <canvas id="incomeDistributionChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Accounts Section -->
+        <div id="accounts" class="section hidden">
+            <div class="mb-8 flex justify-between items-center">
+                <div>
+                    <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">مدیریت حساب‌ها</h2>
+                    <p class="text-gray-600 dark:text-gray-400">مدیریت حساب‌های مالی</p>
+                </div>
+                <button onclick="showAccountModal()"
+                    class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg flex items-center">
+                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
+                    افزودن حساب
+                </button>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                        <thead class="bg-gray-50 dark:bg-gray-700">
+                            <tr>
+                                <th
+                                    class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    نام حساب</th>
+                                <th
+                                    class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    نوع</th>
+                                <th
+                                    class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    موجودی</th>
+                                <th
+                                    class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="accountsTable"
+                            class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Customers Section -->
+        <div id="customers" class="section hidden">
+            <div class="mb-8 flex justify-between items-center">
+                <div>
+                    <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">مدیریت مشتریان</h2>
+                    <p class="text-gray-600 dark:text-gray-400">مدیریت اطلاعات مشتریان</p>
+                </div>
+                <button onclick="showCustomerModal()"
+                    class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg flex items-center">
+                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
+                    افزودن مشتری
+                </button>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                        <thead class="bg-gray-50 dark:bg-gray-700">
+                            <tr>
+                                <th
+                                    class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    نام</th>
+                                <th
+                                    class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    تلفن</th>
+                                <th
+                                    class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    ایمیل</th>
+                                <th
+                                    class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    بدهی</th>
+                                <th
+                                    class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="customersTable"
+                            class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Suppliers Section -->
+        <div id="suppliers" class="section hidden">
+            <div class="mb-8 flex justify-between items-center">
+                <div>
+                    <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">مدیریت تامین‌کنندگان</h2>
+                    <p class="text-gray-600 dark:text-gray-400">مدیریت اطلاعات تامین‌کنندگان</p>
+                </div>
+                <button onclick="showSupplierModal()"
+                    class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg flex items-center">
+                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
+                    افزودن تامین‌کننده
+                </button>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                        <thead class="bg-gray-50 dark:bg-gray-700">
+                            <tr>
+                                <th
+                                    class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    نام</th>
+                                <th
+                                    class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    تلفن</th>
+                                <th
+                                    class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    ایمیل</th>
+                                <th
+                                    class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    طلب</th>
+                                <th
+                                    class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="suppliersTable"
+                            class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Products Section -->
+        <div id="products" class="section hidden">
+            <div class="mb-8 flex justify-between items-center">
+                <div>
+                    <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">مدیریت محصولات</h2>
+                    <p class="text-gray-600 dark:text-gray-400">مدیریت محصولات و خدمات</p>
+                </div>
+                <button onclick="showProductModal()"
+                    class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg flex items-center">
+                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
+                    افزودن محصول
+                </button>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                        <thead class="bg-gray-50 dark:bg-gray-700">
+                            <tr>
+                                <th
+                                    class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    نام محصول</th>
+                                <th
+                                    class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    قیمت فروش</th>
+                                <th
+                                    class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    قیمت خرید</th>
+                                <th
+                                    class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    موجودی</th>
+                                <th
+                                    class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productsTable"
+                            class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Invoices Section -->
+        <div id="invoices" class="section hidden">
+            <div class="mb-8 flex justify-between items-center">
+                <div>
+                    <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">مدیریت فاکتورها</h2>
+                    <p class="text-gray-600 dark:text-gray-400">فاکتورهای فروش و خرید</p>
+                </div>
+                <div class="flex space-x-2 space-x-reverse">
+                    <button onclick="showInvoiceModal('sale')"
+                        class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center">
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                        </svg>
+                        فاکتور فروش
+                    </button>
+                    <button onclick="showInvoiceModal('purchase')"
+                        class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg flex items-center">
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                        </svg>
+                        فاکتور خرید
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                        <thead class="bg-gray-50 dark:bg-gray-700">
+                            <tr>
+                                <th
+                                    class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    شماره فاکتور</th>
+                                <th
+                                    class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    نوع</th>
+                                <th
+                                    class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    طرف حساب</th>
+                                <th
+                                    class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    مبلغ کل</th>
+                                <th
+                                    class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    تاریخ</th>
+                                <th
+                                    class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="invoicesTable"
+                            class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transactions Section -->
+        <div id="transactions" class="section hidden">
+            <div class="mb-8 flex justify-between items-center">
+                <div>
+                    <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">مدیریت تراکنش‌ها</h2>
+                    <p class="text-gray-600 dark:text-gray-400">تمام تراکنش‌های مالی</p>
+                </div>
+                <button onclick="showTransactionModal()"
+                    class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg flex items-center">
+                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
+                    افزودن تراکنش
+                </button>
+            </div>
+
+            <!-- Search and Filter -->
+            <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <input type="text" id="transactionSearch" placeholder="جستجو در تراکنش‌ها..."
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">
+                    <select id="transactionTypeFilter"
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">
+                        <option value="">همه انواع</option>
+                        <option value="income">درآمد</option>
+                        <option value="expense">هزینه</option>
+                    </select>
+                    <button onclick="filterTransactions()"
+                        class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg">فیلتر</button>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                        <thead class="bg-gray-50 dark:bg-gray-700">
+                            <tr>
+                                <th
+                                    class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    تاریخ</th>
+                                <th
+                                    class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    شرح</th>
+                                <th
+                                    class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    نوع</th>
+                                <th
+                                    class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    مبلغ</th>
+                                <th
+                                    class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactionsTable"
+                            class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- FAB Button -->
+    <button class="fab bg-primary-600 hover:bg-primary-700 text-white p-4 rounded-full shadow-lg"
+        onclick="showQuickActionMenu()">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+        </svg>
+    </button>
+
+    <!-- Modals -->
+    <!-- Account Modal -->
+    <div id="accountModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-xl max-w-md w-full mx-4 slide-up">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">افزودن/ویرایش حساب</h3>
+            <form id="accountForm">
+                <input type="hidden" id="accountId">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">نام حساب</label>
+                    <input type="text" id="accountName"
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white"
+                        required>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">نوع حساب</label>
+                    <select id="accountType"
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white"
+                        required>
+                        <option value="bank">بانک</option>
+                        <option value="cash">نقد</option>
+                        <option value="receivable">دریافتنی</option>
+                        <option value="payable">پرداختنی</option>
+                    </select>
+                </div>
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">موجودی اولیه</label>
+                    <input type="number" id="accountBalance"
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white"
+                        required>
+                </div>
+                <div class="flex justify-end space-x-2 space-x-reverse">
+                    <button type="button" onclick="closeModal('accountModal')"
+                        class="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200">انصراف</button>
+                    <button type="submit"
+                        class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg">ذخیره</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Customer Modal -->
+    <div id="customerModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-xl max-w-md w-full mx-4 slide-up">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">افزودن/ویرایش مشتری</h3>
+            <form id="customerForm">
+                <input type="hidden" id="customerId">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">نام مشتری</label>
+                    <input type="text" id="customerName"
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white"
+                        required>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">تلفن</label>
+                    <input type="tel" id="customerPhone"
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">ایمیل</label>
+                    <input type="email" id="customerEmail"
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">
+                </div>
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">آدرس</label>
+                    <textarea id="customerAddress"
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white"
+                        rows="3"></textarea>
+                </div>
+                <div class="flex justify-end space-x-2 space-x-reverse">
+                    <button type="button" onclick="closeModal('customerModal')"
+                        class="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200">انصراف</button>
+                    <button type="submit"
+                        class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg">ذخیره</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Supplier Modal -->
+    <div id="supplierModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-xl max-w-md w-full mx-4 slide-up">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">افزودن/ویرایش تامین‌کننده</h3>
+            <form id="supplierForm">
+                <input type="hidden" id="supplierId">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">نام
+                        تامین‌کننده</label>
+                    <input type="text" id="supplierName"
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white"
+                        required>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">تلفن</label>
+                    <input type="tel" id="supplierPhone"
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">ایمیل</label>
+                    <input type="email" id="supplierEmail"
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">
+                </div>
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">آدرس</label>
+                    <textarea id="supplierAddress"
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white"
+                        rows="3"></textarea>
+                </div>
+                <div class="flex justify-end space-x-2 space-x-reverse">
+                    <button type="button" onclick="closeModal('supplierModal')"
+                        class="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200">انصراف</button>
+                    <button type="submit"
+                        class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg">ذخیره</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Product Modal -->
+    <div id="productModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-xl max-w-md w-full mx-4 slide-up">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">افزودن/ویرایش محصول</h3>
+            <form id="productForm">
+                <input type="hidden" id="productId">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">نام محصول</label>
+                    <input type="text" id="productName"
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white"
+                        required>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">قیمت فروش</label>
+                    <input type="number" id="productSalePrice"
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white"
+                        required>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">قیمت خرید</label>
+                    <input type="number" id="productPurchasePrice"
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white"
+                        required>
+                </div>
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">موجودی</label>
+                    <input type="number" id="productStock"
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white"
+                        required>
+                </div>
+                <div class="flex justify-end space-x-2 space-x-reverse">
+                    <button type="button" onclick="closeModal('productModal')"
+                        class="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200">انصراف</button>
+                    <button type="submit"
+                        class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg">ذخیره</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Invoice Modal -->
+    <div id="invoiceModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div
+            class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-xl max-w-4xl w-full mx-4 slide-up max-h-screen overflow-y-auto">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4" id="invoiceModalTitle">ایجاد فاکتور
+            </h3>
+            <form id="invoiceForm">
+                <input type="hidden" id="invoiceId">
+                <input type="hidden" id="invoiceType">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">شماره
+                            فاکتور</label>
+                        <input type="text" id="invoiceNumber"
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white"
+                            required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">تاریخ</label>
+                        <input type="date" id="invoiceDate"
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white"
+                            required>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                        id="partyLabel">مشتری</label>
+                    <select id="invoiceParty"
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white"
+                        required>
+                        <option value="">انتخاب کنید</option>
+                    </select>
+                </div>
+
+                <!-- Invoice Items -->
+                <div class="mb-4">
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">اقلام فاکتور</label>
+                        <button type="button" onclick="addInvoiceItem()"
+                            class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm">افزودن
+                            قلم</button>
+                    </div>
+                    <div id="invoiceItems" class="space-y-2">
+                        <!-- Invoice items will be added here -->
+                    </div>
+                </div>
+
+                <!-- Totals -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">تخفیف (%)</label>
+                        <input type="number" id="invoiceDiscount"
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white"
+                            value="0" onchange="calculateInvoiceTotal()">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">مالیات
+                            (%)</label>
+                        <input type="number" id="invoiceTax"
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white"
+                            value="9" onchange="calculateInvoiceTotal()">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">مبلغ کل</label>
+                        <input type="number" id="invoiceTotal"
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-600"
+                            readonly>
+                    </div>
+                </div>
+
+                <div class="flex justify-end space-x-2 space-x-reverse">
+                    <button type="button" onclick="closeModal('invoiceModal')"
+                        class="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200">انصراف</button>
+                    <button type="submit"
+                        class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg">ذخیره
+                        فاکتور</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Transaction Modal -->
+    <div id="transactionModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-xl max-w-md w-full mx-4 slide-up">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">افزودن/ویرایش تراکنش</h3>
+            <form id="transactionForm">
+                <input type="hidden" id="transactionId">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">تاریخ</label>
+                    <input type="date" id="transactionDate"
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white"
+                        required>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">شرح</label>
+                    <input type="text" id="transactionDescription"
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white"
+                        required>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">نوع</label>
+                    <select id="transactionType"
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white"
+                        required>
+                        <option value="income">درآمد</option>
+                        <option value="expense">هزینه</option>
+                    </select>
+                </div>
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">مبلغ</label>
+                    <input type="number" id="transactionAmount"
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white"
+                        required>
+                </div>
+                <div class="flex justify-end space-x-2 space-x-reverse">
+                    <button type="button" onclick="closeModal('transactionModal')"
+                        class="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200">انصراف</button>
+                    <button type="submit"
+                        class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg">ذخیره</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Quick Action Menu -->
+    <div id="quickActionMenu"
+        class="fixed bottom-20 left-6 bg-white dark:bg-gray-800 rounded-lg shadow-xl p-4 hidden z-50">
+        <div class="space-y-2">
+            <button onclick="showInvoiceModal('sale')"
+                class="w-full text-right px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">فاکتور
+                فروش</button>
+            <button onclick="showInvoiceModal('purchase')"
+                class="w-full text-right px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">فاکتور
+                خرید</button>
+            <button onclick="showTransactionModal()"
+                class="w-full text-right px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">تراکنش
+                جدید</button>
+            <button onclick="showCustomerModal()"
+                class="w-full text-right px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">مشتری جدید</button>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification hidden">
+        <div class="bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg">
+            <div class="flex items-center">
+                <svg class="w-6 h-6 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                <span id="notificationMessage">عملیات با موفقیت انجام شد</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables for data storage
+        let accounts = JSON.parse(localStorage.getItem('accounts')) || [];
+        let customers = JSON.parse(localStorage.getItem('customers')) || [];
+        let suppliers = JSON.parse(localStorage.getItem('suppliers')) || [];
+        let products = JSON.parse(localStorage.getItem('products')) || [];
+        let invoices = JSON.parse(localStorage.getItem('invoices')) || [];
+        let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+        let currentUser = JSON.parse(localStorage.getItem('currentUser')) || { role: 'admin' };
+
+        // Charts
+        let incomeExpenseChart = null;
+        let incomeDistributionChart = null;
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function () {
+            initializeApp();
+            loadDashboard();
+            checkReminders();
+            setInterval(checkReminders, 60000); // Check reminders every minute
+        });
+
+        function initializeApp() {
+            // Set current date for date inputs
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('invoiceDate').value = today;
+            document.getElementById('transactionDate').value = today;
+
+            // Load theme
+            const theme = localStorage.getItem('theme') || 'light';
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+            }
+
+            // Set user role
+            document.getElementById('userRole').textContent = currentUser.role === 'admin' ? 'ادمین' : 'کاربر';
+
+            // Load all data
+            loadAccounts();
+            loadCustomers();
+            loadSuppliers();
+            loadProducts();
+            loadInvoices();
+            loadTransactions();
+        }
+
+        // Navigation functions
+        function showSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.add('hidden');
+            });
+
+            // Show selected section
+            document.getElementById(sectionName).classList.remove('hidden');
+            document.getElementById(sectionName).classList.add('fade-in');
+
+            // Update navigation
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('text-gray-900', 'dark:text-gray-100');
+                btn.classList.add('text-gray-500', 'dark:text-gray-400');
+            });
+
+            event.target.classList.remove('text-gray-500', 'dark:text-gray-400');
+            event.target.classList.add('text-gray-900', 'dark:text-gray-100');
+
+            // Load section-specific data
+            if (sectionName === 'dashboard') {
+                loadDashboard();
+            }
+        }
+
+        // Theme toggle
+        function toggleTheme() {
+            const isDark = document.documentElement.classList.contains('dark');
+            if (isDark) {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+
+            // Reload charts with new theme
+            setTimeout(() => {
+                loadDashboard();
+            }, 100);
+        }
+
+        // Dashboard functions
+        function loadDashboard() {
+            updateStats();
+            loadCharts();
+        }
+
+        function updateStats() {
+            const totalIncome = transactions
+                .filter(t => t.type === 'income')
+                .reduce((sum, t) => sum + parseFloat(t.amount), 0);
+
+            const totalExpense = transactions
+                .filter(t => t.type === 'expense')
+                .reduce((sum, t) => sum + parseFloat(t.amount), 0);
+
+            const netProfit = totalIncome - totalExpense;
+            const totalCustomersCount = customers.length;
+
+            document.getElementById('totalIncome').textContent = formatCurrency(totalIncome);
+            document.getElementById('totalExpense').textContent = formatCurrency(totalExpense);
+            document.getElementById('netProfit').textContent = formatCurrency(netProfit);
+            document.getElementById('totalCustomers').textContent = totalCustomersCount;
+        }
+
+        function loadCharts() {
+            loadIncomeExpenseChart();
+            loadIncomeDistributionChart();
+        }
+
+        function loadIncomeExpenseChart() {
+            const ctx = document.getElementById('incomeExpenseChart').getContext('2d');
+
+            if (incomeExpenseChart) {
+                incomeExpenseChart.destroy();
+            }
+
+            // Get last 6 months data
+            const months = [];
+            const incomeData = [];
+            const expenseData = [];
+
+            for (let i = 5; i >= 0; i--) {
+                const date = new Date();
+                date.setMonth(date.getMonth() - i);
+                const monthKey = date.toISOString().slice(0, 7);
+                months.push(getMonthName(date.getMonth()));
+
+                const monthIncome = transactions
+                    .filter(t => t.type === 'income' && t.date.startsWith(monthKey))
+                    .reduce((sum, t) => sum + parseFloat(t.amount), 0);
+
+                const monthExpense = transactions
+                    .filter(t => t.type === 'expense' && t.date.startsWith(monthKey))
+                    .reduce((sum, t) => sum + parseFloat(t.amount), 0);
+
+                incomeData.push(monthIncome);
+                expenseData.push(monthExpense);
+            }
+
+            incomeExpenseChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: months,
+                    datasets: [{
+                        label: 'درآمد',
+                        data: incomeData,
+                        borderColor: 'rgb(34, 197, 94)',
+                        backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                        tension: 0.4
+                    }, {
+                        label: 'هزینه',
+                        data: expenseData,
+                        borderColor: 'rgb(239, 68, 68)',
+                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                font: {
+                                    family: 'Vazirmatn'
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                font: {
+                                    family: 'Vazirmatn'
+                                }
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                font: {
+                                    family: 'Vazirmatn'
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function loadIncomeDistributionChart() {
+            const ctx = document.getElementById('incomeDistributionChart').getContext('2d');
+
+            if (incomeDistributionChart) {
+                incomeDistributionChart.destroy();
+            }
+
+            // Group income by source (simplified)
+            const incomeByType = {
+                'فروش': 0,
+                'خدمات': 0,
+                'سایر': 0
+            };
+
+            transactions.filter(t => t.type === 'income').forEach(t => {
+                if (t.description.includes('فروش') || t.description.includes('محصول')) {
+                    incomeByType['فروش'] += parseFloat(t.amount);
+                } else if (t.description.includes('خدمات') || t.description.includes('سرویس')) {
+                    incomeByType['خدمات'] += parseFloat(t.amount);
+                } else {
+                    incomeByType['سایر'] += parseFloat(t.amount);
+                }
+            });
+
+            incomeDistributionChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(incomeByType),
+                    datasets: [{
+                        data: Object.values(incomeByType),
+                        backgroundColor: [
+                            'rgb(59, 130, 246)',
+                            'rgb(16, 185, 129)',
+                            'rgb(245, 158, 11)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                font: {
+                                    family: 'Vazirmatn'
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Account management
+        function loadAccounts() {
+            const tbody = document.getElementById('accountsTable');
+            tbody.innerHTML = '';
+
+            accounts.forEach(account => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">${account.name}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">${getAccountTypeName(account.type)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">${formatCurrency(account.balance)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button onclick="editAccount('${account.id}')" class="text-indigo-600 hover:text-indigo-900 ml-2">ویرایش</button>
+                        <button onclick="deleteAccount('${account.id}')" class="text-red-600 hover:text-red-900">حذف</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function showAccountModal(id = null) {
+            const modal = document.getElementById('accountModal');
+            const form = document.getElementById('accountForm');
+
+            if (id) {
+                const account = accounts.find(a => a.id === id);
+                document.getElementById('accountId').value = account.id;
+                document.getElementById('accountName').value = account.name;
+                document.getElementById('accountType').value = account.type;
+                document.getElementById('accountBalance').value = account.balance;
+            } else {
+                form.reset();
+                document.getElementById('accountId').value = '';
+            }
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function editAccount(id) {
+            showAccountModal(id);
+        }
+
+        function deleteAccount(id) {
+            if (confirm('آیا از حذف این حساب اطمینان دارید؟')) {
+                accounts = accounts.filter(a => a.id !== id);
+                localStorage.setItem('accounts', JSON.stringify(accounts));
+                loadAccounts();
+                showNotification('حساب با موفقیت حذف شد');
+            }
+        }
+
+        // Customer management
+        function loadCustomers() {
+            const tbody = document.getElementById('customersTable');
+            tbody.innerHTML = '';
+
+            customers.forEach(customer => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">${customer.name}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">${customer.phone || '-'}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">${customer.email || '-'}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">${formatCurrency(customer.debt || 0)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button onclick="editCustomer('${customer.id}')" class="text-indigo-600 hover:text-indigo-900 ml-2">ویرایش</button>
+                        <button onclick="deleteCustomer('${customer.id}')" class="text-red-600 hover:text-red-900">حذف</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function showCustomerModal(id = null) {
+            const modal = document.getElementById('customerModal');
+            const form = document.getElementById('customerForm');
+
+            if (id) {
+                const customer = customers.find(c => c.id === id);
+                document.getElementById('customerId').value = customer.id;
+                document.getElementById('customerName').value = customer.name;
+                document.getElementById('customerPhone').value = customer.phone || '';
+                document.getElementById('customerEmail').value = customer.email || '';
+                document.getElementById('customerAddress').value = customer.address || '';
+            } else {
+                form.reset();
+                document.getElementById('customerId').value = '';
+            }
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function editCustomer(id) {
+            showCustomerModal(id);
+        }
+
+        function deleteCustomer(id) {
+            if (confirm('آیا از حذف این مشتری اطمینان دارید؟')) {
+                customers = customers.filter(c => c.id !== id);
+                localStorage.setItem('customers', JSON.stringify(customers));
+                loadCustomers();
+                showNotification('مشتری با موفقیت حذف شد');
+            }
+        }
+
+        // Supplier management
+        function loadSuppliers() {
+            const tbody = document.getElementById('suppliersTable');
+            tbody.innerHTML = '';
+
+            suppliers.forEach(supplier => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">${supplier.name}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">${supplier.phone || '-'}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">${supplier.email || '-'}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">${formatCurrency(supplier.credit || 0)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button onclick="editSupplier('${supplier.id}')" class="text-indigo-600 hover:text-indigo-900 ml-2">ویرایش</button>
+                        <button onclick="deleteSupplier('${supplier.id}')" class="text-red-600 hover:text-red-900">حذف</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function showSupplierModal(id = null) {
+            const modal = document.getElementById('supplierModal');
+            const form = document.getElementById('supplierForm');
+
+            if (id) {
+                const supplier = suppliers.find(s => s.id === id);
+                document.getElementById('supplierId').value = supplier.id;
+                document.getElementById('supplierName').value = supplier.name;
+                document.getElementById('supplierPhone').value = supplier.phone || '';
+                document.getElementById('supplierEmail').value = supplier.email || '';
+                document.getElementById('supplierAddress').value = supplier.address || '';
+            } else {
+                form.reset();
+                document.getElementById('supplierId').value = '';
+            }
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function editSupplier(id) {
+            showSupplierModal(id);
+        }
+
+        function deleteSupplier(id) {
+            if (confirm('آیا از حذف این تامین‌کننده اطمینان دارید؟')) {
+                suppliers = suppliers.filter(s => s.id !== id);
+                localStorage.setItem('suppliers', JSON.stringify(suppliers));
+                loadSuppliers();
+                showNotification('تامین‌کننده با موفقیت حذف شد');
+            }
+        }
+
+        // Product management
+        function loadProducts() {
+            const tbody = document.getElementById('productsTable');
+            tbody.innerHTML = '';
+
+            products.forEach(product => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">${product.name}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">${formatCurrency(product.salePrice)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">${formatCurrency(product.purchasePrice)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">${product.stock}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button onclick="editProduct('${product.id}')" class="text-indigo-600 hover:text-indigo-900 ml-2">ویرایش</button>
+                        <button onclick="deleteProduct('${product.id}')" class="text-red-600 hover:text-red-900">حذف</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function showProductModal(id = null) {
+            const modal = document.getElementById('productModal');
+            const form = document.getElementById('productForm');
+
+            if (id) {
+                const product = products.find(p => p.id === id);
+                document.getElementById('productId').value = product.id;
+                document.getElementById('productName').value = product.name;
+                document.getElementById('productSalePrice').value = product.salePrice;
+                document.getElementById('productPurchasePrice').value = product.purchasePrice;
+                document.getElementById('productStock').value = product.stock;
+            } else {
+                form.reset();
+                document.getElementById('productId').value = '';
+            }
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function editProduct(id) {
+            showProductModal(id);
+        }
+
+        function deleteProduct(id) {
+            if (confirm('آیا از حذف این محصول اطمینان دارید؟')) {
+                products = products.filter(p => p.id !== id);
+                localStorage.setItem('products', JSON.stringify(products));
+                loadProducts();
+                showNotification('محصول با موفقیت حذف شد');
+            }
+        }
+
+        // Invoice management
+        function loadInvoices() {
+            const tbody = document.getElementById('invoicesTable');
+            tbody.innerHTML = '';
+
+            invoices.forEach(invoice => {
+                const row = document.createElement('tr');
+                const partyName = invoice.type === 'sale'
+                    ? customers.find(c => c.id === invoice.partyId)?.name || 'نامشخص'
+                    : suppliers.find(s => s.id === invoice.partyId)?.name || 'نامشخص';
+
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">${invoice.number}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                        <span class="px-2 py-1 text-xs rounded-full ${invoice.type === 'sale' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                            ${invoice.type === 'sale' ? 'فروش' : 'خرید'}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">${partyName}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">${formatCurrency(invoice.total)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">${formatDate(invoice.date)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button onclick="viewInvoice('${invoice.id}')" class="text-blue-600 hover:text-blue-900 ml-2">مشاهده</button>
+                        <button onclick="deleteInvoice('${invoice.id}')" class="text-red-600 hover:text-red-900">حذف</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function showInvoiceModal(type, id = null) {
+            const modal = document.getElementById('invoiceModal');
+            const form = document.getElementById('invoiceForm');
+            const title = document.getElementById('invoiceModalTitle');
+            const partyLabel = document.getElementById('partyLabel');
+            const partySelect = document.getElementById('invoiceParty');
+
+            // Set modal title and party label
+            if (type === 'sale') {
+                title.textContent = 'فاکتور فروش';
+                partyLabel.textContent = 'مشتری';
+                populateSelect(partySelect, customers);
+            } else {
+                title.textContent = 'فاکتور خرید';
+                partyLabel.textContent = 'تامین‌کننده';
+                populateSelect(partySelect, suppliers);
+            }
+
+            document.getElementById('invoiceType').value = type;
+
+            if (id) {
+                // Edit mode
+                const invoice = invoices.find(i => i.id === id);
+                document.getElementById('invoiceId').value = invoice.id;
+                document.getElementById('invoiceNumber').value = invoice.number;
+                document.getElementById('invoiceDate').value = invoice.date;
+                document.getElementById('invoiceParty').value = invoice.partyId;
+                document.getElementById('invoiceDiscount').value = invoice.discount || 0;
+                document.getElementById('invoiceTax').value = invoice.tax || 9;
+
+                // Load invoice items
+                loadInvoiceItems(invoice.items);
+            } else {
+                // New invoice
+                form.reset();
+                document.getElementById('invoiceId').value = '';
+                document.getElementById('invoiceType').value = type;
+                document.getElementById('invoiceNumber').value = generateInvoiceNumber();
+                document.getElementById('invoiceDate').value = new Date().toISOString().split('T')[0];
+                document.getElementById('invoiceDiscount').value = 0;
+                document.getElementById('invoiceTax').value = 9;
+
+                // Clear items
+                document.getElementById('invoiceItems').innerHTML = '';
+                addInvoiceItem();
+            }
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function addInvoiceItem() {
+            const container = document.getElementById('invoiceItems');
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'grid grid-cols-1 md:grid-cols-5 gap-2 p-3 border border-gray-200 dark:border-gray-600 rounded';
+
+            itemDiv.innerHTML = `
+                <select class="item-product px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm dark:bg-gray-700 dark:text-white" onchange="updateItemPrice(this)" required>
+                    <option value="">انتخاب محصول</option>
+                    ${products.map(p => `<option value="${p.id}" data-price="${p.salePrice}">${p.name}</option>`).join('')}
+                </select>
+                <input type="number" class="item-quantity px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm dark:bg-gray-700 dark:text-white" placeholder="تعداد" value="1" onchange="calculateItemTotal(this)" required>
+                <input type="number" class="item-price px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm dark:bg-gray-700 dark:text-white" placeholder="قیمت واحد" onchange="calculateItemTotal(this)" required>
+                <input type="number" class="item-total px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm bg-gray-100 dark:bg-gray-600" placeholder="مجموع" readonly>
+                <button type="button" onclick="removeInvoiceItem(this)" class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-sm">حذف</button>
+            `;
+
+            container.appendChild(itemDiv);
+        }
+
+        function removeInvoiceItem(button) {
+            button.parentElement.remove();
+            calculateInvoiceTotal();
+        }
+
+        function updateItemPrice(select) {
+            const option = select.selectedOptions[0];
+            const priceInput = select.parentElement.querySelector('.item-price');
+            if (option && option.dataset.price) {
+                priceInput.value = option.dataset.price;
+                calculateItemTotal(priceInput);
+            }
+        }
+
+        function calculateItemTotal(input) {
+            const row = input.parentElement;
+            const quantity = parseFloat(row.querySelector('.item-quantity').value) || 0;
+            const price = parseFloat(row.querySelector('.item-price').value) || 0;
+            const total = quantity * price;
+
+            row.querySelector('.item-total').value = total;
+            calculateInvoiceTotal();
+        }
+
+        function calculateInvoiceTotal() {
+            const itemTotals = document.querySelectorAll('.item-total');
+            let subtotal = 0;
+
+            itemTotals.forEach(input => {
+                subtotal += parseFloat(input.value) || 0;
+            });
+
+            const discount = parseFloat(document.getElementById('invoiceDiscount').value) || 0;
+            const tax = parseFloat(document.getElementById('invoiceTax').value) || 0;
+
+            const discountAmount = subtotal * (discount / 100);
+            const taxableAmount = subtotal - discountAmount;
+            const taxAmount = taxableAmount * (tax / 100);
+            const total = taxableAmount + taxAmount;
+
+            document.getElementById('invoiceTotal').value = total.toFixed(0);
+        }
+
+        function loadInvoiceItems(items) {
+            const container = document.getElementById('invoiceItems');
+            container.innerHTML = '';
+
+            items.forEach(item => {
+                addInvoiceItem();
+                const lastItem = container.lastElementChild;
+                lastItem.querySelector('.item-product').value = item.productId;
+                lastItem.querySelector('.item-quantity').value = item.quantity;
+                lastItem.querySelector('.item-price').value = item.price;
+                lastItem.querySelector('.item-total').value = item.total;
+            });
+
+            calculateInvoiceTotal();
+        }
+
+        function viewInvoice(id) {
+            const invoice = invoices.find(i => i.id === id);
+            showInvoiceModal(invoice.type, id);
+        }
+
+        function deleteInvoice(id) {
+            if (confirm('آیا از حذف این فاکتور اطمینان دارید؟')) {
+                invoices = invoices.filter(i => i.id !== id);
+                localStorage.setItem('invoices', JSON.stringify(invoices));
+                loadInvoices();
+                showNotification('فاکتور با موفقیت حذف شد');
+            }
+        }
+
+        // Transaction management
+        function loadTransactions() {
+            const tbody = document.getElementById('transactionsTable');
+            tbody.innerHTML = '';
+
+            transactions.forEach(transaction => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">${formatDate(transaction.date)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">${transaction.description}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                        <span class="px-2 py-1 text-xs rounded-full ${transaction.type === 'income' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                            ${transaction.type === 'income' ? 'درآمد' : 'هزینه'}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">${formatCurrency(transaction.amount)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button onclick="editTransaction('${transaction.id}')" class="text-indigo-600 hover:text-indigo-900 ml-2">ویرایش</button>
+                        <button onclick="deleteTransaction('${transaction.id}')" class="text-red-600 hover:text-red-900">حذف</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function showTransactionModal(id = null) {
+            const modal = document.getElementById('transactionModal');
+            const form = document.getElementById('transactionForm');
+
+            if (id) {
+                const transaction = transactions.find(t => t.id === id);
+                document.getElementById('transactionId').value = transaction.id;
+                document.getElementById('transactionDate').value = transaction.date;
+                document.getElementById('transactionDescription').value = transaction.description;
+                document.getElementById('transactionType').value = transaction.type;
+                document.getElementById('transactionAmount').value = transaction.amount;
+            } else {
+                form.reset();
+                document.getElementById('transactionId').value = '';
+                document.getElementById('transactionDate').value = new Date().toISOString().split('T')[0];
+            }
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function editTransaction(id) {
+            showTransactionModal(id);
+        }
+
+        function deleteTransaction(id) {
+            if (confirm('آیا از حذف این تراکنش اطمینان دارید؟')) {
+                transactions = transactions.filter(t => t.id !== id);
+                localStorage.setItem('transactions', JSON.stringify(transactions));
+                loadTransactions();
+                updateStats();
+                showNotification('تراکنش با موفقیت حذف شد');
+            }
+        }
+
+        function filterTransactions() {
+            const search = document.getElementById('transactionSearch').value.toLowerCase();
+            const typeFilter = document.getElementById('transactionTypeFilter').value;
+
+            let filteredTransactions = transactions;
+
+            if (search) {
+                filteredTransactions = filteredTransactions.filter(t =>
+                    t.description.toLowerCase().includes(search)
+                );
+            }
+
+            if (typeFilter) {
+                filteredTransactions = filteredTransactions.filter(t =>
+                    t.type === typeFilter
+                );
+            }
+
+            // Update table with filtered results
+            const tbody = document.getElementById('transactionsTable');
+            tbody.innerHTML = '';
+
+            filteredTransactions.forEach(transaction => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">${formatDate(transaction.date)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">${transaction.description}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                        <span class="px-2 py-1 text-xs rounded-full ${transaction.type === 'income' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                            ${transaction.type === 'income' ? 'درآمد' : 'هزینه'}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">${formatCurrency(transaction.amount)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button onclick="editTransaction('${transaction.id}')" class="text-indigo-600 hover:text-indigo-900 ml-2">ویرایش</button>
+                        <button onclick="deleteTransaction('${transaction.id}')" class="text-red-600 hover:text-red-900">حذف</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Form submissions
+        document.getElementById('accountForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const id = document.getElementById('accountId').value;
+            const account = {
+                id: id || generateId(),
+                name: document.getElementById('accountName').value,
+                type: document.getElementById('accountType').value,
+                balance: parseFloat(document.getElementById('accountBalance').value)
+            };
+
+            if (id) {
+                const index = accounts.findIndex(a => a.id === id);
+                accounts[index] = account;
+            } else {
+                accounts.push(account);
+            }
+
+            localStorage.setItem('accounts', JSON.stringify(accounts));
+            loadAccounts();
+            closeModal('accountModal');
+            showNotification('حساب با موفقیت ذخیره شد');
+        });
+
+        document.getElementById('customerForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const id = document.getElementById('customerId').value;
+            const customer = {
+                id: id || generateId(),
+                name: document.getElementById('customerName').value,
+                phone: document.getElementById('customerPhone').value,
+                email: document.getElementById('customerEmail').value,
+                address: document.getElementById('customerAddress').value,
+                debt: 0
+            };
+
+            if (id) {
+                const index = customers.findIndex(c => c.id === id);
+                customers[index] = { ...customers[index], ...customer };
+            } else {
+                customers.push(customer);
+            }
+
+            localStorage.setItem('customers', JSON.stringify(customers));
+            loadCustomers();
+            closeModal('customerModal');
+            showNotification('مشتری با موفقیت ذخیره شد');
+        });
+
+        document.getElementById('supplierForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const id = document.getElementById('supplierId').value;
+            const supplier = {
+                id: id || generateId(),
+                name: document.getElementById('supplierName').value,
+                phone: document.getElementById('supplierPhone').value,
+                email: document.getElementById('supplierEmail').value,
+                address: document.getElementById('supplierAddress').value,
+                credit: 0
+            };
+
+            if (id) {
+                const index = suppliers.findIndex(s => s.id === id);
+                suppliers[index] = { ...suppliers[index], ...supplier };
+            } else {
+                suppliers.push(supplier);
+            }
+
+            localStorage.setItem('suppliers', JSON.stringify(suppliers));
+            loadSuppliers();
+            closeModal('supplierModal');
+            showNotification('تامین‌کننده با موفقیت ذخیره شد');
+        });
+
+        document.getElementById('productForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const id = document.getElementById('productId').value;
+            const product = {
+                id: id || generateId(),
+                name: document.getElementById('productName').value,
+                salePrice: parseFloat(document.getElementById('productSalePrice').value),
+                purchasePrice: parseFloat(document.getElementById('productPurchasePrice').value),
+                stock: parseInt(document.getElementById('productStock').value)
+            };
+
+            if (id) {
+                const index = products.findIndex(p => p.id === id);
+                products[index] = product;
+            } else {
+                products.push(product);
+            }
+
+            localStorage.setItem('products', JSON.stringify(products));
+            loadProducts();
+            closeModal('productModal');
+            showNotification('محصول با موفقیت ذخیره شد');
+        });
+
+        document.getElementById('invoiceForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const id = document.getElementById('invoiceId').value;
+            const items = [];
+
+            // Collect invoice items
+            document.querySelectorAll('#invoiceItems > div').forEach(itemDiv => {
+                const productId = itemDiv.querySelector('.item-product').value;
+                const quantity = parseFloat(itemDiv.querySelector('.item-quantity').value);
+                const price = parseFloat(itemDiv.querySelector('.item-price').value);
+                const total = parseFloat(itemDiv.querySelector('.item-total').value);
+
+                if (productId && quantity && price) {
+                    items.push({
+                        productId,
+                        quantity,
+                        price,
+                        total
+                    });
+                }
+            });
+
+            const invoice = {
+                id: id || generateId(),
+                number: document.getElementById('invoiceNumber').value,
+                type: document.getElementById('invoiceType').value,
+                partyId: document.getElementById('invoiceParty').value,
+                date: document.getElementById('invoiceDate').value,
+                items: items,
+                discount: parseFloat(document.getElementById('invoiceDiscount').value) || 0,
+                tax: parseFloat(document.getElementById('invoiceTax').value) || 0,
+                total: parseFloat(document.getElementById('invoiceTotal').value)
+            };
+
+            if (id) {
+                const index = invoices.findIndex(i => i.id === id);
+                invoices[index] = invoice;
+            } else {
+                invoices.push(invoice);
+
+                // Create corresponding transaction
+                const transaction = {
+                    id: generateId(),
+                    date: invoice.date,
+                    description: `فاکتور ${invoice.type === 'sale' ? 'فروش' : 'خرید'} شماره ${invoice.number}`,
+                    type: invoice.type === 'sale' ? 'income' : 'expense',
+                    amount: invoice.total
+                };
+
+                transactions.push(transaction);
+                localStorage.setItem('transactions', JSON.stringify(transactions));
+            }
+
+            localStorage.setItem('invoices', JSON.stringify(invoices));
+            loadInvoices();
+            closeModal('invoiceModal');
+            showNotification('فاکتور با موفقیت ذخیره شد');
+            updateStats();
+        });
+
+        document.getElementById('transactionForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const id = document.getElementById('transactionId').value;
+            const transaction = {
+                id: id || generateId(),
+                date: document.getElementById('transactionDate').value,
+                description: document.getElementById('transactionDescription').value,
+                type: document.getElementById('transactionType').value,
+                amount: parseFloat(document.getElementById('transactionAmount').value)
+            };
+
+            if (id) {
+                const index = transactions.findIndex(t => t.id === id);
+                transactions[index] = transaction;
+            } else {
+                transactions.push(transaction);
+            }
+
+            localStorage.setItem('transactions', JSON.stringify(transactions));
+            loadTransactions();
+            closeModal('transactionModal');
+            showNotification('تراکنش با موفقیت ذخیره شد');
+            updateStats();
+        });
+
+        // Utility functions
+        function generateId() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2);
+        }
+
+        function generateInvoiceNumber() {
+            const count = invoices.length + 1;
+            return `INV-${count.toString().padStart(4, '0')}`;
+        }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('fa-IR').format(amount) + ' تومان';
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('fa-IR');
+        }
+
+        function getAccountTypeName(type) {
+            const types = {
+                'bank': 'بانک',
+                'cash': 'نقد',
+                'receivable': 'دریافتنی',
+                'payable': 'پرداختنی'
+            };
+            return types[type] || type;
+        }
+
+        function getMonthName(monthIndex) {
+            const months = [
+                'فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور',
+                'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'
+            ];
+            return months[monthIndex] || 'نامشخص';
+        }
+
+        function populateSelect(selectElement, data) {
+            selectElement.innerHTML = '<option value="">انتخاب کنید</option>';
+            data.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item.id;
+                option.textContent = item.name;
+                selectElement.appendChild(option);
+            });
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            const messageElement = document.getElementById('notificationMessage');
+
+            messageElement.textContent = message;
+            notification.classList.remove('hidden');
+
+            setTimeout(() => {
+                notification.classList.add('hidden');
+            }, 3000);
+        }
+
+        function showQuickActionMenu() {
+            const menu = document.getElementById('quickActionMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Reminder system
+        function checkReminders() {
+            const today = new Date();
+            const upcomingInvoices = invoices.filter(invoice => {
+                const invoiceDate = new Date(invoice.date);
+                const daysDiff = Math.ceil((today - invoiceDate) / (1000 * 60 * 60 * 24));
+                return daysDiff >= 30; // Invoices older than 30 days
+            });
+
+            if (upcomingInvoices.length > 0) {
+                showNotification(`${upcomingInvoices.length} فاکتور سررسید شده دارید`, 'warning');
+            }
+        }
+
+        // Close modals when clicking outside
+        document.addEventListener('click', function (e) {
+            if (e.target.classList.contains('fixed') && e.target.classList.contains('inset-0')) {
+                const modals = ['accountModal', 'customerModal', 'supplierModal', 'productModal', 'invoiceModal', 'transactionModal'];
+                modals.forEach(modalId => {
+                    closeModal(modalId);
+                });
+            }
+
+            // Close quick action menu when clicking outside
+            const quickMenu = document.getElementById('quickActionMenu');
+            if (!quickMenu.contains(e.target) && !e.target.closest('.fab')) {
+                quickMenu.classList.add('hidden');
+            }
+        });
+
+        // Add sample data for demonstration
+        function addSampleData() {
+            if (accounts.length === 0) {
+                accounts = [
+                    { id: '1', name: 'حساب جاری بانک ملی', type: 'bank', balance: 5000000 },
+                    { id: '2', name: 'صندوق', type: 'cash', balance: 1000000 }
+                ];
+                localStorage.setItem('accounts', JSON.stringify(accounts));
+            }
+
+            if (customers.length === 0) {
+                customers = [
+                    { id: '1', name: 'احمد محمدی', phone: '09123456789', email: 'ahmad@example.com', address: 'تهران', debt: 0 },
+                    { id: '2', name: 'فاطمه احمدی', phone: '09987654321', email: 'fateme@example.com', address: 'اصفهان', debt: 0 }
+                ];
+                localStorage.setItem('customers', JSON.stringify(customers));
+            }
+
+            if (products.length === 0) {
+                products = [
+                    { id: '1', name: 'لپ‌تاپ ایسوس', salePrice: 15000000, purchasePrice: 12000000, stock: 10 },
+                    { id: '2', name: 'موس بی‌سیم', salePrice: 250000, purchasePrice: 200000, stock: 25 }
+                ];
+                localStorage.setItem('products', JSON.stringify(products));
+            }
+
+            if (transactions.length === 0) {
+                transactions = [
+                    { id: '1', date: '2024-01-15', description: 'فروش محصولات', type: 'income', amount: 3000000 },
+                    { id: '2', date: '2024-01-10', description: 'خرید تجهیزات', type: 'expense', amount: 1500000 }
+                ];
+                localStorage.setItem('transactions', JSON.stringify(transactions));
+            }
+        }
+
+        // Initialize sample data
+        addSampleData();
+    </script>
+    <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'96c8e09fa399a61e',t:'MTc1NDc1OTUzNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
+</body>
+
+</html>

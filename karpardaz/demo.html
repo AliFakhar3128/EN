@@ -1,0 +1,1940 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>کارپرداز - نرم‌افزار حسابداری</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * { font-family: 'Vazirmatn', sans-serif; }
+        .material-card { 
+            background: white; 
+            border-radius: 12px; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+        }
+        .material-card:hover { 
+            box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22); 
+        }
+        .fab { 
+            position: fixed; 
+            bottom: 24px; 
+            right: 24px; 
+            width: 56px; 
+            height: 56px; 
+            border-radius: 50%; 
+            background: #6366f1; 
+            color: white; 
+            border: none; 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3); 
+            cursor: pointer; 
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        .fab:hover { 
+            transform: scale(1.1); 
+            box-shadow: 0 6px 12px rgba(0,0,0,0.4); 
+        }
+        .ripple { 
+            position: relative; 
+            overflow: hidden; 
+        }
+        .ripple::before { 
+            content: ''; 
+            position: absolute; 
+            top: 50%; 
+            left: 50%; 
+            width: 0; 
+            height: 0; 
+            border-radius: 50%; 
+            background: rgba(255,255,255,0.3); 
+            transition: width 0.6s, height 0.6s, top 0.6s, left 0.6s; 
+            transform: translate(-50%, -50%); 
+        }
+        .ripple:active::before { 
+            width: 300px; 
+            height: 300px; 
+        }
+        .modal { 
+            display: none; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(0,0,0,0.5); 
+            z-index: 2000; 
+        }
+        .modal.show { 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+        }
+        .progress-bar { 
+            height: 8px; 
+            background: #e5e7eb; 
+            border-radius: 4px; 
+            overflow: hidden; 
+        }
+        .progress-fill { 
+            height: 100%; 
+            background: linear-gradient(90deg, #6366f1, #8b5cf6); 
+            border-radius: 4px; 
+            transition: width 0.3s ease; 
+        }
+        .notification { 
+            position: fixed; 
+            top: 24px; 
+            right: 24px; 
+            padding: 16px 24px; 
+            background: #10b981; 
+            color: white; 
+            border-radius: 8px; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
+            transform: translateX(400px); 
+            transition: transform 0.3s ease; 
+            z-index: 3000; 
+        }
+        .notification.show { 
+            transform: translateX(0); 
+        }
+        .notification.error { 
+            background: #ef4444; 
+        }
+        .sidebar { 
+            transform: translateX(100%); 
+            transition: transform 0.3s ease; 
+        }
+        .sidebar.open { 
+            transform: translateX(0); 
+        }
+        @media (min-width: 768px) { 
+            .sidebar { 
+                transform: translateX(0); 
+            } 
+        }
+        .login-container {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .company-info-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal show">
+        <div class="login-container flex items-center justify-center w-full">
+            <div class="material-card p-8 w-full max-w-md mx-4">
+                <div class="text-center mb-8">
+                    <div class="w-16 h-16 bg-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="material-icons text-white text-2xl">account_balance</span>
+                    </div>
+                    <h1 class="text-3xl font-bold text-indigo-600 mb-2">کارپرداز</h1>
+                    <p class="text-gray-600">سیستم مدیریت مالی پیشرفته</p>
+                </div>
+                
+                <form id="loginForm" class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">نام کاربری</label>
+                        <input type="text" id="username" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" required>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">رمز عبور</label>
+                        <input type="password" id="password" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" required>
+                    </div>
+                    
+                    <button type="submit" class="ripple w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 transition-colors font-medium">
+                        ورود به سیستم
+                    </button>
+                </form>
+                
+                <div class="mt-6 space-y-4">
+                    <div class="p-4 bg-blue-50 rounded-lg">
+                        <p class="text-sm text-blue-800 text-center">
+                            <strong>اطلاعات ورود:</strong><br>
+                            نام کاربری: admin<br>
+                            رمز عبور: 1234
+                        </p>
+                    </div>
+                    <div class="p-4 bg-yellow-50 rounded-lg">
+                        <p class="text-xs text-yellow-800 text-center">
+                            <strong>توجه:</strong> برای عملکرد کامل سیستم، فایل data.json باید در پوشه اصلی پروژه قرار داشته باشد
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Company Info Modal -->
+    <div id="companyInfoModal" class="modal">
+        <div class="material-card p-8 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="text-center mb-8">
+                <h2 class="text-2xl font-bold text-gray-900 mb-2">اطلاعات شرکت</h2>
+                <p class="text-gray-600">لطفاً اطلاعات شرکت خود را وارد کنید</p>
+            </div>
+            
+            <form id="companyInfoForm" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">نام شرکت *</label>
+                        <input type="text" id="companyName" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" required>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">نوع فعالیت *</label>
+                        <select id="businessType" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" required>
+                            <option value="">انتخاب کنید</option>
+                            <option value="manufacturing">تولیدی</option>
+                            <option value="trading">بازرگانی</option>
+                            <option value="service">خدماتی</option>
+                            <option value="consulting">مشاوره‌ای</option>
+                            <option value="technology">فناوری</option>
+                            <option value="retail">خرده‌فروشی</option>
+                            <option value="other">سایر</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">شناسه ملی</label>
+                        <input type="text" id="nationalId" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">کد اقتصادی</label>
+                        <input type="text" id="economicCode" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">تلفن</label>
+                        <input type="tel" id="phone" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">ایمیل</label>
+                        <input type="email" id="email" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">آدرس</label>
+                    <textarea id="address" rows="3" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"></textarea>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">توضیحات</label>
+                    <textarea id="description" rows="3" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" placeholder="توضیحات اضافی در مورد شرکت..."></textarea>
+                </div>
+                
+                <div class="flex gap-4 pt-4">
+                    <button type="submit" class="ripple flex-1 bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 transition-colors font-medium">
+                        ذخیره اطلاعات
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification">
+        <span id="notificationText"></span>
+    </div>
+
+    <!-- Mobile Header -->
+    <header class="md:hidden bg-white shadow-sm p-4 flex items-center justify-between">
+        <button id="menuToggle" class="material-icons text-gray-600">menu</button>
+        <h1 class="text-xl font-bold text-indigo-600">کارپرداز</h1>
+        <button id="logoutBtn" class="material-icons text-gray-600">logout</button>
+    </header>
+
+    <div class="flex min-h-screen">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="sidebar fixed md:relative z-40 w-64 bg-white shadow-lg h-full md:h-screen right-0">
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-8">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center">
+                            <span class="material-icons text-white">account_balance</span>
+                        </div>
+                        <h1 class="text-2xl font-bold text-indigo-600">کارپرداز</h1>
+                    </div>
+                    <button id="closeSidebar" class="md:hidden material-icons text-gray-600 hover:text-gray-800">close</button>
+                </div>
+                
+                <!-- Company Selector -->
+                <div class="mb-6">
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="text-sm font-medium text-gray-700">شرکت فعال:</label>
+                        <button id="addCompany" class="material-icons text-indigo-600 hover:text-indigo-800 text-sm">add</button>
+                    </div>
+                    <select id="companySelector" class="w-full p-2 border border-gray-300 rounded-lg bg-white text-gray-900 text-sm">
+                        <option value="">انتخاب شرکت</option>
+                    </select>
+                </div>
+                
+                <nav class="space-y-2">
+                    <button class="nav-item w-full text-right p-3 rounded-lg flex items-center gap-3 text-gray-700 hover:bg-indigo-50 transition-colors" data-page="dashboard">
+                        <span class="material-icons">dashboard</span>
+                        داشبورد
+                    </button>
+                    <button class="nav-item w-full text-right p-3 rounded-lg flex items-center gap-3 text-gray-700 hover:bg-indigo-50 transition-colors" data-page="transactions">
+                        <span class="material-icons">receipt_long</span>
+                        تراکنش‌ها
+                    </button>
+                    <button class="nav-item w-full text-right p-3 rounded-lg flex items-center gap-3 text-gray-700 hover:bg-indigo-50 transition-colors" data-page="reports">
+                        <span class="material-icons">assessment</span>
+                        گزارش‌ها
+                    </button>
+                    <button class="nav-item w-full text-right p-3 rounded-lg flex items-center gap-3 text-gray-700 hover:bg-indigo-50 transition-colors" data-page="budget">
+                        <span class="material-icons">savings</span>
+                        بودجه
+                    </button>
+                    <button class="nav-item w-full text-right p-3 rounded-lg flex items-center gap-3 text-gray-700 hover:bg-indigo-50 transition-colors" data-page="company">
+                        <span class="material-icons">business</span>
+                        اطلاعات شرکت
+                    </button>
+                    <button class="nav-item w-full text-right p-3 rounded-lg flex items-center gap-3 text-gray-700 hover:bg-indigo-50 transition-colors" data-page="settings">
+                        <span class="material-icons">settings</span>
+                        تنظیمات
+                    </button>
+                </nav>
+            </div>
+            
+            <!-- Logout Button -->
+            <div class="absolute bottom-6 right-6">
+                <button id="desktopLogoutBtn" class="p-3 rounded-lg bg-red-100 text-red-600 hover:bg-red-200 transition-colors">
+                    <span class="material-icons">logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Overlay for mobile -->
+        <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden hidden"></div>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-4 md:p-8">
+            <!-- Dashboard Page -->
+            <div id="dashboard" class="page">
+                <div class="mb-8">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-2">داشبورد</h2>
+                    <p class="text-gray-600">نمای کلی وضعیت مالی شما</p>
+                </div>
+
+                <!-- Company Info Card -->
+                <div id="companyInfoCard" class="company-info-card material-card p-6 mb-8">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-xl font-bold mb-2" id="dashboardCompanyName">نام شرکت</h3>
+                            <p class="opacity-90" id="dashboardBusinessType">نوع فعالیت</p>
+                        </div>
+                        <div class="w-16 h-16 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+                            <span class="material-icons text-white text-2xl">business</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="stats-grid mb-8">
+                    <div class="material-card p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-600 mb-1">کل درآمد</p>
+                                <p class="text-2xl font-bold text-green-600" id="totalIncome">0 ریال</p>
+                            </div>
+                            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                                <span class="material-icons text-green-600">trending_up</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="material-card p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-600 mb-1">کل هزینه</p>
+                                <p class="text-2xl font-bold text-red-600" id="totalExpense">0 ریال</p>
+                            </div>
+                            <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
+                                <span class="material-icons text-red-600">trending_down</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="material-card p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-600 mb-1">سود/زیان</p>
+                                <p class="text-2xl font-bold" id="netProfit">0 ریال</p>
+                            </div>
+                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <span class="material-icons text-blue-600">account_balance</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="material-card p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-600 mb-1">تراکنش‌ها</p>
+                                <p class="text-2xl font-bold text-indigo-600" id="totalTransactions">0</p>
+                            </div>
+                            <div class="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
+                                <span class="material-icons text-indigo-600">receipt</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <div class="material-card p-6">
+                        <h3 class="text-lg font-semibold mb-4 text-gray-900">نمودار درآمد و هزینه</h3>
+                        <canvas id="incomeExpenseChart"></canvas>
+                    </div>
+                    
+                    <div class="material-card p-6">
+                        <h3 class="text-lg font-semibold mb-4 text-gray-900">توزیع دسته‌بندی‌ها</h3>
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Trend Chart -->
+                <div class="material-card p-6">
+                    <h3 class="text-lg font-semibold mb-4 text-gray-900">روند درآمد و هزینه (6 ماه اخیر)</h3>
+                    <canvas id="trendChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Transactions Page -->
+            <div id="transactions" class="page hidden">
+                <div class="mb-8">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-2">تراکنش‌ها</h2>
+                    <p class="text-gray-600">مدیریت تراکنش‌های مالی</p>
+                </div>
+
+                <!-- Search and Filter -->
+                <div class="material-card p-6 mb-6">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <input type="text" id="searchTransactions" placeholder="جستجو..." class="p-3 border border-gray-300 rounded-lg bg-white text-gray-900">
+                        <select id="filterType" class="p-3 border border-gray-300 rounded-lg bg-white text-gray-900">
+                            <option value="">همه انواع</option>
+                            <option value="income">درآمد</option>
+                            <option value="expense">هزینه</option>
+                        </select>
+                        <select id="filterCategory" class="p-3 border border-gray-300 rounded-lg bg-white text-gray-900">
+                            <option value="">همه دسته‌ها</option>
+                        </select>
+                        <input type="date" id="filterDate" class="p-3 border border-gray-300 rounded-lg bg-white text-gray-900">
+                    </div>
+                </div>
+
+                <!-- Transactions List -->
+                <div class="material-card">
+                    <div class="p-6 border-b border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-900">لیست تراکنش‌ها</h3>
+                    </div>
+                    <div id="transactionsList" class="divide-y divide-gray-200">
+                        <div class="p-6 text-center text-gray-500">
+                            هیچ تراکنشی یافت نشد
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reports Page -->
+            <div id="reports" class="page hidden">
+                <div class="mb-8">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-2">گزارش‌ها</h2>
+                    <p class="text-gray-600">گزارش‌های مالی تفصیلی</p>
+                </div>
+
+                <!-- Report Controls -->
+                <div class="material-card p-6 mb-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <select id="reportType" class="p-3 border border-gray-300 rounded-lg bg-white text-gray-900">
+                            <option value="monthly">گزارش ماهانه</option>
+                            <option value="category">گزارش دسته‌بندی</option>
+                            <option value="yearly">گزارش سالانه</option>
+                        </select>
+                        <input type="month" id="reportMonth" class="p-3 border border-gray-300 rounded-lg bg-white text-gray-900">
+                        <button id="generateReport" class="ripple bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors">
+                            تولید گزارش
+                        </button>
+                    </div>
+                    <div class="flex gap-3">
+                        <button id="exportCSV" class="ripple bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors">
+                            خروجی CSV
+                        </button>
+                        <button id="exportPDF" class="ripple bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors">
+                            خروجی PDF
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Report Content -->
+                <div id="reportContent" class="material-card p-6">
+                    <p class="text-center text-gray-500">گزارشی انتخاب نشده است</p>
+                </div>
+            </div>
+
+            <!-- Budget Page -->
+            <div id="budget" class="page hidden">
+                <div class="mb-8">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-2">بودجه</h2>
+                    <p class="text-gray-600">برنامه‌ریزی و کنترل بودجه</p>
+                </div>
+
+                <!-- Budget Overview -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <div class="material-card p-6">
+                        <h3 class="text-lg font-semibold mb-4 text-gray-900">بودجه کل ماه</h3>
+                        <div class="text-3xl font-bold text-indigo-600 mb-2" id="totalBudget">0 ریال</div>
+                        <div class="progress-bar mb-2">
+                            <div class="progress-fill" id="budgetProgress" style="width: 0%"></div>
+                        </div>
+                        <p class="text-sm text-gray-600">
+                            <span id="budgetUsed">0</span> از <span id="budgetTotal">0</span> ریال استفاده شده
+                        </p>
+                    </div>
+                    
+                    <div class="material-card p-6">
+                        <h3 class="text-lg font-semibold mb-4 text-gray-900">وضعیت بودجه</h3>
+                        <div class="space-y-3" id="budgetStatus">
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-600">باقی‌مانده:</span>
+                                <span class="font-semibold" id="budgetRemaining">0 ریال</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Budget Categories -->
+                <div class="material-card">
+                    <div class="p-6 border-b border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-900">بودجه دسته‌بندی‌ها</h3>
+                    </div>
+                    <div id="budgetCategories" class="p-6 space-y-4">
+                        <p class="text-center text-gray-500">بودجه‌ای تنظیم نشده است</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Company Page -->
+            <div id="company" class="page hidden">
+                <div class="mb-8">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-2">اطلاعات شرکت</h2>
+                    <p class="text-gray-600">مدیریت اطلاعات شرکت</p>
+                </div>
+
+                <div class="material-card p-8">
+                    <div id="companyDetails">
+                        <p class="text-center text-gray-500">اطلاعات شرکت بارگذاری می‌شود...</p>
+                    </div>
+                    
+                    <div class="mt-8 text-center">
+                        <button id="editCompanyInfo" class="ripple bg-indigo-600 text-white px-8 py-3 rounded-lg hover:bg-indigo-700 transition-colors">
+                            ویرایش اطلاعات
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Page -->
+            <div id="settings" class="page hidden">
+                <div class="mb-8">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-2">تنظیمات</h2>
+                    <p class="text-gray-600">تنظیمات برنامه</p>
+                </div>
+
+                <div class="space-y-6">
+                    <!-- Data Management -->
+                    <div class="material-card p-6">
+                        <h3 class="text-lg font-semibold mb-4 text-gray-900">مدیریت داده‌ها</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <button id="exportData" class="ripple bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
+                                خروجی JSON
+                            </button>
+                            <button id="exportCSVData" class="ripple bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors">
+                                خروجی CSV
+                            </button>
+                            <button id="importData" class="ripple bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors">
+                                وارد کردن داده
+                            </button>
+                            <button id="clearData" class="ripple bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors">
+                                پاک کردن همه
+                            </button>
+                        </div>
+                        <input type="file" id="importFile" accept=".json,.csv" class="hidden">
+                    </div>
+
+                    <!-- System Info -->
+                    <div class="material-card p-6">
+                        <h3 class="text-lg font-semibold mb-4 text-gray-900">اطلاعات سیستم</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">نسخه:</span>
+                                <span class="font-medium">1.0.0</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">آخرین بروزرسانی:</span>
+                                <span class="font-medium" id="lastUpdate">-</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">تعداد تراکنش‌ها:</span>
+                                <span class="font-medium" id="transactionCount">0</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">حجم داده:</span>
+                                <span class="font-medium" id="dataSize">0 KB</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- FAB -->
+    <button id="fab" class="fab ripple fixed" title="افزودن تراکنش">
+        <span class="material-icons">add</span>
+    </button>
+
+    <!-- Transaction Modal -->
+    <div id="transactionModal" class="modal">
+        <div class="material-card p-6 w-full max-w-md mx-4">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-xl font-semibold text-gray-900" id="modalTitle">افزودن تراکنش</h3>
+                <button id="closeModal" class="material-icons text-gray-500 hover:text-gray-700">close</button>
+            </div>
+            
+            <form id="transactionForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">نوع</label>
+                    <select id="transactionType" class="w-full p-3 border border-gray-300 rounded-lg bg-white text-gray-900" required>
+                        <option value="income">درآمد</option>
+                        <option value="expense">هزینه</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">مبلغ (ریال)</label>
+                    <input type="number" id="transactionAmount" class="w-full p-3 border border-gray-300 rounded-lg bg-white text-gray-900" required>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">دسته‌بندی</label>
+                    <select id="transactionCategory" class="w-full p-3 border border-gray-300 rounded-lg bg-white text-gray-900" required>
+                        <option value="food">غذا</option>
+                        <option value="transport">حمل‌ونقل</option>
+                        <option value="entertainment">سرگرمی</option>
+                        <option value="utilities">قبوض</option>
+                        <option value="salary">حقوق</option>
+                        <option value="business">کسب‌وکار</option>
+                        <option value="other">سایر</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">تاریخ</label>
+                    <input type="date" id="transactionDate" class="w-full p-3 border border-gray-300 rounded-lg bg-white text-gray-900" required>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">یادداشت</label>
+                    <textarea id="transactionNote" class="w-full p-3 border border-gray-300 rounded-lg bg-white text-gray-900" rows="3"></textarea>
+                </div>
+                
+                <div class="flex gap-3 pt-4">
+                    <button type="submit" class="ripple flex-1 bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 transition-colors">
+                        ذخیره
+                    </button>
+                    <button type="button" id="cancelModal" class="ripple flex-1 bg-gray-300 text-gray-700 py-3 rounded-lg hover:bg-gray-400 transition-colors">
+                        انصراف
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Budget Modal -->
+    <div id="budgetModal" class="modal">
+        <div class="material-card p-6 w-full max-w-md mx-4">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-xl font-semibold text-gray-900">تنظیم بودجه</h3>
+                <button id="closeBudgetModal" class="material-icons text-gray-500 hover:text-gray-700">close</button>
+            </div>
+            
+            <form id="budgetForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">دسته‌بندی</label>
+                    <select id="budgetCategory" class="w-full p-3 border border-gray-300 rounded-lg bg-white text-gray-900" required>
+                        <option value="food">غذا</option>
+                        <option value="transport">حمل‌ونقل</option>
+                        <option value="entertainment">سرگرمی</option>
+                        <option value="utilities">قبوض</option>
+                        <option value="other">سایر</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">مبلغ بودجه (ریال)</label>
+                    <input type="number" id="budgetAmount" class="w-full p-3 border border-gray-300 rounded-lg bg-white text-gray-900" required>
+                </div>
+                
+                <div class="flex gap-3 pt-4">
+                    <button type="submit" class="ripple flex-1 bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 transition-colors">
+                        ذخیره
+                    </button>
+                    <button type="button" id="cancelBudgetModal" class="ripple flex-1 bg-gray-300 text-gray-700 py-3 rounded-lg hover:bg-gray-400 transition-colors">
+                        انصراف
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // App State
+        let currentPage = 'dashboard';
+        let currentCompany = null;
+        let companies = {};
+        let appData = {
+            transactions: [],
+            budgets: {},
+            companyInfo: {},
+            settings: { lastUpdate: new Date().toISOString() }
+        };
+        let editingTransaction = null;
+        let isLoggedIn = false;
+
+        // Categories in Persian
+        const categoryNames = {
+            'food': 'غذا',
+            'transport': 'حمل‌ونقل',
+            'entertainment': 'سرگرمی',
+            'utilities': 'قبوض',
+            'salary': 'حقوق',
+            'business': 'کسب‌وکار',
+            'other': 'سایر'
+        };
+
+        const businessTypeNames = {
+            'manufacturing': 'تولیدی',
+            'trading': 'بازرگانی',
+            'service': 'خدماتی',
+            'consulting': 'مشاوره‌ای',
+            'technology': 'فناوری',
+            'retail': 'خرده‌فروشی',
+            'other': 'سایر'
+        };
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            setupEventListeners();
+            loadDataFromJSON();
+        });
+
+        function setupEventListeners() {
+            // Login
+            document.getElementById('loginForm').addEventListener('submit', handleLogin);
+            
+            // Logout
+            document.getElementById('logoutBtn').addEventListener('click', logout);
+            document.getElementById('desktopLogoutBtn').addEventListener('click', logout);
+
+            // Navigation
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    const page = e.currentTarget.dataset.page;
+                    loadPage(page);
+                    closeSidebar();
+                });
+            });
+
+            // Mobile menu
+            document.getElementById('menuToggle').addEventListener('click', toggleSidebar);
+            document.getElementById('overlay').addEventListener('click', closeSidebar);
+            document.getElementById('closeSidebar').addEventListener('click', closeSidebar);
+
+            // FAB
+            document.getElementById('fab').addEventListener('click', () => {
+                openTransactionModal();
+            });
+
+            // Modals
+            document.getElementById('closeModal').addEventListener('click', closeTransactionModal);
+            document.getElementById('cancelModal').addEventListener('click', closeTransactionModal);
+            document.getElementById('closeBudgetModal').addEventListener('click', closeBudgetModal);
+            document.getElementById('cancelBudgetModal').addEventListener('click', closeBudgetModal);
+
+            // Forms
+            document.getElementById('transactionForm').addEventListener('submit', handleTransactionSubmit);
+            document.getElementById('budgetForm').addEventListener('submit', handleBudgetSubmit);
+            document.getElementById('companyInfoForm').addEventListener('submit', handleCompanyInfoSubmit);
+
+            // Search and filters
+            document.getElementById('searchTransactions').addEventListener('input', filterTransactions);
+            document.getElementById('filterType').addEventListener('change', filterTransactions);
+            document.getElementById('filterCategory').addEventListener('change', filterTransactions);
+            document.getElementById('filterDate').addEventListener('change', filterTransactions);
+
+            // Reports
+            document.getElementById('generateReport').addEventListener('click', generateReport);
+            document.getElementById('exportCSV').addEventListener('click', exportToCSV);
+
+            // Settings
+            document.getElementById('exportData').addEventListener('click', exportData);
+            document.getElementById('exportCSVData').addEventListener('click', exportCSVData);
+            document.getElementById('importData').addEventListener('click', () => document.getElementById('importFile').click());
+            document.getElementById('importFile').addEventListener('change', importData);
+            document.getElementById('clearData').addEventListener('click', clearAllData);
+
+            // Company
+            document.getElementById('editCompanyInfo').addEventListener('click', () => {
+                populateCompanyForm();
+                document.getElementById('companyInfoModal').classList.add('show');
+            });
+            
+            // Company management
+            document.getElementById('companySelector').addEventListener('change', switchCompany);
+            document.getElementById('addCompany').addEventListener('click', () => {
+                document.getElementById('companyInfoModal').classList.add('show');
+            });
+
+            // Close modals on outside click
+            document.getElementById('transactionModal').addEventListener('click', (e) => {
+                if (e.target.id === 'transactionModal') closeTransactionModal();
+            });
+            document.getElementById('budgetModal').addEventListener('click', (e) => {
+                if (e.target.id === 'budgetModal') closeBudgetModal();
+            });
+            document.getElementById('companyInfoModal').addEventListener('click', (e) => {
+                if (e.target.id === 'companyInfoModal') closeCompanyInfoModal();
+            });
+        }
+
+        // Authentication
+        function handleLogin(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (username === 'admin' && password === '1234') {
+                isLoggedIn = true;
+                document.getElementById('loginModal').classList.remove('show');
+                
+                initializeApp();
+                
+                showNotification('خوش آمدید!');
+            } else {
+                showNotification('نام کاربری یا رمز عبور اشتباه است', 'error');
+            }
+        }
+
+        function logout() {
+            if (confirm('آیا می‌خواهید از سیستم خارج شوید؟')) {
+                isLoggedIn = false;
+                document.getElementById('loginModal').classList.add('show');
+                showNotification('با موفقیت خارج شدید');
+            }
+        }
+
+        function initializeApp() {
+            // Set current date as default
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('transactionDate').value = today;
+            
+            // Set current month for reports
+            const currentMonth = new Date().toISOString().slice(0, 7);
+            document.getElementById('reportMonth').value = currentMonth;
+            
+            // Populate filter categories
+            populateFilterCategories();
+            
+            // Load companies and populate selector
+            loadCompanies();
+            
+            // Load initial page
+            loadPage('dashboard');
+            updateDashboard();
+            updateSystemInfo();
+        }
+
+        // Company Management
+        function loadCompanies() {
+            const savedCompanies = localStorage.getItem('karpardaz_companies');
+            if (savedCompanies) {
+                companies = JSON.parse(savedCompanies);
+            }
+            
+            const selector = document.getElementById('companySelector');
+            selector.innerHTML = '<option value="">انتخاب شرکت</option>';
+            
+            Object.entries(companies).forEach(([id, company]) => {
+                const option = document.createElement('option');
+                option.value = id;
+                option.textContent = company.companyInfo.companyName || `شرکت ${id}`;
+                selector.appendChild(option);
+            });
+            
+            // Auto-select first company if available
+            const companyIds = Object.keys(companies);
+            if (companyIds.length > 0 && !currentCompany) {
+                currentCompany = companyIds[0];
+                selector.value = currentCompany;
+                loadCompanyData();
+            }
+        }
+
+        function switchCompany(e) {
+            const companyId = e.target.value;
+            if (companyId && companies[companyId]) {
+                currentCompany = companyId;
+                loadCompanyData();
+                updateDashboard();
+                if (currentPage === 'transactions') loadTransactions();
+                if (currentPage === 'budget') loadBudget();
+                updateCompanyDisplay();
+            }
+        }
+
+        function loadCompanyData() {
+            if (currentCompany && companies[currentCompany]) {
+                appData = companies[currentCompany];
+            } else {
+                appData = {
+                    transactions: [],
+                    budgets: {},
+                    companyInfo: {},
+                    settings: { lastUpdate: new Date().toISOString() }
+                };
+            }
+        }
+
+        function saveCompanyData() {
+            if (currentCompany) {
+                companies[currentCompany] = appData;
+                localStorage.setItem('karpardaz_companies', JSON.stringify(companies));
+            }
+        }
+
+        // Company Info
+        function handleCompanyInfoSubmit(e) {
+            e.preventDefault();
+            
+            const companyInfo = {
+                companyName: document.getElementById('companyName').value,
+                businessType: document.getElementById('businessType').value,
+                nationalId: document.getElementById('nationalId').value,
+                economicCode: document.getElementById('economicCode').value,
+                phone: document.getElementById('phone').value,
+                email: document.getElementById('email').value,
+                address: document.getElementById('address').value,
+                description: document.getElementById('description').value
+            };
+            
+            // If no current company, create new one
+            if (!currentCompany) {
+                currentCompany = Date.now().toString();
+                appData = {
+                    transactions: [],
+                    budgets: {},
+                    companyInfo: companyInfo,
+                    settings: { lastUpdate: new Date().toISOString() }
+                };
+            } else {
+                appData.companyInfo = companyInfo;
+            }
+            
+            saveCompanyData();
+            loadCompanies();
+            document.getElementById('companySelector').value = currentCompany;
+            closeCompanyInfoModal();
+            updateCompanyDisplay();
+            
+            showNotification('اطلاعات شرکت ذخیره شد');
+        }
+
+        function populateCompanyForm() {
+            if (appData.companyInfo) {
+                document.getElementById('companyName').value = appData.companyInfo.companyName || '';
+                document.getElementById('businessType').value = appData.companyInfo.businessType || '';
+                document.getElementById('nationalId').value = appData.companyInfo.nationalId || '';
+                document.getElementById('economicCode').value = appData.companyInfo.economicCode || '';
+                document.getElementById('phone').value = appData.companyInfo.phone || '';
+                document.getElementById('email').value = appData.companyInfo.email || '';
+                document.getElementById('address').value = appData.companyInfo.address || '';
+                document.getElementById('description').value = appData.companyInfo.description || '';
+            }
+        }
+
+        function closeCompanyInfoModal() {
+            document.getElementById('companyInfoModal').classList.remove('show');
+        }
+
+        function updateCompanyDisplay() {
+            if (appData.companyInfo.companyName) {
+                document.getElementById('dashboardCompanyName').textContent = appData.companyInfo.companyName;
+                document.getElementById('dashboardBusinessType').textContent = businessTypeNames[appData.companyInfo.businessType] || appData.companyInfo.businessType;
+                
+                // Update company page
+                const companyDetails = document.getElementById('companyDetails');
+                companyDetails.innerHTML = `
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <div>
+                                <h4 class="font-semibold text-gray-900 mb-2">نام شرکت</h4>
+                                <p class="text-gray-600">${appData.companyInfo.companyName}</p>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-900 mb-2">نوع فعالیت</h4>
+                                <p class="text-gray-600">${businessTypeNames[appData.companyInfo.businessType] || appData.companyInfo.businessType}</p>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-900 mb-2">شناسه ملی</h4>
+                                <p class="text-gray-600">${appData.companyInfo.nationalId || 'وارد نشده'}</p>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-900 mb-2">کد اقتصادی</h4>
+                                <p class="text-gray-600">${appData.companyInfo.economicCode || 'وارد نشده'}</p>
+                            </div>
+                        </div>
+                        <div class="space-y-4">
+                            <div>
+                                <h4 class="font-semibold text-gray-900 mb-2">تلفن</h4>
+                                <p class="text-gray-600">${appData.companyInfo.phone || 'وارد نشده'}</p>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-900 mb-2">ایمیل</h4>
+                                <p class="text-gray-600">${appData.companyInfo.email || 'وارد نشده'}</p>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-900 mb-2">آدرس</h4>
+                                <p class="text-gray-600">${appData.companyInfo.address || 'وارد نشده'}</p>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-900 mb-2">توضیحات</h4>
+                                <p class="text-gray-600">${appData.companyInfo.description || 'وارد نشده'}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Data Management
+        async function loadDataFromJSON() {
+            try {
+                const response = await fetch('./data.json');
+                if (response.ok) {
+                    const data = await response.json();
+                    appData = { ...appData, ...data };
+                    showNotification('داده‌ها بارگذاری شد');
+                } else {
+                    // Create initial data.json file if it doesn't exist
+                    await saveDataToJSON();
+                }
+            } catch (error) {
+                console.log('No existing data file found, creating new one');
+                await saveDataToJSON();
+            }
+        }
+
+        async function saveDataToJSON() {
+            appData.settings.lastUpdate = new Date().toISOString();
+            saveCompanyData();
+            updateSystemInfo();
+        }
+
+        function exportData() {
+            const blob = new Blob([JSON.stringify(appData, null, 2)], { type: 'application/json' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `karpardaz-backup-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            
+            showNotification('داده‌ها با موفقیت دانلود شد');
+        }
+
+        function exportCSVData() {
+            let csvContent = 'تاریخ,نوع,دسته‌بندی,مبلغ,یادداشت\n';
+            csvContent += appData.transactions.map(t => 
+                `${t.date},${t.type === 'income' ? 'درآمد' : 'هزینه'},${categoryNames[t.category]},${t.amount},"${t.note || ''}"`
+            ).join('\n');
+            
+            const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `karpardaz-transactions-${new Date().toISOString().split('T')[0]}.csv`;
+            link.click();
+            
+            showNotification('داده‌های CSV دانلود شد');
+        }
+
+        function importData(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                try {
+                    const importedData = JSON.parse(event.target.result);
+                    
+                    if (confirm('آیا می‌خواهید داده‌های موجود را با داده‌های وارد شده جایگزین کنید؟')) {
+                        appData = { ...appData, ...importedData };
+                        saveDataToJSON();
+                        updateDashboard();
+                        loadTransactions();
+                        loadBudget();
+                        updateCompanyDisplay();
+                        showNotification('داده‌ها با موفقیت وارد شد');
+                    }
+                } catch (error) {
+                    showNotification('فایل نامعتبر است', 'error');
+                }
+            };
+            reader.readAsText(file);
+            
+            // Reset file input
+            e.target.value = '';
+        }
+
+        function clearAllData() {
+            if (confirm('آیا از پاک کردن همه داده‌ها اطمینان دارید؟ این عمل قابل بازگشت نیست.')) {
+                appData = {
+                    transactions: [],
+                    budgets: {},
+                    companyInfo: {},
+                    settings: { lastUpdate: new Date().toISOString() }
+                };
+                
+                localStorage.removeItem('karpardaz_data');
+                saveDataToJSON();
+                
+                updateDashboard();
+                loadTransactions();
+                loadBudget();
+                updateCompanyDisplay();
+                updateSystemInfo();
+                
+                showNotification('همه داده‌ها پاک شد');
+            }
+        }
+
+        function updateSystemInfo() {
+            document.getElementById('transactionCount').textContent = appData.transactions.length;
+            document.getElementById('lastUpdate').textContent = new Date(appData.settings.lastUpdate).toLocaleDateString('fa-IR');
+            
+            const dataSize = new Blob([JSON.stringify(appData)]).size;
+            document.getElementById('dataSize').textContent = `${(dataSize / 1024).toFixed(1)} KB`;
+        }
+
+        // Navigation
+        function loadPage(page) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+            
+            // Show selected page
+            document.getElementById(page).classList.remove('hidden');
+            
+            // Update navigation
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('bg-indigo-100', 'text-indigo-700');
+                if (item.dataset.page === page) {
+                    item.classList.add('bg-indigo-100', 'text-indigo-700');
+                }
+            });
+            
+            currentPage = page;
+            
+            // Load page-specific data
+            switch(page) {
+                case 'dashboard':
+                    updateDashboard();
+                    updateCompanyDisplay();
+                    break;
+                case 'transactions':
+                    loadTransactions();
+                    break;
+                case 'reports':
+                    break;
+                case 'budget':
+                    loadBudget();
+                    break;
+                case 'company':
+                    updateCompanyDisplay();
+                    break;
+                case 'settings':
+                    updateSystemInfo();
+                    break;
+            }
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('hidden');
+        }
+
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            
+            sidebar.classList.remove('open');
+            overlay.classList.add('hidden');
+        }
+
+        // Transactions
+        function openTransactionModal(transaction = null) {
+            editingTransaction = transaction;
+            const modal = document.getElementById('transactionModal');
+            const title = document.getElementById('modalTitle');
+            const form = document.getElementById('transactionForm');
+            
+            if (transaction) {
+                title.textContent = 'ویرایش تراکنش';
+                document.getElementById('transactionType').value = transaction.type;
+                document.getElementById('transactionAmount').value = transaction.amount;
+                document.getElementById('transactionCategory').value = transaction.category;
+                document.getElementById('transactionDate').value = transaction.date;
+                document.getElementById('transactionNote').value = transaction.note || '';
+            } else {
+                title.textContent = 'افزودن تراکنش';
+                form.reset();
+                document.getElementById('transactionDate').value = new Date().toISOString().split('T')[0];
+            }
+            
+            modal.classList.add('show');
+        }
+
+        function closeTransactionModal() {
+            document.getElementById('transactionModal').classList.remove('show');
+            editingTransaction = null;
+        }
+
+        function handleTransactionSubmit(e) {
+            e.preventDefault();
+            
+            const transaction = {
+                id: editingTransaction ? editingTransaction.id : Date.now(),
+                type: document.getElementById('transactionType').value,
+                amount: parseFloat(document.getElementById('transactionAmount').value),
+                category: document.getElementById('transactionCategory').value,
+                date: document.getElementById('transactionDate').value,
+                note: document.getElementById('transactionNote').value
+            };
+            
+            if (editingTransaction) {
+                const index = appData.transactions.findIndex(t => t.id === editingTransaction.id);
+                appData.transactions[index] = transaction;
+                showNotification('تراکنش با موفقیت ویرایش شد');
+            } else {
+                appData.transactions.push(transaction);
+                showNotification('تراکنش با موفقیت اضافه شد');
+            }
+            
+            saveDataToJSON();
+            closeTransactionModal();
+            
+            if (currentPage === 'transactions') {
+                loadTransactions();
+            }
+            if (currentPage === 'dashboard') {
+                updateDashboard();
+            }
+        }
+
+        function deleteTransaction(id) {
+            if (confirm('آیا از حذف این تراکنش اطمینان دارید؟')) {
+                appData.transactions = appData.transactions.filter(t => t.id !== id);
+                saveDataToJSON();
+                loadTransactions();
+                updateDashboard();
+                showNotification('تراکنش حذف شد');
+            }
+        }
+
+        function loadTransactions() {
+            const container = document.getElementById('transactionsList');
+            
+            if (appData.transactions.length === 0) {
+                container.innerHTML = '<div class="p-6 text-center text-gray-500">هیچ تراکنشی یافت نشد</div>';
+                return;
+            }
+            
+            const filteredTransactions = getFilteredTransactions();
+            
+            if (filteredTransactions.length === 0) {
+                container.innerHTML = '<div class="p-6 text-center text-gray-500">هیچ تراکنشی با این فیلتر یافت نشد</div>';
+                return;
+            }
+            
+            container.innerHTML = filteredTransactions.map(transaction => `
+                <div class="p-6 flex items-center justify-between hover:bg-gray-50 transition-colors">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-lg flex items-center justify-center ${transaction.type === 'income' ? 'bg-green-100' : 'bg-red-100'}">
+                            <span class="material-icons ${transaction.type === 'income' ? 'text-green-600' : 'text-red-600'}">
+                                ${transaction.type === 'income' ? 'trending_up' : 'trending_down'}
+                            </span>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-900">${categoryNames[transaction.category]}</h4>
+                            <p class="text-sm text-gray-600">${formatDate(transaction.date)}</p>
+                            ${transaction.note ? `<p class="text-sm text-gray-500">${transaction.note}</p>` : ''}
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div class="text-left">
+                            <p class="font-bold ${transaction.type === 'income' ? 'text-green-600' : 'text-red-600'}">
+                                ${transaction.type === 'expense' ? '-' : '+'}${formatCurrency(transaction.amount)}
+                            </p>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="openTransactionModal(${JSON.stringify(transaction).replace(/"/g, '&quot;')})" class="material-icons text-gray-400 hover:text-indigo-600 transition-colors">edit</button>
+                            <button onclick="deleteTransaction(${transaction.id})" class="material-icons text-gray-400 hover:text-red-600 transition-colors">delete</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function getFilteredTransactions() {
+            const search = document.getElementById('searchTransactions').value.toLowerCase();
+            const typeFilter = document.getElementById('filterType').value;
+            const categoryFilter = document.getElementById('filterCategory').value;
+            const dateFilter = document.getElementById('filterDate').value;
+            
+            return appData.transactions.filter(transaction => {
+                const matchesSearch = !search || 
+                    categoryNames[transaction.category].toLowerCase().includes(search) ||
+                    (transaction.note && transaction.note.toLowerCase().includes(search));
+                
+                const matchesType = !typeFilter || transaction.type === typeFilter;
+                const matchesCategory = !categoryFilter || transaction.category === categoryFilter;
+                const matchesDate = !dateFilter || transaction.date === dateFilter;
+                
+                return matchesSearch && matchesType && matchesCategory && matchesDate;
+            }).sort((a, b) => new Date(b.date) - new Date(a.date));
+        }
+
+        function filterTransactions() {
+            loadTransactions();
+        }
+
+        function populateFilterCategories() {
+            const select = document.getElementById('filterCategory');
+            select.innerHTML = '<option value="">همه دسته‌ها</option>';
+            
+            Object.entries(categoryNames).forEach(([key, value]) => {
+                select.innerHTML += `<option value="${key}">${value}</option>`;
+            });
+        }
+
+        // Dashboard
+        function updateDashboard() {
+            const stats = calculateStats();
+            
+            document.getElementById('totalIncome').textContent = formatCurrency(stats.totalIncome);
+            document.getElementById('totalExpense').textContent = formatCurrency(stats.totalExpense);
+            document.getElementById('totalTransactions').textContent = stats.totalTransactions;
+            
+            const netProfit = stats.totalIncome - stats.totalExpense;
+            const netProfitElement = document.getElementById('netProfit');
+            netProfitElement.textContent = formatCurrency(Math.abs(netProfit));
+            netProfitElement.className = `text-2xl font-bold ${netProfit >= 0 ? 'text-green-600' : 'text-red-600'}`;
+            
+            updateCharts(stats);
+        }
+
+        function calculateStats() {
+            const currentMonth = new Date().toISOString().slice(0, 7);
+            const monthlyTransactions = appData.transactions.filter(t => t.date.startsWith(currentMonth));
+            
+            const totalIncome = monthlyTransactions
+                .filter(t => t.type === 'income')
+                .reduce((sum, t) => sum + t.amount, 0);
+            
+            const totalExpense = monthlyTransactions
+                .filter(t => t.type === 'expense')
+                .reduce((sum, t) => sum + t.amount, 0);
+            
+            const categoryStats = {};
+            monthlyTransactions.forEach(t => {
+                if (!categoryStats[t.category]) {
+                    categoryStats[t.category] = { income: 0, expense: 0 };
+                }
+                categoryStats[t.category][t.type] += t.amount;
+            });
+            
+            return {
+                totalIncome,
+                totalExpense,
+                totalTransactions: appData.transactions.length,
+                categoryStats
+            };
+        }
+
+        function updateCharts(stats) {
+            updateIncomeExpenseChart(stats);
+            updateCategoryChart(stats);
+            updateTrendChart();
+        }
+
+        function updateIncomeExpenseChart(stats) {
+            const ctx = document.getElementById('incomeExpenseChart').getContext('2d');
+            
+            // Destroy existing chart if it exists
+            if (window.incomeExpenseChart) {
+                window.incomeExpenseChart.destroy();
+            }
+            
+            window.incomeExpenseChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['درآمد', 'هزینه'],
+                    datasets: [{
+                        data: [stats.totalIncome, stats.totalExpense],
+                        backgroundColor: ['#10b981', '#ef4444'],
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return formatCurrency(value);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateCategoryChart(stats) {
+            const ctx = document.getElementById('categoryChart').getContext('2d');
+            
+            // Destroy existing chart if it exists
+            if (window.categoryChart) {
+                window.categoryChart.destroy();
+            }
+            
+            const categories = Object.keys(stats.categoryStats);
+            const data = categories.map(cat => stats.categoryStats[cat].expense);
+            const labels = categories.map(cat => categoryNames[cat]);
+            
+            if (categories.length === 0) {
+                ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+                ctx.font = '16px Vazirmatn';
+                ctx.fillStyle = '#6b7280';
+                ctx.textAlign = 'center';
+                ctx.fillText('داده‌ای برای نمایش وجود ندارد', ctx.canvas.width / 2, ctx.canvas.height / 2);
+                return;
+            }
+            
+            window.categoryChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: [
+                            '#6366f1', '#8b5cf6', '#ec4899', '#f59e0b',
+                            '#10b981', '#3b82f6', '#ef4444', '#6b7280'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateTrendChart() {
+            const ctx = document.getElementById('trendChart').getContext('2d');
+            
+            // Destroy existing chart if it exists
+            if (window.trendChart) {
+                window.trendChart.destroy();
+            }
+            
+            // Get last 6 months data
+            const months = [];
+            const incomeData = [];
+            const expenseData = [];
+            
+            for (let i = 5; i >= 0; i--) {
+                const date = new Date();
+                date.setMonth(date.getMonth() - i);
+                const monthKey = date.toISOString().slice(0, 7);
+                
+                const monthTransactions = appData.transactions.filter(t => t.date.startsWith(monthKey));
+                const monthIncome = monthTransactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
+                const monthExpense = monthTransactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
+                
+                months.push(date.toLocaleDateString('fa-IR', { year: 'numeric', month: 'short' }));
+                incomeData.push(monthIncome);
+                expenseData.push(monthExpense);
+            }
+            
+            window.trendChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: months,
+                    datasets: [{
+                        label: 'درآمد',
+                        data: incomeData,
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }, {
+                        label: 'هزینه',
+                        data: expenseData,
+                        borderColor: '#ef4444',
+                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return formatCurrency(value);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Budget
+        function loadBudget() {
+            updateBudgetOverview();
+            loadBudgetCategories();
+        }
+
+        function updateBudgetOverview() {
+            const currentMonth = new Date().toISOString().slice(0, 7);
+            const monthlyExpenses = appData.transactions
+                .filter(t => t.type === 'expense' && t.date.startsWith(currentMonth))
+                .reduce((sum, t) => sum + t.amount, 0);
+            
+            const totalBudget = Object.values(appData.budgets).reduce((sum, budget) => sum + budget, 0);
+            const budgetUsed = monthlyExpenses;
+            const budgetRemaining = totalBudget - budgetUsed;
+            const budgetProgress = totalBudget > 0 ? (budgetUsed / totalBudget) * 100 : 0;
+            
+            document.getElementById('totalBudget').textContent = formatCurrency(totalBudget);
+            document.getElementById('budgetUsed').textContent = formatCurrency(budgetUsed);
+            document.getElementById('budgetTotal').textContent = formatCurrency(totalBudget);
+            document.getElementById('budgetRemaining').textContent = formatCurrency(Math.abs(budgetRemaining));
+            document.getElementById('budgetProgress').style.width = `${Math.min(budgetProgress, 100)}%`;
+            
+            const remainingElement = document.getElementById('budgetRemaining');
+            remainingElement.className = `font-semibold ${budgetRemaining >= 0 ? 'text-green-600' : 'text-red-600'}`;
+        }
+
+        function loadBudgetCategories() {
+            const container = document.getElementById('budgetCategories');
+            
+            if (Object.keys(appData.budgets).length === 0) {
+                container.innerHTML = `
+                    <div class="text-center">
+                        <p class="text-gray-500 mb-4">بودجه‌ای تنظیم نشده است</p>
+                        <button onclick="openBudgetModal()" class="ripple bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors">
+                            تنظیم بودجه
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+            
+            const currentMonth = new Date().toISOString().slice(0, 7);
+            
+            container.innerHTML = Object.entries(appData.budgets).map(([category, budgetAmount]) => {
+                const spent = appData.transactions
+                    .filter(t => t.type === 'expense' && t.category === category && t.date.startsWith(currentMonth))
+                    .reduce((sum, t) => sum + t.amount, 0);
+                
+                const percentage = budgetAmount > 0 ? (spent / budgetAmount) * 100 : 0;
+                const remaining = budgetAmount - spent;
+                
+                return `
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <div class="flex justify-between items-center mb-2">
+                            <h4 class="font-semibold text-gray-900">${categoryNames[category]}</h4>
+                            <button onclick="deleteBudget('${category}')" class="material-icons text-gray-400 hover:text-red-600 transition-colors text-sm">delete</button>
+                        </div>
+                        <div class="progress-bar mb-2">
+                            <div class="progress-fill ${percentage > 100 ? 'bg-red-500' : ''}" style="width: ${Math.min(percentage, 100)}%"></div>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">${formatCurrency(spent)} از ${formatCurrency(budgetAmount)}</span>
+                            <span class="${remaining >= 0 ? 'text-green-600' : 'text-red-600'}">${formatCurrency(Math.abs(remaining))} ${remaining >= 0 ? 'باقی‌مانده' : 'اضافه'}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('') + `
+                <div class="text-center pt-4">
+                    <button onclick="openBudgetModal()" class="ripple bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors">
+                        افزودن بودجه
+                    </button>
+                </div>
+            `;
+        }
+
+        function openBudgetModal() {
+            document.getElementById('budgetModal').classList.add('show');
+        }
+
+        function closeBudgetModal() {
+            document.getElementById('budgetModal').classList.remove('show');
+        }
+
+        function handleBudgetSubmit(e) {
+            e.preventDefault();
+            
+            const category = document.getElementById('budgetCategory').value;
+            const amount = parseFloat(document.getElementById('budgetAmount').value);
+            
+            appData.budgets[category] = amount;
+            saveDataToJSON();
+            closeBudgetModal();
+            loadBudget();
+            showNotification('بودجه با موفقیت تنظیم شد');
+        }
+
+        function deleteBudget(category) {
+            if (confirm('آیا از حذف این بودجه اطمینان دارید؟')) {
+                delete appData.budgets[category];
+                saveDataToJSON();
+                loadBudget();
+                showNotification('بودجه حذف شد');
+            }
+        }
+
+        // Reports
+        function generateReport() {
+            const reportType = document.getElementById('reportType').value;
+            const reportMonth = document.getElementById('reportMonth').value;
+            const container = document.getElementById('reportContent');
+            
+            let reportData;
+            let reportHTML;
+            
+            switch(reportType) {
+                case 'monthly':
+                    reportData = generateMonthlyReport(reportMonth);
+                    reportHTML = renderMonthlyReport(reportData);
+                    break;
+                case 'category':
+                    reportData = generateCategoryReport(reportMonth);
+                    reportHTML = renderCategoryReport(reportData);
+                    break;
+                case 'yearly':
+                    reportData = generateYearlyReport(reportMonth.split('-')[0]);
+                    reportHTML = renderYearlyReport(reportData);
+                    break;
+            }
+            
+            container.innerHTML = reportHTML;
+        }
+
+        function generateMonthlyReport(month) {
+            const monthlyTransactions = appData.transactions.filter(t => t.date.startsWith(month));
+            
+            const income = monthlyTransactions
+                .filter(t => t.type === 'income')
+                .reduce((sum, t) => sum + t.amount, 0);
+            
+            const expense = monthlyTransactions
+                .filter(t => t.type === 'expense')
+                .reduce((sum, t) => sum + t.amount, 0);
+            
+            const categoryBreakdown = {};
+            monthlyTransactions.forEach(t => {
+                if (!categoryBreakdown[t.category]) {
+                    categoryBreakdown[t.category] = { income: 0, expense: 0, count: 0 };
+                }
+                categoryBreakdown[t.category][t.type] += t.amount;
+                categoryBreakdown[t.category].count++;
+            });
+            
+            return {
+                month,
+                income,
+                expense,
+                net: income - expense,
+                transactionCount: monthlyTransactions.length,
+                categoryBreakdown
+            };
+        }
+
+        function renderMonthlyReport(data) {
+            return `
+                <div class="space-y-6">
+                    <div class="text-center">
+                        <h3 class="text-2xl font-bold text-gray-900 mb-2">گزارش ماهانه</h3>
+                        <p class="text-gray-600">${formatMonth(data.month)}</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-green-50 p-4 rounded-lg text-center">
+                            <p class="text-sm text-green-600 mb-1">کل درآمد</p>
+                            <p class="text-xl font-bold text-green-700">${formatCurrency(data.income)}</p>
+                        </div>
+                        <div class="bg-red-50 p-4 rounded-lg text-center">
+                            <p class="text-sm text-red-600 mb-1">کل هزینه</p>
+                            <p class="text-xl font-bold text-red-700">${formatCurrency(data.expense)}</p>
+                        </div>
+                        <div class="bg-blue-50 p-4 rounded-lg text-center">
+                            <p class="text-sm text-blue-600 mb-1">خالص</p>
+                            <p class="text-xl font-bold ${data.net >= 0 ? 'text-green-700' : 'text-red-700'}">${formatCurrency(Math.abs(data.net))}</p>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4 class="text-lg font-semibold text-gray-900 mb-4">تفکیک دسته‌بندی</h4>
+                        <div class="space-y-3">
+                            ${Object.entries(data.categoryBreakdown).map(([category, stats]) => `
+                                <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                                    <span class="font-medium text-gray-900">${categoryNames[category]}</span>
+                                    <div class="text-left">
+                                        <div class="text-sm text-gray-600">${stats.count} تراکنش</div>
+                                        <div class="font-semibold">
+                                            ${stats.income > 0 ? `<span class="text-green-600">+${formatCurrency(stats.income)}</span>` : ''}
+                                            ${stats.expense > 0 ? `<span class="text-red-600">-${formatCurrency(stats.expense)}</span>` : ''}
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function generateCategoryReport(month) {
+            const monthlyTransactions = appData.transactions.filter(t => t.date.startsWith(month));
+            const categoryStats = {};
+            
+            monthlyTransactions.forEach(t => {
+                if (!categoryStats[t.category]) {
+                    categoryStats[t.category] = {
+                        income: 0,
+                        expense: 0,
+                        transactions: []
+                    };
+                }
+                categoryStats[t.category][t.type] += t.amount;
+                categoryStats[t.category].transactions.push(t);
+            });
+            
+            return { month, categoryStats };
+        }
+
+        function renderCategoryReport(data) {
+            return `
+                <div class="space-y-6">
+                    <div class="text-center">
+                        <h3 class="text-2xl font-bold text-gray-900 mb-2">گزارش دسته‌بندی</h3>
+                        <p class="text-gray-600">${formatMonth(data.month)}</p>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        ${Object.entries(data.categoryStats).map(([category, stats]) => `
+                            <div class="border border-gray-200 rounded-lg p-4">
+                                <h4 class="text-lg font-semibold text-gray-900 mb-3">${categoryNames[category]}</h4>
+                                <div class="grid grid-cols-2 gap-4 mb-3">
+                                    <div class="text-center">
+                                        <p class="text-sm text-green-600">درآمد</p>
+                                        <p class="text-lg font-bold text-green-700">${formatCurrency(stats.income)}</p>
+                                    </div>
+                                    <div class="text-center">
+                                        <p class="text-sm text-red-600">هزینه</p>
+                                        <p class="text-lg font-bold text-red-700">${formatCurrency(stats.expense)}</p>
+                                    </div>
+                                </div>
+                                <p class="text-sm text-gray-600">${stats.transactions.length} تراکنش</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function generateYearlyReport(year) {
+            const yearlyTransactions = appData.transactions.filter(t => t.date.startsWith(year));
+            const monthlyStats = {};
+            
+            for (let month = 1; month <= 12; month++) {
+                const monthKey = `${year}-${month.toString().padStart(2, '0')}`;
+                const monthTransactions = yearlyTransactions.filter(t => t.date.startsWith(monthKey));
+                
+                monthlyStats[month] = {
+                    income: monthTransactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0),
+                    expense: monthTransactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0),
+                    count: monthTransactions.length
+                };
+            }
+            
+            const totalIncome = Object.values(monthlyStats).reduce((sum, month) => sum + month.income, 0);
+            const totalExpense = Object.values(monthlyStats).reduce((sum, month) => sum + month.expense, 0);
+            
+            return { year, monthlyStats, totalIncome, totalExpense };
+        }
+
+        function renderYearlyReport(data) {
+            const monthNames = [
+                'فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور',
+                'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'
+            ];
+            
+            return `
+                <div class="space-y-6">
+                    <div class="text-center">
+                        <h3 class="text-2xl font-bold text-gray-900 mb-2">گزارش سالانه</h3>
+                        <p class="text-gray-600">سال ${data.year}</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-green-50 p-4 rounded-lg text-center">
+                            <p class="text-sm text-green-600 mb-1">کل درآمد سال</p>
+                            <p class="text-xl font-bold text-green-700">${formatCurrency(data.totalIncome)}</p>
+                        </div>
+                        <div class="bg-red-50 p-4 rounded-lg text-center">
+                            <p class="text-sm text-red-600 mb-1">کل هزینه سال</p>
+                            <p class="text-xl font-bold text-red-700">${formatCurrency(data.totalExpense)}</p>
+                        </div>
+                        <div class="bg-blue-50 p-4 rounded-lg text-center">
+                            <p class="text-sm text-blue-600 mb-1">خالص سال</p>
+                            <p class="text-xl font-bold ${data.totalIncome - data.totalExpense >= 0 ? 'text-green-700' : 'text-red-700'}">${formatCurrency(Math.abs(data.totalIncome - data.totalExpense))}</p>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4 class="text-lg font-semibold text-gray-900 mb-4">تفکیک ماهانه</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                            ${Object.entries(data.monthlyStats).map(([month, stats]) => `
+                                <div class="p-3 bg-gray-50 rounded-lg">
+                                    <h5 class="font-medium text-gray-900 mb-2">${monthNames[month - 1]}</h5>
+                                    <div class="text-sm space-y-1">
+                                        <div class="flex justify-between">
+                                            <span class="text-green-600">درآمد:</span>
+                                            <span>${formatCurrency(stats.income)}</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span class="text-red-600">هزینه:</span>
+                                            <span>${formatCurrency(stats.expense)}</span>
+                                        </div>
+                                        <div class="flex justify-between font-medium">
+                                            <span>خالص:</span>
+                                            <span class="${stats.income - stats.expense >= 0 ? 'text-green-600' : 'text-red-600'}">${formatCurrency(Math.abs(stats.income - stats.expense))}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function exportToCSV() {
+            const reportType = document.getElementById('reportType').value;
+            const reportMonth = document.getElementById('reportMonth').value;
+            
+            let csvContent = '';
+            let filename = '';
+            
+            if (reportType === 'monthly') {
+                const monthlyTransactions = appData.transactions.filter(t => t.date.startsWith(reportMonth));
+                csvContent = 'تاریخ,نوع,دسته‌بندی,مبلغ,یادداشت\n';
+                csvContent += monthlyTransactions.map(t => 
+                    `${t.date},${t.type === 'income' ? 'درآمد' : 'هزینه'},${categoryNames[t.category]},${t.amount},"${t.note || ''}"`
+                ).join('\n');
+                filename = `monthly-report-${reportMonth}.csv`;
+            }
+            
+            const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            link.click();
+            
+            showNotification('گزارش با موفقیت دانلود شد');
+        }
+
+        // Utility functions
+        function formatCurrency(amount) {
+            return `${amount.toLocaleString('fa-IR')} ریال`;
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('fa-IR');
+        }
+
+        function formatMonth(monthString) {
+            const [year, month] = monthString.split('-');
+            const monthNames = [
+                'فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور',
+                'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'
+            ];
+            return `${monthNames[parseInt(month) - 1]} ${year}`;
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            const text = document.getElementById('notificationText');
+            
+            text.textContent = message;
+            notification.className = `notification ${type} show`;
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96c8ac56721f4f95',t:'MTc1NDc1NzM5NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

@@ -1,0 +1,1424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Karpardaz - Accounting Software</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .fade-in { animation: fadeIn 0.3s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .slide-up { animation: slideUp 0.3s ease-out; }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        .fab { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); }
+        .card-shadow { box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06); }
+        .dark .card-shadow { box-shadow: 0 1px 3px rgba(255, 255, 255, 0.1), 0 1px 2px rgba(255, 255, 255, 0.06); }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    <!-- Navigation -->
+    <nav class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <span class="material-icons text-primary-600 text-2xl mr-2">account_balance</span>
+                        <h1 class="text-xl font-bold text-gray-900 dark:text-white">Karpardaz</h1>
+                    </div>
+                    <div class="hidden md:ml-6 md:flex md:space-x-8">
+                        <button onclick="showTab('dashboard')" class="nav-btn border-primary-500 text-primary-600 border-b-2 py-2 px-1 text-sm font-medium">Dashboard</button>
+                        <button onclick="showTab('accounts')" class="nav-btn border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 border-b-2 py-2 px-1 text-sm font-medium">Accounts</button>
+                        <button onclick="showTab('invoices')" class="nav-btn border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 border-b-2 py-2 px-1 text-sm font-medium">Invoices</button>
+                        <button onclick="showTab('transactions')" class="nav-btn border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 border-b-2 py-2 px-1 text-sm font-medium">Transactions</button>
+                        <button onclick="showTab('contacts')" class="nav-btn border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 border-b-2 py-2 px-1 text-sm font-medium">Contacts</button>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button onclick="toggleTheme()" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <span class="material-icons text-gray-600 dark:text-gray-300">dark_mode</span>
+                    </button>
+                    <div class="relative">
+                        <button onclick="toggleUserMenu()" class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                            <span class="material-icons text-gray-600 dark:text-gray-300">account_circle</span>
+                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300" id="currentUser">Admin</span>
+                        </button>
+                        <div id="userMenu" class="hidden absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 z-50">
+                            <button onclick="switchUser('Admin')" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">Switch to Admin</button>
+                            <button onclick="switchUser('User')" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">Switch to User</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Navigation -->
+    <div class="md:hidden bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+        <div class="px-2 pt-2 pb-3 space-y-1">
+            <button onclick="showTab('dashboard')" class="mobile-nav-btn bg-primary-50 border-primary-500 text-primary-700 block px-3 py-2 rounded-md text-base font-medium w-full text-left">Dashboard</button>
+            <button onclick="showTab('accounts')" class="mobile-nav-btn text-gray-600 hover:text-gray-900 hover:bg-gray-50 block px-3 py-2 rounded-md text-base font-medium w-full text-left">Accounts</button>
+            <button onclick="showTab('invoices')" class="mobile-nav-btn text-gray-600 hover:text-gray-900 hover:bg-gray-50 block px-3 py-2 rounded-md text-base font-medium w-full text-left">Invoices</button>
+            <button onclick="showTab('transactions')" class="mobile-nav-btn text-gray-600 hover:text-gray-900 hover:bg-gray-50 block px-3 py-2 rounded-md text-base font-medium w-full text-left">Transactions</button>
+            <button onclick="showTab('contacts')" class="mobile-nav-btn text-gray-600 hover:text-gray-900 hover:bg-gray-50 block px-3 py-2 rounded-md text-base font-medium w-full text-left">Contacts</button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content fade-in">
+            <div class="mb-6">
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Dashboard</h2>
+                <p class="text-gray-600 dark:text-gray-400">Overview of your financial data</p>
+            </div>
+            
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white dark:bg-gray-800 rounded-lg p-6 card-shadow">
+                    <div class="flex items-center">
+                        <div class="p-2 bg-green-100 dark:bg-green-900 rounded-lg">
+                            <span class="material-icons text-green-600 dark:text-green-400">trending_up</span>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Total Income</p>
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white" id="totalIncome">$0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white dark:bg-gray-800 rounded-lg p-6 card-shadow">
+                    <div class="flex items-center">
+                        <div class="p-2 bg-red-100 dark:bg-red-900 rounded-lg">
+                            <span class="material-icons text-red-600 dark:text-red-400">trending_down</span>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Total Expenses</p>
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white" id="totalExpenses">$0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white dark:bg-gray-800 rounded-lg p-6 card-shadow">
+                    <div class="flex items-center">
+                        <div class="p-2 bg-blue-100 dark:bg-blue-900 rounded-lg">
+                            <span class="material-icons text-blue-600 dark:text-blue-400">account_balance_wallet</span>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Net Profit</p>
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white" id="netProfit">$0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white dark:bg-gray-800 rounded-lg p-6 card-shadow">
+                    <div class="flex items-center">
+                        <div class="p-2 bg-purple-100 dark:bg-purple-900 rounded-lg">
+                            <span class="material-icons text-purple-600 dark:text-purple-400">receipt</span>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Total Invoices</p>
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white" id="totalInvoices">0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <div class="bg-white dark:bg-gray-800 rounded-lg p-6 card-shadow">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Income vs Expenses</h3>
+                    <canvas id="incomeExpenseChart" width="400" height="200"></canvas>
+                </div>
+                <div class="bg-white dark:bg-gray-800 rounded-lg p-6 card-shadow">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Cash Flow Trend</h3>
+                    <canvas id="cashFlowChart" width="400" height="200"></canvas>
+                </div>
+            </div>
+
+            <!-- Recent Transactions -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg p-6 card-shadow">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Recent Transactions</h3>
+                <div id="recentTransactions" class="space-y-3">
+                    <!-- Recent transactions will be populated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Accounts Tab -->
+        <div id="accounts" class="tab-content hidden">
+            <div class="mb-6 flex justify-between items-center">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Accounts</h2>
+                    <p class="text-gray-600 dark:text-gray-400">Manage your chart of accounts</p>
+                </div>
+                <button onclick="showAccountForm()" class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2">
+                    <span class="material-icons">add</span>
+                    <span>Add Account</span>
+                </button>
+            </div>
+            
+            <div class="bg-white dark:bg-gray-800 rounded-lg card-shadow overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                        <thead class="bg-gray-50 dark:bg-gray-700">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Account Name</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Type</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Balance</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="accountsTable" class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                            <!-- Accounts will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Invoices Tab -->
+        <div id="invoices" class="tab-content hidden">
+            <div class="mb-6 flex justify-between items-center">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Invoices</h2>
+                    <p class="text-gray-600 dark:text-gray-400">Manage sales and purchase invoices</p>
+                </div>
+                <button onclick="showInvoiceForm()" class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2">
+                    <span class="material-icons">add</span>
+                    <span>Create Invoice</span>
+                </button>
+            </div>
+            
+            <div class="bg-white dark:bg-gray-800 rounded-lg card-shadow overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                        <thead class="bg-gray-50 dark:bg-gray-700">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Invoice #</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Type</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Customer/Supplier</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Amount</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Date</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="invoicesTable" class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                            <!-- Invoices will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transactions Tab -->
+        <div id="transactions" class="tab-content hidden">
+            <div class="mb-6 flex justify-between items-center">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Transactions</h2>
+                    <p class="text-gray-600 dark:text-gray-400">View and manage all transactions</p>
+                </div>
+                <button onclick="showTransactionForm()" class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2">
+                    <span class="material-icons">add</span>
+                    <span>Add Transaction</span>
+                </button>
+            </div>
+            
+            <!-- Filters -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg p-4 mb-6 card-shadow">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <input type="text" id="searchTransactions" placeholder="Search transactions..." class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">
+                    <select id="filterType" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">
+                        <option value="">All Types</option>
+                        <option value="income">Income</option>
+                        <option value="expense">Expense</option>
+                    </select>
+                    <input type="date" id="filterDateFrom" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">
+                    <input type="date" id="filterDateTo" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">
+                </div>
+            </div>
+            
+            <div class="bg-white dark:bg-gray-800 rounded-lg card-shadow overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                        <thead class="bg-gray-50 dark:bg-gray-700">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Date</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Description</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Type</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Amount</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Account</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactionsTable" class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                            <!-- Transactions will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contacts Tab -->
+        <div id="contacts" class="tab-content hidden">
+            <div class="mb-6 flex justify-between items-center">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Contacts</h2>
+                    <p class="text-gray-600 dark:text-gray-400">Manage customers and suppliers</p>
+                </div>
+                <button onclick="showContactForm()" class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2">
+                    <span class="material-icons">add</span>
+                    <span>Add Contact</span>
+                </button>
+            </div>
+            
+            <div class="bg-white dark:bg-gray-800 rounded-lg card-shadow overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                        <thead class="bg-gray-50 dark:bg-gray-700">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Name</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Type</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Email</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Phone</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="contactsTable" class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                            <!-- Contacts will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Floating Action Button -->
+    <div class="fixed bottom-6 right-6 z-50">
+        <div class="relative">
+            <button id="fabMain" onclick="toggleFAB()" class="fab bg-primary-600 hover:bg-primary-700 text-white p-4 rounded-full transition-all duration-300">
+                <span class="material-icons">add</span>
+            </button>
+            <div id="fabMenu" class="hidden absolute bottom-16 right-0 space-y-2">
+                <button onclick="showInvoiceForm(); toggleFAB()" class="fab bg-green-600 hover:bg-green-700 text-white p-3 rounded-full flex items-center space-x-2 whitespace-nowrap">
+                    <span class="material-icons">receipt</span>
+                    <span class="hidden sm:inline">Invoice</span>
+                </button>
+                <button onclick="showTransactionForm(); toggleFAB()" class="fab bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-full flex items-center space-x-2 whitespace-nowrap">
+                    <span class="material-icons">account_balance</span>
+                    <span class="hidden sm:inline">Transaction</span>
+                </button>
+                <button onclick="showContactForm(); toggleFAB()" class="fab bg-purple-600 hover:bg-purple-700 text-white p-3 rounded-full flex items-center space-x-2 whitespace-nowrap">
+                    <span class="material-icons">person_add</span>
+                    <span class="hidden sm:inline">Contact</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <!-- Account Form Modal -->
+    <div id="accountModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-lg max-w-md w-full max-h-screen overflow-y-auto slide-up">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Add Account</h3>
+                    <button onclick="closeModal('accountModal')" class="text-gray-400 hover:text-gray-600">
+                        <span class="material-icons">close</span>
+                    </button>
+                </div>
+                <form id="accountForm" onsubmit="saveAccount(event)">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Account Name</label>
+                            <input type="text" name="name" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Account Type</label>
+                            <select name="type" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">
+                                <option value="">Select Type</option>
+                                <option value="asset">Asset</option>
+                                <option value="liability">Liability</option>
+                                <option value="equity">Equity</option>
+                                <option value="income">Income</option>
+                                <option value="expense">Expense</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Initial Balance</label>
+                            <input type="number" name="balance" step="0.01" value="0" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">
+                        </div>
+                    </div>
+                    <div class="flex justify-end space-x-3 mt-6">
+                        <button type="button" onclick="closeModal('accountModal')" class="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200">Cancel</button>
+                        <button type="submit" class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md">Save Account</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Invoice Form Modal -->
+    <div id="invoiceModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-lg max-w-4xl w-full max-h-screen overflow-y-auto slide-up">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Create Invoice</h3>
+                    <button onclick="closeModal('invoiceModal')" class="text-gray-400 hover:text-gray-600">
+                        <span class="material-icons">close</span>
+                    </button>
+                </div>
+                <form id="invoiceForm" onsubmit="saveInvoice(event)">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Invoice Type</label>
+                            <select name="type" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">
+                                <option value="">Select Type</option>
+                                <option value="sales">Sales Invoice</option>
+                                <option value="purchase">Purchase Invoice</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Contact</label>
+                            <select name="contact" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white" id="invoiceContactSelect">
+                                <option value="">Select Contact</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Invoice Date</label>
+                            <input type="date" name="date" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Due Date</label>
+                            <input type="date" name="dueDate" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">
+                        </div>
+                    </div>
+                    
+                    <!-- Invoice Items -->
+                    <div class="mb-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h4 class="text-md font-semibold text-gray-900 dark:text-white">Invoice Items</h4>
+                            <button type="button" onclick="addInvoiceItem()" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm">Add Item</button>
+                        </div>
+                        <div id="invoiceItems" class="space-y-3">
+                            <!-- Invoice items will be added here -->
+                        </div>
+                    </div>
+                    
+                    <!-- Totals -->
+                    <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg mb-6">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Discount (%)</label>
+                                <input type="number" name="discount" step="0.01" value="0" onchange="calculateInvoiceTotal()" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tax (%)</label>
+                                <input type="number" name="tax" step="0.01" value="0" onchange="calculateInvoiceTotal()" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Total Amount</label>
+                                <input type="number" name="total" readonly class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-100 dark:bg-gray-600 dark:text-white">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-end space-x-3">
+                        <button type="button" onclick="closeModal('invoiceModal')" class="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200">Cancel</button>
+                        <button type="submit" class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md">Save Invoice</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transaction Form Modal -->
+    <div id="transactionModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-lg max-w-md w-full max-h-screen overflow-y-auto slide-up">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Add Transaction</h3>
+                    <button onclick="closeModal('transactionModal')" class="text-gray-400 hover:text-gray-600">
+                        <span class="material-icons">close</span>
+                    </button>
+                </div>
+                <form id="transactionForm" onsubmit="saveTransaction(event)">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Date</label>
+                            <input type="date" name="date" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
+                            <input type="text" name="description" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Type</label>
+                            <select name="type" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">
+                                <option value="">Select Type</option>
+                                <option value="income">Income</option>
+                                <option value="expense">Expense</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Amount</label>
+                            <input type="number" name="amount" step="0.01" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Account</label>
+                            <select name="account" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white" id="transactionAccountSelect">
+                                <option value="">Select Account</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="flex justify-end space-x-3 mt-6">
+                        <button type="button" onclick="closeModal('transactionModal')" class="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200">Cancel</button>
+                        <button type="submit" class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md">Save Transaction</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Form Modal -->
+    <div id="contactModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-lg max-w-md w-full max-h-screen overflow-y-auto slide-up">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Add Contact</h3>
+                    <button onclick="closeModal('contactModal')" class="text-gray-400 hover:text-gray-600">
+                        <span class="material-icons">close</span>
+                    </button>
+                </div>
+                <form id="contactForm" onsubmit="saveContact(event)">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Name</label>
+                            <input type="text" name="name" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Type</label>
+                            <select name="type" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">
+                                <option value="">Select Type</option>
+                                <option value="customer">Customer</option>
+                                <option value="supplier">Supplier</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label>
+                            <input type="email" name="email" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Phone</label>
+                            <input type="tel" name="phone" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Address</label>
+                            <textarea name="address" rows="3" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white"></textarea>
+                        </div>
+                    </div>
+                    <div class="flex justify-end space-x-3 mt-6">
+                        <button type="button" onclick="closeModal('contactModal')" class="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200">Cancel</button>
+                        <button type="submit" class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md">Save Contact</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Container -->
+    <div id="notifications" class="fixed top-4 right-4 z-50 space-y-2">
+        <!-- Notifications will appear here -->
+    </div>
+
+    <script>
+        // Global variables
+        let currentTab = 'dashboard';
+        let currentUser = 'Admin';
+        let fabOpen = false;
+        let charts = {};
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+        });
+
+        function initializeApp() {
+            // Load theme
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            if (savedTheme === 'dark') {
+                document.documentElement.classList.add('dark');
+            }
+
+            // Load user
+            const savedUser = localStorage.getItem('currentUser') || 'Admin';
+            currentUser = savedUser;
+            document.getElementById('currentUser').textContent = currentUser;
+
+            // Initialize sample data if not exists
+            initializeSampleData();
+
+            // Load all data
+            loadDashboard();
+            loadAccounts();
+            loadInvoices();
+            loadTransactions();
+            loadContacts();
+
+            // Set up event listeners
+            setupEventListeners();
+
+            // Set current date for forms
+            const today = new Date().toISOString().split('T')[0];
+            document.querySelectorAll('input[type="date"]').forEach(input => {
+                if (!input.value) input.value = today;
+            });
+
+            // Start reminder system
+            startReminderSystem();
+        }
+
+        function initializeSampleData() {
+            if (!localStorage.getItem('accounts')) {
+                const sampleAccounts = [
+                    { id: 1, name: 'Cash', type: 'asset', balance: 5000 },
+                    { id: 2, name: 'Bank Account', type: 'asset', balance: 15000 },
+                    { id: 3, name: 'Sales Revenue', type: 'income', balance: 0 },
+                    { id: 4, name: 'Office Expenses', type: 'expense', balance: 0 }
+                ];
+                localStorage.setItem('accounts', JSON.stringify(sampleAccounts));
+            }
+
+            if (!localStorage.getItem('contacts')) {
+                const sampleContacts = [
+                    { id: 1, name: 'ABC Company', type: 'customer', email: 'contact@abc.com', phone: '123-456-7890', address: '123 Main St' },
+                    { id: 2, name: 'XYZ Supplier', type: 'supplier', email: 'sales@xyz.com', phone: '098-765-4321', address: '456 Oak Ave' }
+                ];
+                localStorage.setItem('contacts', JSON.stringify(sampleContacts));
+            }
+
+            if (!localStorage.getItem('transactions')) {
+                const sampleTransactions = [
+                    { id: 1, date: '2024-01-15', description: 'Initial deposit', type: 'income', amount: 5000, account: 'Cash' },
+                    { id: 2, date: '2024-01-16', description: 'Office supplies', type: 'expense', amount: 250, account: 'Office Expenses' }
+                ];
+                localStorage.setItem('transactions', JSON.stringify(sampleTransactions));
+            }
+
+            if (!localStorage.getItem('invoices')) {
+                localStorage.setItem('invoices', JSON.stringify([]));
+            }
+        }
+
+        function setupEventListeners() {
+            // Search and filter functionality
+            document.getElementById('searchTransactions').addEventListener('input', filterTransactions);
+            document.getElementById('filterType').addEventListener('change', filterTransactions);
+            document.getElementById('filterDateFrom').addEventListener('change', filterTransactions);
+            document.getElementById('filterDateTo').addEventListener('change', filterTransactions);
+
+            // Close modals when clicking outside
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('fixed') && e.target.classList.contains('inset-0')) {
+                    const modals = ['accountModal', 'invoiceModal', 'transactionModal', 'contactModal'];
+                    modals.forEach(modalId => {
+                        if (!document.getElementById(modalId).classList.contains('hidden')) {
+                            closeModal(modalId);
+                        }
+                    });
+                }
+            });
+
+            // Close user menu when clicking outside
+            document.addEventListener('click', function(e) {
+                const userMenu = document.getElementById('userMenu');
+                if (!e.target.closest('.relative') && !userMenu.classList.contains('hidden')) {
+                    userMenu.classList.add('hidden');
+                }
+            });
+        }
+
+        // Navigation functions
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.add('hidden');
+            });
+
+            // Show selected tab
+            document.getElementById(tabName).classList.remove('hidden');
+            document.getElementById(tabName).classList.add('fade-in');
+
+            // Update navigation
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('border-primary-500', 'text-primary-600');
+                btn.classList.add('border-transparent', 'text-gray-500');
+            });
+
+            document.querySelectorAll('.mobile-nav-btn').forEach(btn => {
+                btn.classList.remove('bg-primary-50', 'border-primary-500', 'text-primary-700');
+                btn.classList.add('text-gray-600');
+            });
+
+            // Highlight active tab
+            const activeBtn = document.querySelector(`[onclick="showTab('${tabName}')"]`);
+            if (activeBtn) {
+                if (activeBtn.classList.contains('nav-btn')) {
+                    activeBtn.classList.remove('border-transparent', 'text-gray-500');
+                    activeBtn.classList.add('border-primary-500', 'text-primary-600');
+                } else {
+                    activeBtn.classList.remove('text-gray-600');
+                    activeBtn.classList.add('bg-primary-50', 'border-primary-500', 'text-primary-700');
+                }
+            }
+
+            currentTab = tabName;
+
+            // Load data for specific tabs
+            if (tabName === 'dashboard') {
+                loadDashboard();
+            }
+        }
+
+        // Theme functions
+        function toggleTheme() {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            
+            // Update charts if they exist
+            if (charts.incomeExpense) {
+                updateChartTheme();
+            }
+        }
+
+        // User functions
+        function toggleUserMenu() {
+            document.getElementById('userMenu').classList.toggle('hidden');
+        }
+
+        function switchUser(user) {
+            currentUser = user;
+            document.getElementById('currentUser').textContent = user;
+            localStorage.setItem('currentUser', user);
+            document.getElementById('userMenu').classList.add('hidden');
+            showNotification(`Switched to ${user} role`, 'success');
+        }
+
+        // FAB functions
+        function toggleFAB() {
+            const fabMenu = document.getElementById('fabMenu');
+            const fabMain = document.getElementById('fabMain');
+            
+            fabOpen = !fabOpen;
+            
+            if (fabOpen) {
+                fabMenu.classList.remove('hidden');
+                fabMain.style.transform = 'rotate(45deg)';
+            } else {
+                fabMenu.classList.add('hidden');
+                fabMain.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // Modal functions
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+            // Reset forms
+            const form = document.getElementById(modalId).querySelector('form');
+            if (form) form.reset();
+            
+            // Clear invoice items if invoice modal
+            if (modalId === 'invoiceModal') {
+                document.getElementById('invoiceItems').innerHTML = '';
+                addInvoiceItem(); // Add one default item
+            }
+        }
+
+        // Dashboard functions
+        function loadDashboard() {
+            const transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
+            const invoices = JSON.parse(localStorage.getItem('invoices') || '[]');
+
+            // Calculate totals
+            const totalIncome = transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + parseFloat(t.amount), 0);
+            const totalExpenses = transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + parseFloat(t.amount), 0);
+            const netProfit = totalIncome - totalExpenses;
+
+            // Update dashboard cards
+            document.getElementById('totalIncome').textContent = `$${totalIncome.toLocaleString()}`;
+            document.getElementById('totalExpenses').textContent = `$${totalExpenses.toLocaleString()}`;
+            document.getElementById('netProfit').textContent = `$${netProfit.toLocaleString()}`;
+            document.getElementById('totalInvoices').textContent = invoices.length;
+
+            // Load recent transactions
+            loadRecentTransactions();
+
+            // Load charts
+            loadCharts();
+        }
+
+        function loadRecentTransactions() {
+            const transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
+            const recent = transactions.slice(-5).reverse();
+            
+            const container = document.getElementById('recentTransactions');
+            container.innerHTML = '';
+
+            if (recent.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center py-4">No recent transactions</p>';
+                return;
+            }
+
+            recent.forEach(transaction => {
+                const div = document.createElement('div');
+                div.className = 'flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg';
+                div.innerHTML = `
+                    <div>
+                        <p class="font-medium text-gray-900 dark:text-white">${transaction.description}</p>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">${transaction.date} • ${transaction.account}</p>
+                    </div>
+                    <span class="font-semibold ${transaction.type === 'income' ? 'text-green-600' : 'text-red-600'}">
+                        ${transaction.type === 'income' ? '+' : '-'}$${parseFloat(transaction.amount).toLocaleString()}
+                    </span>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function loadCharts() {
+            const transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
+            
+            // Income vs Expenses Chart
+            const ctx1 = document.getElementById('incomeExpenseChart').getContext('2d');
+            const totalIncome = transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + parseFloat(t.amount), 0);
+            const totalExpenses = transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + parseFloat(t.amount), 0);
+
+            if (charts.incomeExpense) {
+                charts.incomeExpense.destroy();
+            }
+
+            charts.incomeExpense = new Chart(ctx1, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Income', 'Expenses'],
+                    datasets: [{
+                        data: [totalIncome, totalExpenses],
+                        backgroundColor: ['#10b981', '#ef4444'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: document.documentElement.classList.contains('dark') ? '#e5e7eb' : '#374151'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Cash Flow Chart
+            const ctx2 = document.getElementById('cashFlowChart').getContext('2d');
+            const last6Months = getLast6MonthsData(transactions);
+
+            if (charts.cashFlow) {
+                charts.cashFlow.destroy();
+            }
+
+            charts.cashFlow = new Chart(ctx2, {
+                type: 'line',
+                data: {
+                    labels: last6Months.labels,
+                    datasets: [{
+                        label: 'Cash Flow',
+                        data: last6Months.data,
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: document.documentElement.classList.contains('dark') ? '#e5e7eb' : '#374151'
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            ticks: {
+                                color: document.documentElement.classList.contains('dark') ? '#e5e7eb' : '#374151'
+                            },
+                            grid: {
+                                color: document.documentElement.classList.contains('dark') ? '#374151' : '#e5e7eb'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: document.documentElement.classList.contains('dark') ? '#e5e7eb' : '#374151'
+                            },
+                            grid: {
+                                color: document.documentElement.classList.contains('dark') ? '#374151' : '#e5e7eb'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function getLast6MonthsData(transactions) {
+            const months = [];
+            const data = [];
+            const now = new Date();
+
+            for (let i = 5; i >= 0; i--) {
+                const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+                const monthName = date.toLocaleDateString('en-US', { month: 'short' });
+                months.push(monthName);
+
+                const monthTransactions = transactions.filter(t => {
+                    const tDate = new Date(t.date);
+                    return tDate.getMonth() === date.getMonth() && tDate.getFullYear() === date.getFullYear();
+                });
+
+                const income = monthTransactions.filter(t => t.type === 'income').reduce((sum, t) => sum + parseFloat(t.amount), 0);
+                const expenses = monthTransactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + parseFloat(t.amount), 0);
+                data.push(income - expenses);
+            }
+
+            return { labels: months, data: data };
+        }
+
+        function updateChartTheme() {
+            const isDark = document.documentElement.classList.contains('dark');
+            const textColor = isDark ? '#e5e7eb' : '#374151';
+            const gridColor = isDark ? '#374151' : '#e5e7eb';
+
+            Object.values(charts).forEach(chart => {
+                if (chart.options.plugins && chart.options.plugins.legend) {
+                    chart.options.plugins.legend.labels.color = textColor;
+                }
+                if (chart.options.scales) {
+                    if (chart.options.scales.y) {
+                        chart.options.scales.y.ticks.color = textColor;
+                        chart.options.scales.y.grid.color = gridColor;
+                    }
+                    if (chart.options.scales.x) {
+                        chart.options.scales.x.ticks.color = textColor;
+                        chart.options.scales.x.grid.color = gridColor;
+                    }
+                }
+                chart.update();
+            });
+        }
+
+        // Account functions
+        function loadAccounts() {
+            const accounts = JSON.parse(localStorage.getItem('accounts') || '[]');
+            const tbody = document.getElementById('accountsTable');
+            tbody.innerHTML = '';
+
+            accounts.forEach(account => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">${account.name}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 capitalize">${account.type}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">$${parseFloat(account.balance).toLocaleString()}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button onclick="editAccount(${account.id})" class="text-primary-600 hover:text-primary-900 mr-3">Edit</button>
+                        <button onclick="deleteAccount(${account.id})" class="text-red-600 hover:text-red-900">Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // Update account selects
+            updateAccountSelects();
+        }
+
+        function showAccountForm() {
+            document.getElementById('accountModal').classList.remove('hidden');
+        }
+
+        function saveAccount(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const accounts = JSON.parse(localStorage.getItem('accounts') || '[]');
+            
+            const account = {
+                id: Date.now(),
+                name: formData.get('name'),
+                type: formData.get('type'),
+                balance: parseFloat(formData.get('balance'))
+            };
+
+            accounts.push(account);
+            localStorage.setItem('accounts', JSON.stringify(accounts));
+            
+            closeModal('accountModal');
+            loadAccounts();
+            showNotification('Account created successfully!', 'success');
+        }
+
+        function editAccount(id) {
+            // Implementation for editing accounts
+            showNotification('Edit functionality coming soon!', 'info');
+        }
+
+        function deleteAccount(id) {
+            if (confirm('Are you sure you want to delete this account?')) {
+                const accounts = JSON.parse(localStorage.getItem('accounts') || '[]');
+                const filtered = accounts.filter(account => account.id !== id);
+                localStorage.setItem('accounts', JSON.stringify(filtered));
+                loadAccounts();
+                showNotification('Account deleted successfully!', 'success');
+            }
+        }
+
+        function updateAccountSelects() {
+            const accounts = JSON.parse(localStorage.getItem('accounts') || '[]');
+            const select = document.getElementById('transactionAccountSelect');
+            select.innerHTML = '<option value="">Select Account</option>';
+            
+            accounts.forEach(account => {
+                const option = document.createElement('option');
+                option.value = account.name;
+                option.textContent = account.name;
+                select.appendChild(option);
+            });
+        }
+
+        // Invoice functions
+        function loadInvoices() {
+            const invoices = JSON.parse(localStorage.getItem('invoices') || '[]');
+            const tbody = document.getElementById('invoicesTable');
+            tbody.innerHTML = '';
+
+            invoices.forEach(invoice => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">INV-${invoice.id}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 capitalize">${invoice.type}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">${invoice.contact}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">$${parseFloat(invoice.total).toLocaleString()}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">${invoice.date}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(invoice.status)}">
+                            ${invoice.status}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button onclick="viewInvoice(${invoice.id})" class="text-primary-600 hover:text-primary-900 mr-3">View</button>
+                        <button onclick="deleteInvoice(${invoice.id})" class="text-red-600 hover:text-red-900">Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // Update contact selects
+            updateContactSelects();
+        }
+
+        function getStatusColor(status) {
+            switch (status) {
+                case 'paid': return 'bg-green-100 text-green-800';
+                case 'pending': return 'bg-yellow-100 text-yellow-800';
+                case 'overdue': return 'bg-red-100 text-red-800';
+                default: return 'bg-gray-100 text-gray-800';
+            }
+        }
+
+        function showInvoiceForm() {
+            document.getElementById('invoiceModal').classList.remove('hidden');
+            document.getElementById('invoiceItems').innerHTML = '';
+            addInvoiceItem(); // Add first item
+            updateContactSelects();
+        }
+
+        function addInvoiceItem() {
+            const container = document.getElementById('invoiceItems');
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'grid grid-cols-1 md:grid-cols-5 gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg';
+            itemDiv.innerHTML = `
+                <input type="text" placeholder="Description" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-600 dark:text-white" onchange="calculateInvoiceTotal()">
+                <input type="number" placeholder="Quantity" step="1" value="1" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-600 dark:text-white" onchange="calculateInvoiceTotal()">
+                <input type="number" placeholder="Unit Price" step="0.01" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-600 dark:text-white" onchange="calculateInvoiceTotal()">
+                <input type="number" placeholder="Total" readonly class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-100 dark:bg-gray-600 dark:text-white">
+                <button type="button" onclick="removeInvoiceItem(this)" class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-md">Remove</button>
+            `;
+            container.appendChild(itemDiv);
+        }
+
+        function removeInvoiceItem(button) {
+            button.parentElement.remove();
+            calculateInvoiceTotal();
+        }
+
+        function calculateInvoiceTotal() {
+            const items = document.querySelectorAll('#invoiceItems > div');
+            let subtotal = 0;
+
+            items.forEach(item => {
+                const inputs = item.querySelectorAll('input');
+                const quantity = parseFloat(inputs[1].value) || 0;
+                const unitPrice = parseFloat(inputs[2].value) || 0;
+                const total = quantity * unitPrice;
+                inputs[3].value = total.toFixed(2);
+                subtotal += total;
+            });
+
+            const discount = parseFloat(document.querySelector('input[name="discount"]').value) || 0;
+            const tax = parseFloat(document.querySelector('input[name="tax"]').value) || 0;
+
+            const discountAmount = subtotal * (discount / 100);
+            const taxAmount = (subtotal - discountAmount) * (tax / 100);
+            const total = subtotal - discountAmount + taxAmount;
+
+            document.querySelector('input[name="total"]').value = total.toFixed(2);
+        }
+
+        function saveInvoice(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const invoices = JSON.parse(localStorage.getItem('invoices') || '[]');
+            
+            // Get invoice items
+            const items = [];
+            const itemDivs = document.querySelectorAll('#invoiceItems > div');
+            itemDivs.forEach(div => {
+                const inputs = div.querySelectorAll('input');
+                if (inputs[0].value && inputs[1].value && inputs[2].value) {
+                    items.push({
+                        description: inputs[0].value,
+                        quantity: parseFloat(inputs[1].value),
+                        unitPrice: parseFloat(inputs[2].value),
+                        total: parseFloat(inputs[3].value)
+                    });
+                }
+            });
+
+            const invoice = {
+                id: Date.now(),
+                type: formData.get('type'),
+                contact: formData.get('contact'),
+                date: formData.get('date'),
+                dueDate: formData.get('dueDate'),
+                items: items,
+                discount: parseFloat(formData.get('discount')),
+                tax: parseFloat(formData.get('tax')),
+                total: parseFloat(formData.get('total')),
+                status: 'pending'
+            };
+
+            invoices.push(invoice);
+            localStorage.setItem('invoices', JSON.stringify(invoices));
+            
+            // Create corresponding transaction
+            const transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
+            const transaction = {
+                id: Date.now() + 1,
+                date: invoice.date,
+                description: `Invoice INV-${invoice.id} - ${invoice.contact}`,
+                type: invoice.type === 'sales' ? 'income' : 'expense',
+                amount: invoice.total,
+                account: 'Cash' // Default account
+            };
+            transactions.push(transaction);
+            localStorage.setItem('transactions', JSON.stringify(transactions));
+            
+            closeModal('invoiceModal');
+            loadInvoices();
+            loadTransactions();
+            showNotification('Invoice created successfully!', 'success');
+        }
+
+        function viewInvoice(id) {
+            showNotification('Invoice view functionality coming soon!', 'info');
+        }
+
+        function deleteInvoice(id) {
+            if (confirm('Are you sure you want to delete this invoice?')) {
+                const invoices = JSON.parse(localStorage.getItem('invoices') || '[]');
+                const filtered = invoices.filter(invoice => invoice.id !== id);
+                localStorage.setItem('invoices', JSON.stringify(filtered));
+                loadInvoices();
+                showNotification('Invoice deleted successfully!', 'success');
+            }
+        }
+
+        function updateContactSelects() {
+            const contacts = JSON.parse(localStorage.getItem('contacts') || '[]');
+            const select = document.getElementById('invoiceContactSelect');
+            select.innerHTML = '<option value="">Select Contact</option>';
+            
+            contacts.forEach(contact => {
+                const option = document.createElement('option');
+                option.value = contact.name;
+                option.textContent = `${contact.name} (${contact.type})`;
+                select.appendChild(option);
+            });
+        }
+
+        // Transaction functions
+        function loadTransactions() {
+            const transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
+            displayTransactions(transactions);
+        }
+
+        function displayTransactions(transactions) {
+            const tbody = document.getElementById('transactionsTable');
+            tbody.innerHTML = '';
+
+            transactions.forEach(transaction => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">${transaction.date}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">${transaction.description}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${transaction.type === 'income' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                            ${transaction.type}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">$${parseFloat(transaction.amount).toLocaleString()}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">${transaction.account}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button onclick="editTransaction(${transaction.id})" class="text-primary-600 hover:text-primary-900 mr-3">Edit</button>
+                        <button onclick="deleteTransaction(${transaction.id})" class="text-red-600 hover:text-red-900">Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function filterTransactions() {
+            const transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
+            const search = document.getElementById('searchTransactions').value.toLowerCase();
+            const type = document.getElementById('filterType').value;
+            const dateFrom = document.getElementById('filterDateFrom').value;
+            const dateTo = document.getElementById('filterDateTo').value;
+
+            let filtered = transactions.filter(transaction => {
+                const matchesSearch = transaction.description.toLowerCase().includes(search) ||
+                                    transaction.account.toLowerCase().includes(search);
+                const matchesType = !type || transaction.type === type;
+                const matchesDateFrom = !dateFrom || transaction.date >= dateFrom;
+                const matchesDateTo = !dateTo || transaction.date <= dateTo;
+
+                return matchesSearch && matchesType && matchesDateFrom && matchesDateTo;
+            });
+
+            displayTransactions(filtered);
+        }
+
+        function showTransactionForm() {
+            document.getElementById('transactionModal').classList.remove('hidden');
+            updateAccountSelects();
+        }
+
+        function saveTransaction(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
+            
+            const transaction = {
+                id: Date.now(),
+                date: formData.get('date'),
+                description: formData.get('description'),
+                type: formData.get('type'),
+                amount: parseFloat(formData.get('amount')),
+                account: formData.get('account')
+            };
+
+            transactions.push(transaction);
+            localStorage.setItem('transactions', JSON.stringify(transactions));
+            
+            closeModal('transactionModal');
+            loadTransactions();
+            showNotification('Transaction added successfully!', 'success');
+        }
+
+        function editTransaction(id) {
+            showNotification('Edit functionality coming soon!', 'info');
+        }
+
+        function deleteTransaction(id) {
+            if (confirm('Are you sure you want to delete this transaction?')) {
+                const transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
+                const filtered = transactions.filter(transaction => transaction.id !== id);
+                localStorage.setItem('transactions', JSON.stringify(filtered));
+                loadTransactions();
+                showNotification('Transaction deleted successfully!', 'success');
+            }
+        }
+
+        // Contact functions
+        function loadContacts() {
+            const contacts = JSON.parse(localStorage.getItem('contacts') || '[]');
+            const tbody = document.getElementById('contactsTable');
+            tbody.innerHTML = '';
+
+            contacts.forEach(contact => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">${contact.name}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 capitalize">${contact.type}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">${contact.email || '-'}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">${contact.phone || '-'}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button onclick="editContact(${contact.id})" class="text-primary-600 hover:text-primary-900 mr-3">Edit</button>
+                        <button onclick="deleteContact(${contact.id})" class="text-red-600 hover:text-red-900">Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function showContactForm() {
+            document.getElementById('contactModal').classList.remove('hidden');
+        }
+
+        function saveContact(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const contacts = JSON.parse(localStorage.getItem('contacts') || '[]');
+            
+            const contact = {
+                id: Date.now(),
+                name: formData.get('name'),
+                type: formData.get('type'),
+                email: formData.get('email'),
+                phone: formData.get('phone'),
+                address: formData.get('address')
+            };
+
+            contacts.push(contact);
+            localStorage.setItem('contacts', JSON.stringify(contacts));
+            
+            closeModal('contactModal');
+            loadContacts();
+            showNotification('Contact added successfully!', 'success');
+        }
+
+        function editContact(id) {
+            showNotification('Edit functionality coming soon!', 'info');
+        }
+
+        function deleteContact(id) {
+            if (confirm('Are you sure you want to delete this contact?')) {
+                const contacts = JSON.parse(localStorage.getItem('contacts') || '[]');
+                const filtered = contacts.filter(contact => contact.id !== id);
+                localStorage.setItem('contacts', JSON.stringify(filtered));
+                loadContacts();
+                showNotification('Contact deleted successfully!', 'success');
+            }
+        }
+
+        // Notification functions
+        function showNotification(message, type = 'info') {
+            const container = document.getElementById('notifications');
+            const notification = document.createElement('div');
+            
+            const colors = {
+                success: 'bg-green-500',
+                error: 'bg-red-500',
+                warning: 'bg-yellow-500',
+                info: 'bg-blue-500'
+            };
+
+            notification.className = `${colors[type]} text-white px-4 py-3 rounded-lg shadow-lg transform translate-x-full transition-transform duration-300`;
+            notification.innerHTML = `
+                <div class="flex items-center justify-between">
+                    <span>${message}</span>
+                    <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-white hover:text-gray-200">
+                        <span class="material-icons text-sm">close</span>
+                    </button>
+                </div>
+            `;
+
+            container.appendChild(notification);
+
+            // Animate in
+            setTimeout(() => {
+                notification.classList.remove('translate-x-full');
+            }, 100);
+
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.classList.add('translate-x-full');
+                    setTimeout(() => {
+                        if (notification.parentElement) {
+                            notification.remove();
+                        }
+                    }, 300);
+                }
+            }, 5000);
+        }
+
+        // Reminder system
+        function startReminderSystem() {
+            // Check for due invoices every minute
+            setInterval(checkDueInvoices, 60000);
+            // Check immediately on load
+            checkDueInvoices();
+        }
+
+        function checkDueInvoices() {
+            const invoices = JSON.parse(localStorage.getItem('invoices') || '[]');
+            const today = new Date().toISOString().split('T')[0];
+            
+            invoices.forEach(invoice => {
+                if (invoice.status === 'pending' && invoice.dueDate <= today) {
+                    // Update status to overdue
+                    invoice.status = 'overdue';
+                    
+                    // Show notification
+                    showNotification(`Invoice INV-${invoice.id} is overdue!`, 'warning');
+                }
+            });
+
+            // Save updated invoices
+            localStorage.setItem('invoices', JSON.stringify(invoices));
+            
+            // Reload invoices if on invoices tab
+            if (currentTab === 'invoices') {
+                loadInvoices();
+            }
+        }
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96c8d6aa66ec9930',t:'MTc1NDc1OTEyOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

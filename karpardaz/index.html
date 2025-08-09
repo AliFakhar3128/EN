@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>کارپرداز - نرم‌افزار حسابداری هوشمند</title>
+    <meta name="description" content="نرم‌افزار حسابداری کارپرداز - مدیریت آسان مالی و حسابداری برای کسب‌وکارها">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'vazir': ['Vazirmatn', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+        }
+
+        .wave-animation {
+            background: linear-gradient(-45deg, #0ea5e9, #3b82f6, #8b5cf6, #06b6d4);
+            background-size: 400% 400%;
+            animation: wave 15s ease-in-out infinite;
+        }
+
+        @keyframes wave {
+
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card-hover:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .dark .card-hover:hover {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease-out;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .mockup-shadow {
+            filter: drop-shadow(0 25px 50px rgba(0, 0, 0, 0.15));
+        }
+
+        .dark .mockup-shadow {
+            filter: drop-shadow(0 25px 50px rgba(0, 0, 0, 0.4));
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
+    <!-- Header -->
+    <header
+        class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
+        <nav class="container mx-auto px-4 py-4 flex items-center justify-between" role="navigation" aria-label="اصلی">
+            <div class="flex items-center space-x-4 space-x-reverse">
+                <div
+                    class="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center">
+                    <span class="material-icons text-white text-xl">account_balance</span>
+                </div>
+                <h1 class="text-2xl font-bold text-primary-600 dark:text-primary-400">کارپرداز</h1>
+            </div>
+
+            <div class="flex items-center space-x-4 space-x-reverse">
+                <!-- Theme Toggle -->
+                <button id="theme-toggle"
+                    class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                    aria-label="تغییر حالت تاریک/روشن">
+                    <span class="material-icons dark:hidden">dark_mode</span>
+                    <span class="material-icons hidden dark:inline">light_mode</span>
+                </button>
+
+                <button
+                    class="bg-primary-600 hover:bg-primary-700 text-white px-6 py-2 rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800">
+                    شروع رایگان
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative overflow-hidden py-20 lg:py-32">
+        <div class="absolute inset-0 wave-animation opacity-5"></div>
+        <div class="container mx-auto px-4 text-center relative z-10">
+            <div class="fade-in">
+                <h2
+                    class="text-4xl lg:text-6xl font-bold mb-6 bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent">
+                    حسابداری هوشمند
+                    <br>
+                    برای کسب‌وکار شما
+                </h2>
+                <p class="text-xl lg:text-2xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
+                    با کارپرداز، مدیریت مالی و حسابداری کسب‌وکارتان را ساده‌تر و دقیق‌تر کنید
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    <button
+                        class="bg-primary-600 hover:bg-primary-700 text-white px-8 py-4 rounded-xl font-medium text-lg transition-all transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900">
+                        شروع استفاده رایگان
+                    </button>
+                    <button
+                        class="border-2 border-primary-600 text-primary-600 dark:text-primary-400 dark:border-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20 px-8 py-4 rounded-xl font-medium text-lg transition-all focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900">
+                        مشاهده دمو
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-20 bg-white dark:bg-gray-800">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16 fade-in">
+                <h3 class="text-3xl lg:text-4xl font-bold mb-4">ویژگی‌های کارپرداز</h3>
+                <p class="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+                    همه چیزی که برای مدیریت مالی حرفه‌ای نیاز دارید
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="bg-gray-50 dark:bg-gray-700 p-8 rounded-2xl card-hover fade-in" role="article">
+                    <div
+                        class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mb-6">
+                        <span class="material-icons text-white text-2xl">dashboard</span>
+                    </div>
+                    <h4 class="text-xl font-semibold mb-4">داشبورد هوشمند</h4>
+                    <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
+                        نمای کلی از وضعیت مالی کسب‌وکارتان با نمودارها و گزارش‌های تعاملی
+                    </p>
+                </div>
+
+                <div class="bg-gray-50 dark:bg-gray-700 p-8 rounded-2xl card-hover fade-in" role="article">
+                    <div
+                        class="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mb-6">
+                        <span class="material-icons text-white text-2xl">receipt_long</span>
+                    </div>
+                    <h4 class="text-xl font-semibold mb-4">مدیریت تراکنش‌ها</h4>
+                    <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
+                        ثبت و پیگیری آسان تمام تراکنش‌های مالی با دسته‌بندی خودکار
+                    </p>
+                </div>
+
+                <div class="bg-gray-50 dark:bg-gray-700 p-8 rounded-2xl card-hover fade-in" role="article">
+                    <div
+                        class="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6">
+                        <span class="material-icons text-white text-2xl">assessment</span>
+                    </div>
+                    <h4 class="text-xl font-semibold mb-4">گزارش‌های تحلیلی</h4>
+                    <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
+                        گزارش‌های مالی دقیق و قابل تنظیم برای تصمیم‌گیری بهتر
+                    </p>
+                </div>
+
+                <div class="bg-gray-50 dark:bg-gray-700 p-8 rounded-2xl card-hover fade-in" role="article">
+                    <div
+                        class="w-16 h-16 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center mb-6">
+                        <span class="material-icons text-white text-2xl">savings</span>
+                    </div>
+                    <h4 class="text-xl font-semibold mb-4">برنامه‌ریز بودجه</h4>
+                    <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
+                        تنظیم و پیگیری بودجه با هشدارهای هوشمند و پیشنهادات بهینه‌سازی
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- App Showcase -->
+    <section class="py-20 bg-gradient-to-br from-primary-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
+        <div class="container mx-auto px-4">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="fade-in">
+                    <h3 class="text-3xl lg:text-4xl font-bold mb-6">
+                        رابط کاربری مدرن و ساده
+                    </h3>
+                    <p class="text-xl text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
+                        طراحی شده با آخرین استانداردهای تجربه کاربری برای استفاده آسان و لذت‌بخش
+                    </p>
+                    <ul class="space-y-4">
+                        <li class="flex items-center space-x-3 space-x-reverse">
+                            <div class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                                <span class="material-icons text-white text-sm">check</span>
+                            </div>
+                            <span class="text-lg">طراحی پاسخ‌گو برای همه دستگاه‌ها</span>
+                        </li>
+                        <li class="flex items-center space-x-3 space-x-reverse">
+                            <div class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                                <span class="material-icons text-white text-sm">check</span>
+                            </div>
+                            <span class="text-lg">حالت تاریک و روشن</span>
+                        </li>
+                        <li class="flex items-center space-x-3 space-x-reverse">
+                            <div class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                                <span class="material-icons text-white text-sm">check</span>
+                            </div>
+                            <span class="text-lg">دسترسی‌پذیری کامل</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="fade-in">
+                    <div class="relative">
+                        <!-- App Mockup -->
+                        <div class="bg-white dark:bg-gray-800 rounded-3xl p-8 mockup-shadow">
+                            <div class="flex items-center justify-between mb-6">
+                                <h4 class="text-xl font-semibold">داشبورد مالی</h4>
+                                <div class="flex space-x-2 space-x-reverse">
+                                    <div class="w-3 h-3 bg-red-400 rounded-full"></div>
+                                    <div class="w-3 h-3 bg-yellow-400 rounded-full"></div>
+                                    <div class="w-3 h-3 bg-green-400 rounded-full"></div>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4 mb-6">
+                                <div
+                                    class="bg-gradient-to-br from-primary-500 to-primary-600 p-4 rounded-xl text-white">
+                                    <p class="text-sm opacity-90">درآمد ماهانه</p>
+                                    <p class="text-2xl font-bold">۱۲,۵۰۰,۰۰۰ ﷼</p>
+                                </div>
+                                <div class="bg-gradient-to-br from-green-500 to-green-600 p-4 rounded-xl text-white">
+                                    <p class="text-sm opacity-90">سود خالص</p>
+                                    <p class="text-2xl font-bold">۳,۲۰۰,۰۰۰ ﷼</p>
+                                </div>
+                            </div>
+
+                            <div class="space-y-3">
+                                <div
+                                    class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                                    <div class="flex items-center space-x-3 space-x-reverse">
+                                        <div class="w-8 h-8 bg-blue-500 rounded-lg"></div>
+                                        <span>فروش محصولات</span>
+                                    </div>
+                                    <span class="font-semibold text-green-600">+۲,۵۰۰,۰۰۰ ﷼</span>
+                                </div>
+                                <div
+                                    class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                                    <div class="flex items-center space-x-3 space-x-reverse">
+                                        <div class="w-8 h-8 bg-orange-500 rounded-lg"></div>
+                                        <span>هزینه‌های عملیاتی</span>
+                                    </div>
+                                    <span class="font-semibold text-red-600">-۸۰۰,۰۰۰ ﷼</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Form -->
+    <section class="py-20 bg-white dark:bg-gray-800">
+        <div class="container mx-auto px-4 max-w-2xl">
+            <div class="text-center mb-12 fade-in">
+                <h3 class="text-3xl lg:text-4xl font-bold mb-4">با ما در تماس باشید</h3>
+                <p class="text-xl text-gray-600 dark:text-gray-300">
+                    سوالی دارید؟ ما اینجا هستیم تا کمکتان کنیم
+                </p>
+            </div>
+
+            <form id="contact-form" class="space-y-6 fade-in" novalidate>
+                <div>
+                    <label for="name" class="block text-sm font-medium mb-2">نام و نام خانوادگی</label>
+                    <input type="text" id="name" name="name" required
+                        class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-gray-700 transition-colors"
+                        aria-describedby="name-error">
+                    <div id="name-error" class="text-red-600 text-sm mt-1 hidden" role="alert"></div>
+                </div>
+
+                <div>
+                    <label for="email" class="block text-sm font-medium mb-2">ایمیل</label>
+                    <input type="email" id="email" name="email" required
+                        class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-gray-700 transition-colors"
+                        aria-describedby="email-error">
+                    <div id="email-error" class="text-red-600 text-sm mt-1 hidden" role="alert"></div>
+                </div>
+
+                <div>
+                    <label for="message" class="block text-sm font-medium mb-2">پیام</label>
+                    <textarea id="message" name="message" rows="5" required
+                        class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-gray-700 transition-colors resize-none"
+                        aria-describedby="message-error"></textarea>
+                    <div id="message-error" class="text-red-600 text-sm mt-1 hidden" role="alert"></div>
+                </div>
+
+                <button type="submit"
+                    class="w-full bg-primary-600 hover:bg-primary-700 text-white py-4 rounded-lg font-medium text-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800">
+                    ارسال پیام
+                </button>
+
+                <div id="form-success"
+                    class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-800 dark:text-green-200 px-4 py-3 rounded-lg hidden"
+                    role="alert">
+                    پیام شما با موفقیت ارسال شد!
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-16">
+        <div class="container mx-auto px-4">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-3 space-x-reverse mb-6">
+                        <div
+                            class="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center">
+                            <span class="material-icons text-white text-xl">account_balance</span>
+                        </div>
+                        <h4 class="text-2xl font-bold">کارپرداز</h4>
+                    </div>
+                    <p class="text-gray-300 leading-relaxed">
+                        نرم‌افزار حسابداری هوشمند برای کسب‌وکارهای مدرن
+                    </p>
+                </div>
+
+                <div>
+                    <h5 class="font-semibold mb-4">محصولات</h5>
+                    <ul class="space-y-2 text-gray-300">
+                        <li><a href="#" class="hover:text-white transition-colors">داشبورد</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">گزارش‌ها</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">مدیریت تراکنش</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">برنامه‌ریز بودجه</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h5 class="font-semibold mb-4">پشتیبانی</h5>
+                    <ul class="space-y-2 text-gray-300">
+                        <li><a href="#" class="hover:text-white transition-colors">مرکز راهنمایی</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">تماس با ما</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">سوالات متداول</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">آموزش‌ها</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h5 class="font-semibold mb-4">شبکه‌های اجتماعی</h5>
+                    <div class="flex space-x-4 space-x-reverse">
+                        <a href="#"
+                            class="w-10 h-10 bg-gray-800 hover:bg-primary-600 rounded-lg flex items-center justify-center transition-colors"
+                            aria-label="تلگرام">
+                            <span class="material-icons">telegram</span>
+                        </a>
+                        <a href="#"
+                            class="w-10 h-10 bg-gray-800 hover:bg-primary-600 rounded-lg flex items-center justify-center transition-colors"
+                            aria-label="اینستاگرام">
+                            <span class="material-icons">camera_alt</span>
+                        </a>
+                        <a href="#"
+                            class="w-10 h-10 bg-gray-800 hover:bg-primary-600 rounded-lg flex items-center justify-center transition-colors"
+                            aria-label="لینکدین">
+                            <span class="material-icons">business</span>
+                        </a>
+                    </div>
+                    <div class="mt-4 text-gray-300">
+                        <p>تلفن: ۰۲۱-۱۲۳۴۵۶۷۸</p>
+                        <p>ایمیل: info@karpardaz.com</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
+                <p>&copy; ۱۴۰۳ کارپرداز. تمامی حقوق محفوظ است.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Theme Toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+
+        // Check for saved theme preference or default to system preference
+        const savedTheme = localStorage.getItem('theme');
+        const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        const currentTheme = savedTheme || systemTheme;
+
+        html.classList.toggle('dark', currentTheme === 'dark');
+
+        themeToggle.addEventListener('click', () => {
+            const isDark = html.classList.contains('dark');
+            html.classList.toggle('dark', !isDark);
+            localStorage.setItem('theme', !isDark ? 'dark' : 'light');
+        });
+
+        // Intersection Observer for fade-in animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Contact Form
+        const contactForm = document.getElementById('contact-form');
+        const formSuccess = document.getElementById('form-success');
+
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            // Clear previous errors
+            document.querySelectorAll('[id$="-error"]').forEach(el => {
+                el.classList.add('hidden');
+                el.textContent = '';
+            });
+
+            // Get form data
+            const formData = new FormData(contactForm);
+            const data = {
+                name: formData.get('name').trim(),
+                email: formData.get('email').trim(),
+                message: formData.get('message').trim(),
+                timestamp: new Date().toISOString()
+            };
+
+            // Validation
+            let isValid = true;
+
+            if (!data.name) {
+                showError('name-error', 'نام و نام خانوادگی الزامی است');
+                isValid = false;
+            }
+
+            if (!data.email) {
+                showError('email-error', 'ایمیل الزامی است');
+                isValid = false;
+            } else if (!isValidEmail(data.email)) {
+                showError('email-error', 'فرمت ایمیل صحیح نیست');
+                isValid = false;
+            }
+
+            if (!data.message) {
+                showError('message-error', 'پیام الزامی است');
+                isValid = false;
+            }
+
+            if (isValid) {
+                // Save to localStorage (demo purposes)
+                const contacts = JSON.parse(localStorage.getItem('contacts') || '[]');
+                contacts.push(data);
+                localStorage.setItem('contacts', JSON.stringify(contacts));
+
+                // Show success message
+                formSuccess.classList.remove('hidden');
+                contactForm.reset();
+
+                // Hide success message after 5 seconds
+                setTimeout(() => {
+                    formSuccess.classList.add('hidden');
+                }, 5000);
+            }
+        });
+
+        function showError(elementId, message) {
+            const errorElement = document.getElementById(elementId);
+            errorElement.textContent = message;
+            errorElement.classList.remove('hidden');
+        }
+
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        // Keyboard navigation support
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Tab') {
+                document.body.classList.add('keyboard-navigation');
+            }
+        });
+
+        document.addEventListener('mousedown', () => {
+            document.body.classList.remove('keyboard-navigation');
+        });
+
+        // Service Worker for offline support
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                const swScript = `
+                    const CACHE_NAME = 'karpardaz-v1';
+                    const urlsToCache = [
+                        '/',
+                        'https://cdn.tailwindcss.com',
+                        'https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap',
+                        'https://fonts.googleapis.com/icon?family=Material+Icons'
+                    ];
+                    
+                    self.addEventListener('install', (event) => {
+                        event.waitUntil(
+                            caches.open(CACHE_NAME)
+                                .then((cache) => cache.addAll(urlsToCache))
+                        );
+                    });
+                    
+                    self.addEventListener('fetch', (event) => {
+                        event.respondWith(
+                            caches.match(event.request)
+                                .then((response) => {
+                                    return response || fetch(event.request);
+                                })
+                        );
+                    });
+                `;
+
+                const blob = new Blob([swScript], { type: 'application/javascript' });
+                const swUrl = URL.createObjectURL(blob);
+
+                navigator.serviceWorker.register(swUrl)
+                    .then((registration) => {
+                        console.log('SW registered: ', registration);
+                    })
+                    .catch((registrationError) => {
+                        console.log('SW registration failed: ', registrationError);
+                    });
+            });
+        }
+
+        // Lazy loading for images (if any are added later)
+        if ('IntersectionObserver' in window) {
+            const imageObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        img.src = img.dataset.src;
+                        img.classList.remove('lazy');
+                        imageObserver.unobserve(img);
+                    }
+                });
+            });
+
+            document.querySelectorAll('img[data-src]').forEach(img => {
+                imageObserver.observe(img);
+            });
+        }
+    </script>
+    <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'96c8bd1b472370d8',t:'MTc1NDc1ODA4Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
+</body>
+
+</html>
