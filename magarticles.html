@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اخبار و مقالات - کمیکد مگ</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description"
+        content="آخرین اخبار تکنولوژی و مقالات تخصصی کمیکد مگ - تحلیل‌های عمیق و اخبار روز دنیای فناوری">
+    <meta name="keywords" content="اخبار تکنولوژی، مقالات فناوری، تحلیل تکنولوژی، اخبار فناوری ایران">
+    <meta name="author" content="Comicod Mag">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="اخبار و مقالات - کمیکد مگ">
+    <meta property="og:description" content="آخرین اخبار تکنولوژی و مقالات تخصصی">
+    <meta property="og:type" content="website">
+
+    <!-- CDN Resources -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'vazir': ['Vazirmatn', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#007BFF',
+                        'primary-dark': '#0056b3',
+                        'primary-light': '#66b3ff',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+        }
+
+        /* Custom animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(-100%);
+            }
+
+            to {
+                transform: translateX(0);
+            }
+        }
+
+        .animate-fade-in-up {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .animate-slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Focus styles for accessibility */
+        .focus-visible:focus {
+            outline: 2px solid #007BFF;
+            outline-offset: 2px;
+        }
+
+        /* Card hover effects */
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        /* Filter button styles */
+        .filter-btn {
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn.active {
+            background: #007BFF;
+            color: white;
+        }
+
+        /* Search highlight */
+        .search-highlight {
+            background: rgba(0, 123, 255, 0.2);
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+
+        /* Loading animation */
+        .loading-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #007BFF;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Sticky sidebar */
+        .sticky-sidebar {
+            position: sticky;
+            top: 100px;
+        }
+
+        /* Reading progress bar */
+        .reading-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 3px;
+            background: #007BFF;
+            z-index: 1000;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-900 font-vazir" x-data="contentApp()">
+
+    <!-- Reading Progress Bar -->
+    <div class="reading-progress" :style="`width: ${readingProgress}%`"></div>
+
+    <!-- Header -->
+    <header class="bg-white shadow-lg sticky top-0 z-50" role="banner">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-16 lg:h-20">
+
+                <!-- Logo -->
+                <div class="flex items-center space-x-4 space-x-reverse">
+                    <a href="/" class="flex items-center space-x-4 space-x-reverse">
+                        <div class="w-10 h-10 lg:w-12 lg:h-12">
+                            <svg viewBox="0 0 1030.93 1030.93" class="w-full h-full">
+                                <defs>
+                                    <style>
+                                        .cls-1 {
+                                            fill: #007BFF;
+                                            stroke-width: 0px;
+                                        }
+                                    </style>
+                                </defs>
+                                <g>
+                                    <path class="cls-1"
+                                        d="m1030.2,523.5c.43,137.02-30.98,252.49-100.05,352.12-14.19,20.47-30.42,27.79-50.71,20.99-27.57-9.24-36.57-45.75-17.06-71.4,121.02-159.09,121.41-418.59,4.37-593.26-20.18-30.12-20-52.44-.29-72.16,18.94-18.95,39.1-14.59,59.49,13.97,53.42,74.85,84.75,162.38,97.9,259.78,4.34,32.15,8.88,64.53,6.34,89.96Z" />
+                                    <path class="cls-1"
+                                        d="m869.67,556.26c.59,46.93-18.9,115.1-53.93,176.99-11.16,19.71-24.74,36.33-47.43,30.52-31.55-8.08-40.11-45.72-18.53-81.82,42.66-71.36,56.28-148.77,33.18-234.07-7.29-26.9-18.67-50.66-33.65-72.31-17.47-25.27-16.34-57.16,1.68-73.99,16.68-15.58,42.17-10.32,58.11,12.77,42.43,61.45,60.32,133.36,60.57,241.91Z" />
+                                    <path class="cls-1"
+                                        d="m594.1,839.52c39.22-14.09,46.78-27.83,46.75-77.83-.13-222.12-1.8-444.27.44-666.36.95-94.01-30.62-108.1-93.92-86.5-1.82.62-3.42,2.17-5.24,2.81C382.34,68.3,222.62,125.2,62.71,181.33,13.74,198.52.18,217.93.13,280.22-.06,504.69,0,729.15.04,953.62c0,59.09,14.78,77.2,63.32,77.23,176.15.11,352.3.1,528.45.04,33.76-.01,49.61-16.57,48.95-50.48-.61-31.58-12.32-42.81-47.78-42.07-91.76,1.91-183.64-3.05-277,2.82,4.11-2.48,8.03-5.78,12.37-7.32,88.57-31.51,177.25-62.51,265.75-94.31Zm-496.94,87.17c-20.82,7.8-21.42-1.8-21.31-21.87.56-100.53.26-201.06.26-301.59,0-97.03,1.18-194.08-.68-291.06-.59-30.7,8.21-41.18,31.26-49.3,146.01-51.45,291.58-104.79,437.12-158.19,16.52-6.06,20.95-2.1,20.9,19.31-.49,202.23-.43,404.47.3,606.7.07,19.49-6.78,26.22-20.04,31.07-149.36,54.61-298.76,109.08-447.81,164.94Z" />
+                                </g>
+                            </svg>
+                        </div>
+                        <div>
+                            <h1 class="text-xl lg:text-2xl font-bold text-primary">کمیکد مگ</h1>
+                            <p class="text-xs text-gray-600 hidden lg:block">مجله تکنولوژی و نوآوری</p>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Navigation -->
+                <nav class="hidden lg:flex items-center space-x-8 space-x-reverse" role="navigation">
+                    <a href="/" class="text-gray-700 hover:text-primary transition-colors focus-visible:focus">خانه</a>
+                    <a href="#news" class="text-primary font-medium">اخبار</a>
+                    <a href="#articles" class="text-primary font-medium">مقالات</a>
+                    <a href="#videos"
+                        class="text-gray-700 hover:text-primary transition-colors focus-visible:focus">ویدیوها</a>
+                    <a href="#podcasts"
+                        class="text-gray-700 hover:text-primary transition-colors focus-visible:focus">پادکست‌ها</a>
+                </nav>
+
+                <!-- Search & Mobile Menu -->
+                <div class="flex items-center space-x-4 space-x-reverse">
+                    <button @click="searchOpen = !searchOpen"
+                        class="p-2 text-gray-600 hover:text-primary transition-colors focus-visible:focus"
+                        :aria-expanded="searchOpen">
+                        <span class="material-icons">search</span>
+                    </button>
+
+                    <button @click="mobileMenuOpen = !mobileMenuOpen"
+                        class="lg:hidden p-2 text-gray-600 hover:text-primary transition-colors focus-visible:focus">
+                        <span class="material-icons" x-text="mobileMenuOpen ? 'close' : 'menu'"></span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Search Bar -->
+            <div x-show="searchOpen" x-transition:enter="transition ease-out duration-200"
+                x-transition:enter-start="opacity-0 transform -translate-y-2"
+                x-transition:enter-end="opacity-100 transform translate-y-0" class="pb-4">
+                <div class="relative">
+                    <input type="search" x-model="searchQuery" @input="performSearch"
+                        placeholder="جستجو در اخبار و مقالات..."
+                        class="w-full px-4 py-3 pr-12 rounded-2xl border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
+                    <span
+                        class="material-icons absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400">search</span>
+                </div>
+            </div>
+
+            <!-- Mobile Menu -->
+            <div x-show="mobileMenuOpen" x-transition:enter="transition ease-out duration-200"
+                x-transition:enter-start="opacity-0 transform -translate-y-2"
+                x-transition:enter-end="opacity-100 transform translate-y-0"
+                class="lg:hidden pb-4 border-t border-gray-100 mt-4 pt-4">
+                <nav class="space-y-2" role="navigation">
+                    <a href="/"
+                        class="block px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-xl transition-colors">خانه</a>
+                    <a href="#news" class="block px-4 py-3 text-primary bg-blue-50 rounded-xl">اخبار</a>
+                    <a href="#articles" class="block px-4 py-3 text-primary bg-blue-50 rounded-xl">مقالات</a>
+                    <a href="#videos"
+                        class="block px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-xl transition-colors">ویدیوها</a>
+                    <a href="#podcasts"
+                        class="block px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-xl transition-colors">پادکست‌ها</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Breadcrumb -->
+    <section class="bg-white border-b border-gray-100">
+        <div class="container mx-auto px-4 py-4">
+            <nav class="flex items-center space-x-2 space-x-reverse text-sm" aria-label="مسیر صفحه">
+                <a href="/" class="text-gray-500 hover:text-primary transition-colors">خانه</a>
+                <span class="material-icons text-gray-400 text-sm">chevron_left</span>
+                <span class="text-gray-900 font-medium" x-text="activeTab === 'news' ? 'اخبار' : 'مقالات'"></span>
+            </nav>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <div class="lg:flex lg:space-x-8 space-x-reverse">
+
+            <!-- Content Area -->
+            <div class="lg:w-3/4">
+
+                <!-- Page Header -->
+                <div class="mb-8">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+                        <div>
+                            <h1 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-2"
+                                x-text="activeTab === 'news' ? 'آخرین اخبار' : 'مقالات تخصصی'"></h1>
+                            <p class="text-lg text-gray-600"
+                                x-text="activeTab === 'news' ? 'جدیدترین اخبار دنیای تکنولوژی' : 'تحلیل‌های عمیق و مقالات کارشناسی'">
+                            </p>
+                        </div>
+
+                        <!-- View Toggle -->
+                        <div class="flex items-center space-x-2 space-x-reverse mt-4 sm:mt-0">
+                            <button @click="viewMode = 'grid'"
+                                :class="viewMode === 'grid' ? 'bg-primary text-white' : 'bg-gray-100 text-gray-600'"
+                                class="p-2 rounded-lg transition-colors focus-visible:focus">
+                                <span class="material-icons text-sm">grid_view</span>
+                            </button>
+                            <button @click="viewMode = 'list'"
+                                :class="viewMode === 'list' ? 'bg-primary text-white' : 'bg-gray-100 text-gray-600'"
+                                class="p-2 rounded-lg transition-colors focus-visible:focus">
+                                <span class="material-icons text-sm">view_list</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Tab Navigation -->
+                    <div class="flex space-x-4 space-x-reverse border-b border-gray-200">
+                        <button @click="activeTab = 'news'"
+                            :class="activeTab === 'news' ? 'border-primary text-primary' : 'border-transparent text-gray-500 hover:text-gray-700'"
+                            class="pb-4 px-1 border-b-2 font-medium transition-colors focus-visible:focus">
+                            اخبار
+                        </button>
+                        <button @click="activeTab = 'articles'"
+                            :class="activeTab === 'articles' ? 'border-primary text-primary' : 'border-transparent text-gray-500 hover:text-gray-700'"
+                            class="pb-4 px-1 border-b-2 font-medium transition-colors focus-visible:focus">
+                            مقالات
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="mb-8">
+                    <div class="flex flex-wrap gap-3">
+                        <button @click="activeFilter = 'all'" :class="activeFilter === 'all' ? 'active' : ''"
+                            class="filter-btn px-4 py-2 rounded-2xl bg-gray-100 text-gray-700 hover:bg-gray-200 focus-visible:focus">
+                            همه
+                        </button>
+                        <button @click="activeFilter = 'ai'" :class="activeFilter === 'ai' ? 'active' : ''"
+                            class="filter-btn px-4 py-2 rounded-2xl bg-gray-100 text-gray-700 hover:bg-gray-200 focus-visible:focus">
+                            هوش مصنوعی
+                        </button>
+                        <button @click="activeFilter = 'programming'"
+                            :class="activeFilter === 'programming' ? 'active' : ''"
+                            class="filter-btn px-4 py-2 rounded-2xl bg-gray-100 text-gray-700 hover:bg-gray-200 focus-visible:focus">
+                            برنامه‌نویسی
+                        </button>
+                        <button @click="activeFilter = 'security'" :class="activeFilter === 'security' ? 'active' : ''"
+                            class="filter-btn px-4 py-2 rounded-2xl bg-gray-100 text-gray-700 hover:bg-gray-200 focus-visible:focus">
+                            امنیت سایبری
+                        </button>
+                        <button @click="activeFilter = 'startup'" :class="activeFilter === 'startup' ? 'active' : ''"
+                            class="filter-btn px-4 py-2 rounded-2xl bg-gray-100 text-gray-700 hover:bg-gray-200 focus-visible:focus">
+                            استارت‌آپ
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Loading State -->
+                <div x-show="loading" class="flex justify-center py-12">
+                    <div class="loading-spinner"></div>
+                </div>
+
+                <!-- Content Grid/List -->
+                <div x-show="!loading">
+
+                    <!-- Grid View -->
+                    <div x-show="viewMode === 'grid'" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <template x-for="item in filteredContent" :key="item.id">
+                            <article class="card-hover bg-white rounded-2xl shadow-lg overflow-hidden">
+                                <div class="h-48 flex items-center justify-center"
+                                    :style="`background: linear-gradient(135deg, ${item.color} 0%, ${item.colorDark} 100%)`">
+                                    <span class="material-icons text-white text-6xl" x-text="item.icon"></span>
+                                </div>
+                                <div class="p-6">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <span
+                                            class="inline-block px-3 py-1 bg-blue-100 text-primary text-sm rounded-full font-medium"
+                                            x-text="item.category"></span>
+                                        <div class="flex items-center text-sm text-gray-500">
+                                            <span class="material-icons text-sm ml-1">schedule</span>
+                                            <span x-text="item.time"></span>
+                                        </div>
+                                    </div>
+                                    <h3 class="text-xl font-semibold mb-3 line-clamp-2" x-text="item.title"></h3>
+                                    <p class="text-gray-600 mb-4 line-clamp-3" x-text="item.excerpt"></p>
+                                    <div class="flex items-center justify-between">
+                                        <button
+                                            class="text-primary hover:text-primary-dark font-medium focus-visible:focus">
+                                            <span x-text="activeTab === 'news' ? 'ادامه خبر' : 'مطالعه مقاله'"></span>
+                                        </button>
+                                        <div class="flex items-center space-x-3 space-x-reverse">
+                                            <span class="text-sm text-gray-500" x-show="item.readTime"
+                                                x-text="item.readTime + ' دقیقه مطالعه'"></span>
+                                            <button
+                                                class="p-2 text-gray-400 hover:text-primary transition-colors focus-visible:focus"
+                                                title="اشتراک‌گذاری">
+                                                <span class="material-icons text-sm">share</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </article>
+                        </template>
+                    </div>
+
+                    <!-- List View -->
+                    <div x-show="viewMode === 'list'" class="space-y-6">
+                        <template x-for="item in filteredContent" :key="item.id">
+                            <article class="card-hover bg-white rounded-2xl shadow-lg overflow-hidden">
+                                <div class="md:flex">
+                                    <div class="md:w-1/3 h-48 md:h-auto flex items-center justify-center"
+                                        :style="`background: linear-gradient(135deg, ${item.color} 0%, ${item.colorDark} 100%)`">
+                                        <span class="material-icons text-white text-6xl" x-text="item.icon"></span>
+                                    </div>
+                                    <div class="md:w-2/3 p-6">
+                                        <div class="flex items-center justify-between mb-3">
+                                            <span
+                                                class="inline-block px-3 py-1 bg-blue-100 text-primary text-sm rounded-full font-medium"
+                                                x-text="item.category"></span>
+                                            <div class="flex items-center text-sm text-gray-500">
+                                                <span class="material-icons text-sm ml-1">schedule</span>
+                                                <span x-text="item.time"></span>
+                                            </div>
+                                        </div>
+                                        <h3 class="text-xl lg:text-2xl font-semibold mb-3" x-text="item.title"></h3>
+                                        <p class="text-gray-600 mb-4" x-text="item.excerpt"></p>
+                                        <div class="flex items-center justify-between">
+                                            <button
+                                                class="bg-primary text-white px-6 py-2 rounded-xl font-medium hover:bg-primary-dark transition-colors focus-visible:focus">
+                                                <span
+                                                    x-text="activeTab === 'news' ? 'ادامه خبر' : 'مطالعه مقاله'"></span>
+                                            </button>
+                                            <div class="flex items-center space-x-3 space-x-reverse">
+                                                <span class="text-sm text-gray-500" x-show="item.readTime"
+                                                    x-text="item.readTime + ' دقیقه مطالعه'"></span>
+                                                <button
+                                                    class="p-2 text-gray-400 hover:text-primary transition-colors focus-visible:focus"
+                                                    title="اشتراک‌گذاری">
+                                                    <span class="material-icons text-sm">share</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </article>
+                        </template>
+                    </div>
+
+                    <!-- No Results -->
+                    <div x-show="filteredContent.length === 0" class="text-center py-12">
+                        <span class="material-icons text-gray-400 text-6xl mb-4">search_off</span>
+                        <h3 class="text-xl font-semibold text-gray-600 mb-2">نتیجه‌ای یافت نشد</h3>
+                        <p class="text-gray-500">لطفاً کلمات کلیدی دیگری امتحان کنید یا فیلترها را تغییر دهید.</p>
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <div class="mt-12 flex justify-center">
+                    <nav class="flex items-center space-x-2 space-x-reverse" aria-label="صفحه‌بندی">
+                        <button class="px-3 py-2 text-gray-500 hover:text-primary transition-colors focus-visible:focus"
+                            disabled>
+                            <span class="material-icons">chevron_right</span>
+                        </button>
+                        <button class="px-4 py-2 bg-primary text-white rounded-lg font-medium">۱</button>
+                        <button
+                            class="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors focus-visible:focus">۲</button>
+                        <button
+                            class="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors focus-visible:focus">۳</button>
+                        <span class="px-2 text-gray-500">...</span>
+                        <button
+                            class="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors focus-visible:focus">۱۰</button>
+                        <button
+                            class="px-3 py-2 text-gray-700 hover:text-primary transition-colors focus-visible:focus">
+                            <span class="material-icons">chevron_left</span>
+                        </button>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <aside class="lg:w-1/4 mt-12 lg:mt-0">
+                <div class="sticky-sidebar space-y-8">
+
+                    <!-- Popular Posts -->
+                    <div class="bg-white rounded-2xl shadow-lg p-6">
+                        <h3 class="text-xl font-bold mb-6 flex items-center">
+                            <span class="material-icons text-primary ml-2">trending_up</span>
+                            محبوب‌ترین‌ها
+                        </h3>
+                        <div class="space-y-4">
+                            <template x-for="(post, index) in popularPosts" :key="post.id">
+                                <article class="flex items-start space-x-3 space-x-reverse group cursor-pointer">
+                                    <div class="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0"
+                                        x-text="index + 1"></div>
+                                    <div class="flex-1">
+                                        <h4 class="font-medium text-gray-900 group-hover:text-primary transition-colors line-clamp-2"
+                                            x-text="post.title"></h4>
+                                        <div class="flex items-center text-sm text-gray-500 mt-1">
+                                            <span class="material-icons text-xs ml-1">visibility</span>
+                                            <span x-text="post.views + ' بازدید'"></span>
+                                        </div>
+                                    </div>
+                                </article>
+                            </template>
+                        </div>
+                    </div>
+
+                    <!-- Categories -->
+                    <div class="bg-white rounded-2xl shadow-lg p-6">
+                        <h3 class="text-xl font-bold mb-6 flex items-center">
+                            <span class="material-icons text-primary ml-2">category</span>
+                            دسته‌بندی‌ها
+                        </h3>
+                        <div class="space-y-3">
+                            <template x-for="category in categories" :key="category.name">
+                                <div
+                                    class="flex items-center justify-between p-3 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer">
+                                    <div class="flex items-center space-x-3 space-x-reverse">
+                                        <span class="material-icons text-primary text-sm" x-text="category.icon"></span>
+                                        <span class="font-medium" x-text="category.name"></span>
+                                    </div>
+                                    <span class="bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-sm"
+                                        x-text="category.count"></span>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+
+                    <!-- Newsletter -->
+                    <div class="bg-gradient-to-br from-primary to-primary-dark rounded-2xl p-6 text-white">
+                        <h3 class="text-xl font-bold mb-4">عضویت در خبرنامه</h3>
+                        <p class="text-blue-100 mb-4">آخرین اخبار و مقالات را در ایمیل خود دریافت کنید</p>
+                        <div class="space-y-3">
+                            <input type="email" placeholder="آدرس ایمیل"
+                                class="w-full px-4 py-3 rounded-xl border-0 text-gray-900 focus:ring-2 focus:ring-white/50 outline-none">
+                            <button
+                                class="w-full bg-white text-primary px-4 py-3 rounded-xl font-medium hover:bg-gray-100 transition-colors focus-visible:focus">
+                                عضویت
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Tags -->
+                    <div class="bg-white rounded-2xl shadow-lg p-6">
+                        <h3 class="text-xl font-bold mb-6 flex items-center">
+                            <span class="material-icons text-primary ml-2">local_offer</span>
+                            برچسب‌ها
+                        </h3>
+                        <div class="flex flex-wrap gap-2">
+                            <template x-for="tag in tags" :key="tag">
+                                <span
+                                    class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm hover:bg-primary hover:text-white transition-colors cursor-pointer"
+                                    x-text="tag"></span>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-16 mt-16" role="contentinfo">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+
+                <!-- Brand -->
+                <div>
+                    <div class="flex items-center space-x-3 space-x-reverse mb-4">
+                        <div class="w-10 h-10">
+                            <svg viewBox="0 0 1030.93 1030.93" class="w-full h-full">
+                                <defs>
+                                    <style>
+                                        .cls-1 {
+                                            fill: #007BFF;
+                                            stroke-width: 0px;
+                                        }
+                                    </style>
+                                </defs>
+                                <g>
+                                    <path class="cls-1"
+                                        d="m1030.2,523.5c.43,137.02-30.98,252.49-100.05,352.12-14.19,20.47-30.42,27.79-50.71,20.99-27.57-9.24-36.57-45.75-17.06-71.4,121.02-159.09,121.41-418.59,4.37-593.26-20.18-30.12-20-52.44-.29-72.16,18.94-18.95,39.1-14.59,59.49,13.97,53.42,74.85,84.75,162.38,97.9,259.78,4.34,32.15,8.88,64.53,6.34,89.96Z" />
+                                    <path class="cls-1"
+                                        d="m869.67,556.26c.59,46.93-18.9,115.1-53.93,176.99-11.16,19.71-24.74,36.33-47.43,30.52-31.55-8.08-40.11-45.72-18.53-81.82,42.66-71.36,56.28-148.77,33.18-234.07-7.29-26.9-18.67-50.66-33.65-72.31-17.47-25.27-16.34-57.16,1.68-73.99,16.68-15.58,42.17-10.32,58.11,12.77,42.43,61.45,60.32,133.36,60.57,241.91Z" />
+                                    <path class="cls-1"
+                                        d="m594.1,839.52c39.22-14.09,46.78-27.83,46.75-77.83-.13-222.12-1.8-444.27.44-666.36.95-94.01-30.62-108.1-93.92-86.5-1.82.62-3.42,2.17-5.24,2.81C382.34,68.3,222.62,125.2,62.71,181.33,13.74,198.52.18,217.93.13,280.22-.06,504.69,0,729.15.04,953.62c0,59.09,14.78,77.2,63.32,77.23,176.15.11,352.3.1,528.45.04,33.76-.01,49.61-16.57,48.95-50.48-.61-31.58-12.32-42.81-47.78-42.07-91.76,1.91-183.64-3.05-277,2.82,4.11-2.48,8.03-5.78,12.37-7.32,88.57-31.51,177.25-62.51,265.75-94.31Zm-496.94,87.17c-20.82,7.8-21.42-1.8-21.31-21.87.56-100.53.26-201.06.26-301.59,0-97.03,1.18-194.08-.68-291.06-.59-30.7,8.21-41.18,31.26-49.3,146.01-51.45,291.58-104.79,437.12-158.19,16.52-6.06,20.95-2.1,20.9,19.31-.49,202.23-.43,404.47.3,606.7.07,19.49-6.78,26.22-20.04,31.07-149.36,54.61-298.76,109.08-447.81,164.94Z" />
+                                </g>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold">کمیکد مگ</h3>
+                            <p class="text-sm text-gray-400">مجله تکنولوژی و نوآوری</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-400 mb-4">پیشرو در ارائه آخرین اخبار، مقالات و تحلیل‌های دنیای تکنولوژی</p>
+                </div>
+
+                <!-- Quick Links -->
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">دسترسی سریع</h4>
+                    <ul class="space-y-2">
+                        <li><a href="/"
+                                class="text-gray-400 hover:text-white transition-colors focus-visible:focus">خانه</a>
+                        </li>
+                        <li><a href="#news"
+                                class="text-gray-400 hover:text-white transition-colors focus-visible:focus">اخبار</a>
+                        </li>
+                        <li><a href="#articles"
+                                class="text-gray-400 hover:text-white transition-colors focus-visible:focus">مقالات</a>
+                        </li>
+                        <li><a href="#videos"
+                                class="text-gray-400 hover:text-white transition-colors focus-visible:focus">ویدیوها</a>
+                        </li>
+                        <li><a href="#podcasts"
+                                class="text-gray-400 hover:text-white transition-colors focus-visible:focus">پادکست‌ها</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Categories -->
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">دسته‌بندی‌ها</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors focus-visible:focus">هوش
+                                مصنوعی</a></li>
+                        <li><a href="#"
+                                class="text-gray-400 hover:text-white transition-colors focus-visible:focus">برنامه‌نویسی</a>
+                        </li>
+                        <li><a href="#"
+                                class="text-gray-400 hover:text-white transition-colors focus-visible:focus">امنیت
+                                سایبری</a></li>
+                        <li><a href="#"
+                                class="text-gray-400 hover:text-white transition-colors focus-visible:focus">استارت‌آپ</a>
+                        </li>
+                        <li><a href="#"
+                                class="text-gray-400 hover:text-white transition-colors focus-visible:focus">گجت‌ها</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Contact -->
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">تماس با ما</h4>
+                    <ul class="space-y-2">
+                        <li class="flex items-center space-x-2 space-x-reverse text-gray-400">
+                            <span class="material-icons text-sm">email</span>
+                            <span>info@comicodmag.com</span>
+                        </li>
+                        <li class="flex items-center space-x-2 space-x-reverse text-gray-400">
+                            <span class="material-icons text-sm">phone</span>
+                            <span>۰۲۱-۱۲۳۴۵۶۷۸</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Bottom Footer -->
+            <div class="border-t border-gray-800 mt-12 pt-8 text-center">
+                <p class="text-gray-400 text-sm">
+                    © ۱۴۰۳ کمیکد مگ. تمامی حقوق محفوظ است.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button id="backToTop"
+        class="fixed bottom-6 left-6 w-12 h-12 bg-primary text-white rounded-full shadow-lg hover:bg-primary-dark transition-all duration-300 opacity-0 invisible focus-visible:focus"
+        title="بازگشت به بالا">
+        <span class="material-icons">keyboard_arrow_up</span>
+    </button>
+
+    <script>
+        function contentApp() {
+            return {
+                // State management
+                activeTab: 'news',
+                activeFilter: 'all',
+                viewMode: 'grid',
+                searchOpen: false,
+                mobileMenuOpen: false,
+                searchQuery: '',
+                loading: false,
+                readingProgress: 0,
+
+                // Sample data for news
+                newsData: [
+                    {
+                        id: 1,
+                        title: 'آیفون جدید اپل با قابلیت‌های هوش مصنوعی معرفی شد',
+                        excerpt: 'اپل در رویداد جدید خود، آیفون ۱۵ را با قابلیت‌های پیشرفته هوش مصنوعی و پردازنده A17 Pro معرفی کرد که تجربه کاربری را متحول می‌کند.',
+                        category: 'گجت‌ها',
+                        time: '۲ ساعت پیش',
+                        icon: 'smartphone',
+                        color: '#007BFF',
+                        colorDark: '#0056b3',
+                        filter: 'ai'
+                    },
+                    {
+                        id: 2,
+                        title: 'پیشرفت جدید در الگوریتم‌های یادگیری عمیق',
+                        excerpt: 'محققان دانشگاه MIT موفق به توسعه الگوریتم جدیدی شدند که دقت تشخیص تصاویر را تا ۹۸ درصد افزایش می‌دهد و سرعت پردازش را دو برابر کرده است.',
+                        category: 'هوش مصنوعی',
+                        time: '۴ ساعت پیش',
+                        icon: 'psychology',
+                        color: '#28a745',
+                        colorDark: '#1e7e34',
+                        filter: 'ai'
+                    },
+                    {
+                        id: 3,
+                        title: 'استارت‌آپ فضایی ایرانی رکورد جدیدی ثبت کرد',
+                        excerpt: 'شرکت فضایی ایرانی موفق به پرتاب موفقیت‌آمیز ماهواره ارتباطی خود شد و رکورد جدیدی در صنعت فضایی کشور ثبت کرد.',
+                        category: 'استارت‌آپ',
+                        time: '۶ ساعت پیش',
+                        icon: 'rocket_launch',
+                        color: '#6f42c1',
+                        colorDark: '#5a32a3',
+                        filter: 'startup'
+                    },
+                    {
+                        id: 4,
+                        title: 'حمله سایبری جدید به زیرساخت‌های بانکی',
+                        excerpt: 'متخصصان امنیت سایبری از شناسایی نوع جدیدی از بدافزار خبر دادند که قادر به نفوذ به سیستم‌های بانکی و سرقت اطلاعات مالی است.',
+                        category: 'امنیت سایبری',
+                        time: '۸ ساعت پیش',
+                        icon: 'security',
+                        color: '#dc3545',
+                        colorDark: '#c82333',
+                        filter: 'security'
+                    },
+                    {
+                        id: 5,
+                        title: 'فریمورک جدید React 19 منتشر شد',
+                        excerpt: 'تیم توسعه React نسخه ۱۹ این فریمورک محبوب را با قابلیت‌های جدید و بهبود عملکرد قابل توجه منتشر کرد.',
+                        category: 'برنامه‌نویسی',
+                        time: '۱۰ ساعت پیش',
+                        icon: 'code',
+                        color: '#17a2b8',
+                        colorDark: '#138496',
+                        filter: 'programming'
+                    },
+                    {
+                        id: 6,
+                        title: 'گوگل سرویس جدید ابری خود را معرفی کرد',
+                        excerpt: 'گوگل سرویس Google Cloud Next را با قابلیت‌های پیشرفته هوش مصنوعی و محاسبات کوانتومی معرفی کرد.',
+                        category: 'فناوری ابری',
+                        time: '۱۲ ساعت پیش',
+                        icon: 'cloud',
+                        color: '#fd7e14',
+                        colorDark: '#e8590c',
+                        filter: 'ai'
+                    }
+                ],
+
+                // Sample data for articles
+                articlesData: [
+                    {
+                        id: 7,
+                        title: 'آینده هوش مصنوعی در ایران: چالش‌ها و فرصت‌ها',
+                        excerpt: 'بررسی جامع وضعیت فعلی و چشم‌انداز آینده هوش مصنوعی در ایران، چالش‌های پیش رو و راهکارهای توسعه این فناوری در کشور.',
+                        category: 'هوش مصنوعی',
+                        time: '۱ روز پیش',
+                        readTime: 15,
+                        icon: 'auto_awesome',
+                        color: '#007BFF',
+                        colorDark: '#0056b3',
+                        filter: 'ai'
+                    },
+                    {
+                        id: 8,
+                        title: 'راهنمای کامل امنیت سایبری برای شرکت‌ها',
+                        excerpt: 'راهکارهای جامع محافظت از داده‌های شرکتی در برابر تهدیدات سایبری مدرن و پیاده‌سازی سیستم‌های امنیتی پیشرفته.',
+                        category: 'امنیت سایبری',
+                        time: '۲ روز پیش',
+                        readTime: 12,
+                        icon: 'security',
+                        color: '#fd7e14',
+                        colorDark: '#e8590c',
+                        filter: 'security'
+                    },
+                    {
+                        id: 9,
+                        title: 'محاسبات ابری و تحول دیجیتال کسب‌وکارها',
+                        excerpt: 'تأثیر فناوری‌های ابری بر تحول دیجیتال شرکت‌ها، بهبود عملکرد و کاهش هزینه‌های عملیاتی در دوران پسا کووید.',
+                        category: 'فناوری ابری',
+                        time: '۳ روز پیش',
+                        readTime: 10,
+                        icon: 'cloud',
+                        color: '#20c997',
+                        colorDark: '#1aa179',
+                        filter: 'programming'
+                    },
+                    {
+                        id: 10,
+                        title: 'راهنمای شروع کار با Python برای مبتدیان',
+                        excerpt: 'آموزش گام به گام برنامه‌نویسی با زبان پایتون از مفاهیم پایه تا پروژه‌های عملی و کاربردی برای تازه‌کارها.',
+                        category: 'برنامه‌نویسی',
+                        time: '۴ روز پیش',
+                        readTime: 20,
+                        icon: 'code',
+                        color: '#6f42c1',
+                        colorDark: '#5a32a3',
+                        filter: 'programming'
+                    },
+                    {
+                        id: 11,
+                        title: 'اکوسیستم استارت‌آپی ایران در سال ۱۴۰۳',
+                        excerpt: 'تحلیل وضعیت اکوسیستم استارت‌آپی ایران، بررسی سرمایه‌گذاری‌ها، چالش‌ها و موفقیت‌های حاصله در سال جاری.',
+                        category: 'استارت‌آپ',
+                        time: '۵ روز پیش',
+                        readTime: 18,
+                        icon: 'trending_up',
+                        color: '#e83e8c',
+                        colorDark: '#d91a72',
+                        filter: 'startup'
+                    },
+                    {
+                        id: 12,
+                        title: 'بلاک‌چین و آینده سیستم‌های مالی',
+                        excerpt: 'بررسی تأثیر فناوری بلاک‌چین بر سیستم‌های مالی سنتی و پتانسیل تحول در صنعت بانکداری و پرداخت‌ها.',
+                        category: 'فین‌تک',
+                        time: '۶ روز پیش',
+                        readTime: 14,
+                        icon: 'account_balance',
+                        color: '#17a2b8',
+                        colorDark: '#138496',
+                        filter: 'startup'
+                    }
+                ],
+
+                // Popular posts
+                popularPosts: [
+                    { id: 1, title: 'آموزش کامل React برای مبتدیان', views: '12.5K' },
+                    { id: 2, title: 'هوش مصنوعی و آینده شغل‌ها', views: '9.8K' },
+                    { id: 3, title: 'امنیت در اپلیکیشن‌های موبایل', views: '8.2K' },
+                    { id: 4, title: 'راهنمای سرمایه‌گذاری در استارت‌آپ‌ها', views: '7.1K' },
+                    { id: 5, title: 'فناوری 5G و تأثیر آن بر IoT', views: '6.9K' }
+                ],
+
+                // Categories
+                categories: [
+                    { name: 'هوش مصنوعی', icon: 'psychology', count: 45 },
+                    { name: 'برنامه‌نویسی', icon: 'code', count: 38 },
+                    { name: 'امنیت سایبری', icon: 'security', count: 29 },
+                    { name: 'استارت‌آپ', icon: 'trending_up', count: 24 },
+                    { name: 'گجت‌ها', icon: 'smartphone', count: 19 },
+                    { name: 'فناوری ابری', icon: 'cloud', count: 16 }
+                ],
+
+                // Tags
+                tags: [
+                    'React', 'Python', 'JavaScript', 'AI', 'Machine Learning',
+                    'Cybersecurity', 'Blockchain', 'Cloud Computing', 'Mobile',
+                    'Web Development', 'Data Science', 'IoT', '5G', 'Fintech'
+                ],
+
+                // Computed properties
+                get currentData() {
+                    return this.activeTab === 'news' ? this.newsData : this.articlesData;
+                },
+
+                get filteredContent() {
+                    let data = this.currentData;
+
+                    // Apply filter
+                    if (this.activeFilter !== 'all') {
+                        data = data.filter(item => item.filter === this.activeFilter);
+                    }
+
+                    // Apply search
+                    if (this.searchQuery.trim()) {
+                        const query = this.searchQuery.toLowerCase();
+                        data = data.filter(item =>
+                            item.title.toLowerCase().includes(query) ||
+                            item.excerpt.toLowerCase().includes(query) ||
+                            item.category.toLowerCase().includes(query)
+                        );
+                    }
+
+                    return data;
+                },
+
+                // Methods
+                init() {
+                    // Initialize reading progress
+                    this.updateReadingProgress();
+                    window.addEventListener('scroll', () => this.updateReadingProgress());
+
+                    // Initialize back to top button
+                    this.initBackToTop();
+                },
+
+                performSearch() {
+                    this.loading = true;
+                    // Simulate API call delay
+                    setTimeout(() => {
+                        this.loading = false;
+                    }, 500);
+                },
+
+                updateReadingProgress() {
+                    const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+                    const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                    this.readingProgress = (winScroll / height) * 100;
+                },
+
+                initBackToTop() {
+                    const backToTopButton = document.getElementById('backToTop');
+
+                    window.addEventListener('scroll', () => {
+                        if (window.pageYOffset > 300) {
+                            backToTopButton.classList.remove('opacity-0', 'invisible');
+                            backToTopButton.classList.add('opacity-100', 'visible');
+                        } else {
+                            backToTopButton.classList.add('opacity-0', 'invisible');
+                            backToTopButton.classList.remove('opacity-100', 'visible');
+                        }
+                    });
+
+                    backToTopButton.addEventListener('click', () => {
+                        window.scrollTo({
+                            top: 0,
+                            behavior: 'smooth'
+                        });
+                    });
+                }
+            }
+        }
+
+        // Smooth scroll for anchor links
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+        });
+
+        // Social sharing functionality
+        function shareContent(title, url) {
+            if (navigator.share) {
+                navigator.share({
+                    title: title,
+                    url: url
+                });
+            } else {
+                const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}`;
+                window.open(shareUrl, '_blank', 'width=600,height=400');
+            }
+        }
+
+        // Add click handlers for share buttons
+        document.addEventListener('DOMContentLoaded', function () {
+            document.addEventListener('click', function (e) {
+                if (e.target.closest('[title="اشتراک‌گذاری"]')) {
+                    const article = e.target.closest('article');
+                    const title = article.querySelector('h3').textContent;
+                    shareContent(title, window.location.href);
+                }
+            });
+        });
+    </script>
+    <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'96ca177bb5960a1c',t:'MTc1NDc3MjI2OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
+</body>
+
+</html>
