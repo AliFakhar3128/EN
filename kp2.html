@@ -1,0 +1,1851 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>کارپرداز - نسل جدید حسابداری هوشمند</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Vazirmatn', sans-serif;
+        }
+
+        .ripple {
+            position: relative;
+            overflow: hidden;
+            transform: translate3d(0, 0, 0);
+        }
+
+        .ripple:before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .ripple:hover:before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+
+        @keyframes floating {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .rotate-360 {
+            animation: rotate360 20s linear infinite;
+        }
+
+        @keyframes rotate360 {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .slide-in-left {
+            opacity: 0;
+            transform: translateX(-100px);
+            transition: all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .slide-in-left.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .slide-in-right {
+            opacity: 0;
+            transform: translateX(100px);
+            transition: all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .slide-in-right.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .scale-in {
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .scale-in.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .reveal-text {
+            overflow: hidden;
+        }
+
+        .reveal-text span {
+            display: inline-block;
+            transform: translateY(100%);
+            transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .reveal-text.visible span {
+            transform: translateY(0);
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #227DB2 0%, #1e6b9a 100%);
+        }
+
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .chart-bar {
+            animation: growBar 2s ease-out;
+        }
+
+        @keyframes growBar {
+            from {
+                height: 0;
+            }
+
+            to {
+                height: var(--bar-height);
+            }
+        }
+
+        .pulse-ring {
+            animation: pulse-ring 2s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
+        }
+
+        @keyframes pulse-ring {
+            0% {
+                transform: scale(0.33);
+            }
+
+            80%,
+            100% {
+                opacity: 0;
+            }
+        }
+
+        .industry-icon {
+            transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .industry-icon:hover {
+            transform: scale(1.15) rotate(5deg) translateY(-10px);
+        }
+
+        .typing-animation {
+            overflow: hidden;
+            border-right: 2px solid #227DB2;
+            white-space: nowrap;
+            animation: typing 3s steps(40, end), blink-caret 0.75s step-end infinite;
+        }
+
+        @keyframes typing {
+            from {
+                width: 0;
+            }
+
+            to {
+                width: 100%;
+            }
+        }
+
+        @keyframes blink-caret {
+
+            from,
+            to {
+                border-color: transparent;
+            }
+
+            50% {
+                border-color: #227DB2;
+            }
+        }
+
+        .stagger-animation {
+            animation-delay: calc(var(--stagger) * 0.1s);
+        }
+
+        .morphing-bg {
+            background: linear-gradient(-45deg, #227DB2, #1e6b9a, #2563eb, #3b82f6);
+            background-size: 400% 400%;
+            animation: gradient-shift 15s ease infinite;
+        }
+
+        @keyframes gradient-shift {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .bounce-in {
+            animation: bounceIn 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        @keyframes bounceIn {
+            0% {
+                transform: scale(0.3);
+                opacity: 0;
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            70% {
+                transform: scale(0.9);
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white/80 backdrop-blur-md border-b border-gray-100 sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-3 space-x-reverse">
+                <img src="https://en-gamma.vercel.app/kp.png" alt="کارپرداز" class="h-8 w-auto">
+                <h1 class="text-xl font-bold text-[#227DB2]">کارپرداز</h1>
+            </div>
+            <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="morphing-bg text-white min-h-screen flex items-center relative overflow-hidden">
+        <div class="absolute inset-0 opacity-5">
+            <div class="absolute top-20 left-20 w-64 h-64 bg-white rounded-full floating"></div>
+            <div class="absolute bottom-32 right-32 w-48 h-48 bg-white rounded-full floating"
+                style="animation-delay: 1s;"></div>
+            <div class="absolute top-1/2 left-1/4 w-32 h-32 bg-white rounded-full floating"
+                style="animation-delay: 2s;"></div>
+        </div>
+
+        <div class="container mx-auto px-6 text-center relative z-10">
+            <div class="reveal-text mb-8">
+                <h1 class="text-6xl md:text-8xl font-black leading-tight">
+                    <span>کارپرداز</span>
+                </h1>
+            </div>
+            <div class="reveal-text mb-6" style="animation-delay: 0.3s;">
+                <h2 class="text-2xl md:text-4xl font-light opacity-90">
+                    <span>نسل جدید حسابداری هوشمند</span>
+                </h2>
+            </div>
+            <div class="scale-in mb-12" style="animation-delay: 0.6s;">
+                <p class="text-xl md:text-2xl font-light max-w-3xl mx-auto leading-relaxed">
+                    راهکاری سریع، امن و اختصاصی برای هر کسب‌وکار
+                </p>
+            </div>
+
+            <!-- Mockup -->
+            <div class="relative max-w-4xl mx-auto mb-12 fade-in" style="animation-delay: 0.4s;">
+                <div class="bg-white rounded-3xl shadow-2xl p-8 mx-4">
+                    <div class="grid md:grid-cols-2 gap-8 items-center">
+                        <!-- Mobile Mockup -->
+                        <div class="relative">
+                            <div class="bg-gray-900 rounded-3xl p-2 shadow-xl">
+                                <div class="bg-white rounded-2xl overflow-hidden">
+                                    <div class="bg-[#227DB2] p-4 text-white text-center">
+                                        <h3 class="font-bold">کارپرداز موبایل</h3>
+                                    </div>
+                                    <div class="p-4 space-y-3">
+                                        <div class="flex justify-between items-center bg-gray-100 p-3 rounded-lg">
+                                            <span class="text-gray-800">فروش امروز</span>
+                                            <span class="text-green-600 font-bold">۲,۵۰۰,۰۰۰ ریال</span>
+                                        </div>
+                                        <div class="flex justify-between items-center bg-gray-100 p-3 rounded-lg">
+                                            <span class="text-gray-800">سفارشات</span>
+                                            <span class="text-blue-600 font-bold">۱۲ مورد</span>
+                                        </div>
+                                        <div class="bg-[#227DB2] text-white p-3 rounded-lg text-center">
+                                            <span class="material-icons">analytics</span>
+                                            <div class="mt-2">گزارش هوشمند</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Desktop Mockup -->
+                        <div class="relative">
+                            <div class="bg-gray-800 rounded-lg p-2 shadow-xl">
+                                <div class="bg-white rounded-lg overflow-hidden">
+                                    <div class="bg-[#227DB2] p-2 flex items-center space-x-2 space-x-reverse">
+                                        <div class="w-3 h-3 bg-red-400 rounded-full"></div>
+                                        <div class="w-3 h-3 bg-yellow-400 rounded-full"></div>
+                                        <div class="w-3 h-3 bg-green-400 rounded-full"></div>
+                                        <span class="text-white text-sm mr-4">کارپرداز - پنل مدیریت</span>
+                                    </div>
+                                    <div class="p-4">
+                                        <div class="grid grid-cols-3 gap-2 mb-4">
+                                            <div class="bg-blue-100 p-2 rounded text-center">
+                                                <div class="text-[#227DB2] font-bold">۱۲۳</div>
+                                                <div class="text-xs text-gray-600">محصولات</div>
+                                            </div>
+                                            <div class="bg-green-100 p-2 rounded text-center">
+                                                <div class="text-green-600 font-bold">۴۵</div>
+                                                <div class="text-xs text-gray-600">فروش</div>
+                                            </div>
+                                            <div class="bg-purple-100 p-2 rounded text-center">
+                                                <div class="text-purple-600 font-bold">۶۷</div>
+                                                <div class="text-xs text-gray-600">مشتریان</div>
+                                            </div>
+                                        </div>
+                                        <div class="bg-gray-100 h-16 rounded flex items-end justify-around p-2">
+                                            <div class="bg-[#227DB2] w-4 h-8 rounded-t"></div>
+                                            <div class="bg-[#227DB2] w-4 h-12 rounded-t"></div>
+                                            <div class="bg-[#227DB2] w-4 h-6 rounded-t"></div>
+                                            <div class="bg-[#227DB2] w-4 h-10 rounded-t"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button
+                class="bg-white text-[#227DB2] px-8 py-4 rounded-full text-xl font-bold ripple hover:shadow-2xl transition-all duration-300 fade-in"
+                style="animation-delay: 0.6s;">
+                <span class="material-icons align-middle ml-2">play_arrow</span>
+                شروع معرفی
+            </button>
+        </div>
+    </section>
+
+    <!-- Unique Selling Point -->
+    <section class="py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto text-center">
+                <div class="bg-gradient-to-r from-[#227DB2] to-blue-600 rounded-3xl p-12 text-white shadow-2xl fade-in">
+                    <div class="mb-8">
+                        <div
+                            class="w-24 h-24 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <span class="material-icons text-4xl">extension</span>
+                        </div>
+                        <h2 class="text-4xl font-bold mb-6">قابلیت متمایزکننده</h2>
+                        <p class="text-2xl leading-relaxed">
+                            ماژول‌های اختصاصی با برنامه‌ریزی ویژه برای نیاز هر مشتری
+                        </p>
+                    </div>
+                    <div class="grid md:grid-cols-3 gap-6 mt-12">
+                        <div class="glass-effect rounded-2xl p-6">
+                            <span class="material-icons text-3xl mb-4 block">tune</span>
+                            <h3 class="font-bold mb-2">سفارشی‌سازی کامل</h3>
+                            <p class="text-sm opacity-90">طراحی ماژول‌ها بر اساس نیاز دقیق شما</p>
+                        </div>
+                        <div class="glass-effect rounded-2xl p-6">
+                            <span class="material-icons text-3xl mb-4 block">speed</span>
+                            <h3 class="font-bold mb-2">پیاده‌سازی سریع</h3>
+                            <p class="text-sm opacity-90">راه‌اندازی در کمترین زمان ممکن</p>
+                        </div>
+                        <div class="glass-effect rounded-2xl p-6">
+                            <span class="material-icons text-3xl mb-4 block">support</span>
+                            <h3 class="font-bold mb-2">پشتیبانی اختصاصی</h3>
+                            <p class="text-sm opacity-90">تیم متخصص در خدمت شما</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 360 Industries Vision -->
+    <section class="py-32 bg-gradient-to-br from-indigo-50 via-white to-cyan-50 relative overflow-hidden">
+        <div class="absolute inset-0 opacity-30">
+            <div
+                class="absolute top-20 right-20 w-96 h-96 bg-gradient-to-br from-blue-200 to-purple-200 rounded-full blur-3xl">
+            </div>
+            <div
+                class="absolute bottom-20 left-20 w-80 h-80 bg-gradient-to-br from-cyan-200 to-blue-200 rounded-full blur-3xl">
+            </div>
+        </div>
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="text-center mb-24 fade-in">
+                <div class="reveal-text mb-8">
+                    <h2 class="text-6xl font-bold text-gray-800">
+                        <span>چشم‌انداز ۳۶۰ شغلی</span>
+                    </h2>
+                </div>
+                <div class="scale-in">
+                    <p class="text-2xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
+                        برنامه پیاده‌سازی ۳۶۰ قالب آماده برای ۳۶۰ رسته شغلی مختلف
+                    </p>
+                </div>
+            </div>
+
+            <!-- 360 Animation -->
+            <div class="relative max-w-2xl mx-auto mb-16 fade-in">
+                <div class="relative w-80 h-80 mx-auto">
+                    <!-- Earth Core -->
+                    <div
+                        class="absolute inset-0 bg-gradient-to-br from-[#227DB2] to-blue-800 rounded-full shadow-2xl flex items-center justify-center">
+                        <div class="text-white text-center">
+                            <div class="text-6xl font-bold">۳۶۰</div>
+                            <div class="text-lg">رسته شغلی</div>
+                        </div>
+                    </div>
+
+                    <!-- Rotating Ring -->
+                    <div class="absolute inset-0 rotate-360">
+                        <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-4">
+                            <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                                <span class="material-icons text-white text-sm">restaurant</span>
+                            </div>
+                        </div>
+                        <div class="absolute right-0 top-1/2 transform translate-x-4 -translate-y-1/2">
+                            <div class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
+                                <span class="material-icons text-white text-sm">store</span>
+                            </div>
+                        </div>
+                        <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-4">
+                            <div class="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
+                                <span class="material-icons text-white text-sm">factory</span>
+                            </div>
+                        </div>
+                        <div class="absolute left-0 top-1/2 transform -translate-x-4 -translate-y-1/2">
+                            <div class="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
+                                <span class="material-icons text-white text-sm">medical_services</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pulse Rings -->
+                    <div class="absolute inset-0 pulse-ring">
+                        <div class="w-full h-full border-4 border-[#227DB2] rounded-full opacity-30"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Industry Examples -->
+            <div class="grid md:grid-cols-5 gap-8 max-w-7xl mx-auto">
+                <div class="text-center industry-icon slide-in-left" style="--stagger: 1;">
+                    <div
+                        class="w-24 h-24 bg-gradient-to-br from-green-100 to-emerald-200 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-xl hover:shadow-2xl transition-all duration-500">
+                        <span class="material-icons text-4xl text-green-600">restaurant</span>
+                    </div>
+                    <h3 class="font-bold text-gray-800 text-lg mb-2">رستوران‌ها</h3>
+                    <p class="text-gray-600">کافی‌شاپ‌ها و فست‌فود</p>
+                    <div class="mt-3 px-3 py-1 bg-green-100 rounded-full text-xs text-green-700 inline-block">
+                        ۴۵+ قالب آماده
+                    </div>
+                </div>
+                <div class="text-center industry-icon slide-in-left" style="--stagger: 2;">
+                    <div
+                        class="w-24 h-24 bg-gradient-to-br from-blue-100 to-cyan-200 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-xl hover:shadow-2xl transition-all duration-500">
+                        <span class="material-icons text-4xl text-blue-600">shopping_cart</span>
+                    </div>
+                    <h3 class="font-bold text-gray-800 text-lg mb-2">فروشگاه‌های آنلاین</h3>
+                    <p class="text-gray-600">تجارت الکترونیک</p>
+                    <div class="mt-3 px-3 py-1 bg-blue-100 rounded-full text-xs text-blue-700 inline-block">
+                        ۸۰+ قالب آماده
+                    </div>
+                </div>
+                <div class="text-center industry-icon slide-in-left" style="--stagger: 3;">
+                    <div
+                        class="w-24 h-24 bg-gradient-to-br from-purple-100 to-pink-200 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-xl hover:shadow-2xl transition-all duration-500">
+                        <span class="material-icons text-4xl text-purple-600">business</span>
+                    </div>
+                    <h3 class="font-bold text-gray-800 text-lg mb-2">شرکت‌های خدماتی</h3>
+                    <p class="text-gray-600">مشاوره و خدمات</p>
+                    <div class="mt-3 px-3 py-1 bg-purple-100 rounded-full text-xs text-purple-700 inline-block">
+                        ۶۰+ قالب آماده
+                    </div>
+                </div>
+                <div class="text-center industry-icon slide-in-left" style="--stagger: 4;">
+                    <div
+                        class="w-24 h-24 bg-gradient-to-br from-orange-100 to-red-200 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-xl hover:shadow-2xl transition-all duration-500">
+                        <span class="material-icons text-4xl text-orange-600">factory</span>
+                    </div>
+                    <h3 class="font-bold text-gray-800 text-lg mb-2">تولیدکنندگان</h3>
+                    <p class="text-gray-600">کارگاه‌ها و صنایع</p>
+                    <div class="mt-3 px-3 py-1 bg-orange-100 rounded-full text-xs text-orange-700 inline-block">
+                        ۷۵+ قالب آماده
+                    </div>
+                </div>
+                <div class="text-center industry-icon slide-in-left" style="--stagger: 5;">
+                    <div
+                        class="w-24 h-24 bg-gradient-to-br from-red-100 to-pink-200 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-xl hover:shadow-2xl transition-all duration-500">
+                        <span class="material-icons text-4xl text-red-600">person</span>
+                    </div>
+                    <h3 class="font-bold text-gray-800 text-lg mb-2">فریلنسرها</h3>
+                    <p class="text-gray-600">کسب‌وکار شخصی</p>
+                    <div class="mt-3 px-3 py-1 bg-red-100 rounded-full text-xs text-red-700 inline-block">
+                        ۹۰+ قالب آماده
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Industry Panels Preview -->
+    <section class="py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16 fade-in">
+                <h2 class="text-4xl font-bold text-gray-800 mb-6">پیش‌نمایش پنل‌های اختصاصی</h2>
+                <p class="text-xl text-gray-600">نمونه‌ای از رابط کاربری طراحی شده برای صنایع مختلف</p>
+            </div>
+
+            <!-- Manufacturing Panel -->
+            <div class="max-w-6xl mx-auto mb-16 fade-in">
+                <h3 class="text-2xl font-bold text-center mb-8 text-[#227DB2]">پنل شرکت تولیدی</h3>
+                <div class="bg-gray-100 rounded-3xl p-8 shadow-2xl">
+                    <div class="bg-white rounded-2xl overflow-hidden">
+                        <!-- Header -->
+                        <div class="bg-[#227DB2] text-white p-4 flex justify-between items-center">
+                            <div class="flex items-center space-x-4 space-x-reverse">
+                                <span class="material-icons">factory</span>
+                                <h4 class="font-bold">پنل تولید - شرکت صنعتی پارس</h4>
+                            </div>
+                            <div class="text-sm">۱۴۰۳/۰۸/۱۵</div>
+                        </div>
+
+                        <!-- Dashboard Content -->
+                        <div class="p-6">
+                            <div class="grid md:grid-cols-4 gap-6 mb-8">
+                                <div class="bg-green-50 p-4 rounded-xl border-r-4 border-green-500">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <p class="text-green-600 text-sm">تولید امروز</p>
+                                            <p class="text-2xl font-bold text-green-700">۱,۲۳۴ واحد</p>
+                                        </div>
+                                        <span class="material-icons text-green-500 text-3xl">trending_up</span>
+                                    </div>
+                                </div>
+                                <div class="bg-blue-50 p-4 rounded-xl border-r-4 border-blue-500">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <p class="text-blue-600 text-sm">موجودی انبار</p>
+                                            <p class="text-2xl font-bold text-blue-700">۸,۹۲۱ واحد</p>
+                                        </div>
+                                        <span class="material-icons text-blue-500 text-3xl">inventory</span>
+                                    </div>
+                                </div>
+                                <div class="bg-orange-50 p-4 rounded-xl border-r-4 border-orange-500">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <p class="text-orange-600 text-sm">سفارشات در انتظار</p>
+                                            <p class="text-2xl font-bold text-orange-700">۴۵ مورد</p>
+                                        </div>
+                                        <span class="material-icons text-orange-500 text-3xl">pending_actions</span>
+                                    </div>
+                                </div>
+                                <div class="bg-purple-50 p-4 rounded-xl border-r-4 border-purple-500">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <p class="text-purple-600 text-sm">درآمد ماه</p>
+                                            <p class="text-2xl font-bold text-purple-700">۲.۵ میلیارد</p>
+                                        </div>
+                                        <span class="material-icons text-purple-500 text-3xl">account_balance</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Production Chart -->
+                            <div class="bg-gray-50 rounded-xl p-6">
+                                <h5 class="font-bold mb-4 text-gray-800">نمودار تولید هفتگی</h5>
+                                <div class="flex items-end justify-between h-32 space-x-2 space-x-reverse">
+                                    <div class="flex flex-col items-center">
+                                        <div class="bg-[#227DB2] chart-bar rounded-t"
+                                            style="--bar-height: 80px; width: 40px; height: 80px;"></div>
+                                        <span class="text-xs mt-2 text-gray-600">شنبه</span>
+                                    </div>
+                                    <div class="flex flex-col items-center">
+                                        <div class="bg-[#227DB2] chart-bar rounded-t"
+                                            style="--bar-height: 100px; width: 40px; height: 100px;"></div>
+                                        <span class="text-xs mt-2 text-gray-600">یکشنبه</span>
+                                    </div>
+                                    <div class="flex flex-col items-center">
+                                        <div class="bg-[#227DB2] chart-bar rounded-t"
+                                            style="--bar-height: 60px; width: 40px; height: 60px;"></div>
+                                        <span class="text-xs mt-2 text-gray-600">دوشنبه</span>
+                                    </div>
+                                    <div class="flex flex-col items-center">
+                                        <div class="bg-[#227DB2] chart-bar rounded-t"
+                                            style="--bar-height: 120px; width: 40px; height: 120px;"></div>
+                                        <span class="text-xs mt-2 text-gray-600">سه‌شنبه</span>
+                                    </div>
+                                    <div class="flex flex-col items-center">
+                                        <div class="bg-[#227DB2] chart-bar rounded-t"
+                                            style="--bar-height: 90px; width: 40px; height: 90px;"></div>
+                                        <span class="text-xs mt-2 text-gray-600">چهارشنبه</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Clothing Store Panel -->
+            <div class="max-w-6xl mx-auto fade-in">
+                <h3 class="text-2xl font-bold text-center mb-8 text-[#227DB2]">پنل فروشگاه لباس</h3>
+                <div class="bg-gray-100 rounded-3xl p-8 shadow-2xl">
+                    <div class="bg-white rounded-2xl overflow-hidden">
+                        <!-- Header -->
+                        <div
+                            class="bg-gradient-to-r from-pink-500 to-purple-600 text-white p-4 flex justify-between items-center">
+                            <div class="flex items-center space-x-4 space-x-reverse">
+                                <span class="material-icons">checkroom</span>
+                                <h4 class="font-bold">بوتیک مد و زیبایی - آریانا</h4>
+                            </div>
+                            <div class="text-sm">آنلاین</div>
+                        </div>
+
+                        <!-- Dashboard Content -->
+                        <div class="p-6">
+                            <div class="grid md:grid-cols-3 gap-6 mb-8">
+                                <div class="bg-gradient-to-br from-pink-50 to-rose-50 p-4 rounded-xl">
+                                    <div class="flex items-center justify-between mb-4">
+                                        <h5 class="font-bold text-gray-800">فروش امروز</h5>
+                                        <span class="material-icons text-pink-500">shopping_bag</span>
+                                    </div>
+                                    <p class="text-3xl font-bold text-pink-600 mb-2">۱۲ فقره</p>
+                                    <p class="text-pink-500">۳,۴۵۰,۰۰۰ ریال</p>
+                                </div>
+                                <div class="bg-gradient-to-br from-purple-50 to-indigo-50 p-4 rounded-xl">
+                                    <div class="flex items-center justify-between mb-4">
+                                        <h5 class="font-bold text-gray-800">محصولات پرفروش</h5>
+                                        <span class="material-icons text-purple-500">star</span>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <div class="flex justify-between text-sm">
+                                            <span>مانتو مجلسی</span>
+                                            <span class="text-purple-600 font-bold">۸ عدد</span>
+                                        </div>
+                                        <div class="flex justify-between text-sm">
+                                            <span>شال نخی</span>
+                                            <span class="text-purple-600 font-bold">۵ عدد</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="bg-gradient-to-br from-blue-50 to-cyan-50 p-4 rounded-xl">
+                                    <div class="flex items-center justify-between mb-4">
+                                        <h5 class="font-bold text-gray-800">موجودی کم</h5>
+                                        <span class="material-icons text-red-500">warning</span>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <div class="flex justify-between text-sm">
+                                            <span>تونیک سایز L</span>
+                                            <span class="text-red-600 font-bold">۲ عدد</span>
+                                        </div>
+                                        <div class="flex justify-between text-sm">
+                                            <span>کیف دستی</span>
+                                            <span class="text-red-600 font-bold">۱ عدد</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Product Grid -->
+                            <div class="bg-gray-50 rounded-xl p-6">
+                                <h5 class="font-bold mb-4 text-gray-800">مدیریت محصولات</h5>
+                                <div class="grid grid-cols-4 gap-4">
+                                    <div class="bg-white rounded-lg p-3 shadow-sm">
+                                        <div
+                                            class="bg-gradient-to-br from-pink-200 to-purple-200 h-20 rounded-lg mb-2 flex items-center justify-center">
+                                            <span class="material-icons text-white text-2xl">checkroom</span>
+                                        </div>
+                                        <p class="text-xs font-bold">مانتو مجلسی</p>
+                                        <p class="text-xs text-gray-600">۱,۲۰۰,۰۰۰ ریال</p>
+                                        <p class="text-xs text-green-600">موجود: ۱۵</p>
+                                    </div>
+                                    <div class="bg-white rounded-lg p-3 shadow-sm">
+                                        <div
+                                            class="bg-gradient-to-br from-blue-200 to-indigo-200 h-20 rounded-lg mb-2 flex items-center justify-center">
+                                            <span class="material-icons text-white text-2xl">style</span>
+                                        </div>
+                                        <p class="text-xs font-bold">شال ابریشمی</p>
+                                        <p class="text-xs text-gray-600">۴۵۰,۰۰۰ ریال</p>
+                                        <p class="text-xs text-green-600">موجود: ۲۳</p>
+                                    </div>
+                                    <div class="bg-white rounded-lg p-3 shadow-sm">
+                                        <div
+                                            class="bg-gradient-to-br from-green-200 to-emerald-200 h-20 rounded-lg mb-2 flex items-center justify-center">
+                                            <span class="material-icons text-white text-2xl">local_mall</span>
+                                        </div>
+                                        <p class="text-xs font-bold">کیف دستی</p>
+                                        <p class="text-xs text-gray-600">۸۰۰,۰۰۰ ریال</p>
+                                        <p class="text-xs text-red-600">موجود: ۱</p>
+                                    </div>
+                                    <div class="bg-white rounded-lg p-3 shadow-sm">
+                                        <div
+                                            class="bg-gradient-to-br from-orange-200 to-red-200 h-20 rounded-lg mb-2 flex items-center justify-center">
+                                            <span class="material-icons text-white text-2xl">diamond</span>
+                                        </div>
+                                        <p class="text-xs font-bold">جواهرات</p>
+                                        <p class="text-xs text-gray-600">۲,۵۰۰,۰۰۰ ریال</p>
+                                        <p class="text-xs text-green-600">موجود: ۸</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Speed & Performance -->
+    <section class="py-20 bg-gradient-to-r from-[#227DB2] to-blue-600 text-white">
+        <div class="container mx-auto px-4 text-center">
+            <div class="max-w-4xl mx-auto fade-in">
+                <div class="mb-12">
+                    <div
+                        class="w-32 h-32 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-8">
+                        <span class="material-icons text-6xl">speed</span>
+                    </div>
+                    <h2 class="text-4xl font-bold mb-6">سرعت و کارایی</h2>
+                    <p class="text-xl leading-relaxed">
+                        بهینه‌شده برای عملکرد سریع و پاسخ‌دهی لحظه‌ای
+                    </p>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="glass-effect rounded-2xl p-8">
+                        <div class="text-4xl font-bold mb-2">۰.۵</div>
+                        <div class="text-lg mb-2">ثانیه</div>
+                        <div class="text-sm opacity-90">زمان بارگذاری صفحات</div>
+                    </div>
+                    <div class="glass-effect rounded-2xl p-8">
+                        <div class="text-4xl font-bold mb-2">۹۹.۹%</div>
+                        <div class="text-lg mb-2">آپتایم</div>
+                        <div class="text-sm opacity-90">در دسترس بودن سیستم</div>
+                    </div>
+                    <div class="glass-effect rounded-2xl p-8">
+                        <div class="text-4xl font-bold mb-2">۲۴/۷</div>
+                        <div class="text-lg mb-2">پشتیبانی</div>
+                        <div class="text-sm opacity-90">خدمات غیرمتوقف</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Analytics -->
+    <section class="py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="max-w-6xl mx-auto">
+                <div class="text-center mb-16 fade-in">
+                    <h2 class="text-4xl font-bold text-gray-800 mb-6">تحلیل داده با هوش مصنوعی</h2>
+                    <p class="text-xl text-gray-600">چشم‌اندازی برای سیستم تحلیل داده پیشرفته از طریق AI</p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-12 items-center fade-in">
+                    <!-- AI Dashboard -->
+                    <div class="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-3xl p-8">
+                        <div class="bg-white rounded-2xl p-6 shadow-lg">
+                            <div class="flex items-center justify-between mb-6">
+                                <h3 class="text-xl font-bold text-gray-800">تحلیل هوشمند</h3>
+                                <div class="flex items-center space-x-2 space-x-reverse">
+                                    <div class="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+                                    <span class="text-sm text-gray-600">AI فعال</span>
+                                </div>
+                            </div>
+
+                            <!-- AI Insights -->
+                            <div class="space-y-4">
+                                <div class="bg-green-50 border-r-4 border-green-400 p-4 rounded-lg">
+                                    <div class="flex items-center space-x-2 space-x-reverse mb-2">
+                                        <span class="material-icons text-green-600 text-sm">trending_up</span>
+                                        <span class="text-sm font-bold text-green-700">پیش‌بینی مثبت</span>
+                                    </div>
+                                    <p class="text-sm text-gray-700">فروش ماه آینده ۱۵% افزایش خواهد یافت</p>
+                                </div>
+
+                                <div class="bg-blue-50 border-r-4 border-blue-400 p-4 rounded-lg">
+                                    <div class="flex items-center space-x-2 space-x-reverse mb-2">
+                                        <span class="material-icons text-blue-600 text-sm">lightbulb</span>
+                                        <span class="text-sm font-bold text-blue-700">پیشنهاد هوشمند</span>
+                                    </div>
+                                    <p class="text-sm text-gray-700">موجودی محصول A را تا ۲۰% افزایش دهید</p>
+                                </div>
+
+                                <div class="bg-orange-50 border-r-4 border-orange-400 p-4 rounded-lg">
+                                    <div class="flex items-center space-x-2 space-x-reverse mb-2">
+                                        <span class="material-icons text-orange-600 text-sm">warning</span>
+                                        <span class="text-sm font-bold text-orange-700">هشدار</span>
+                                    </div>
+                                    <p class="text-sm text-gray-700">کاهش تقاضا برای محصول B پیش‌بینی می‌شود</p>
+                                </div>
+                            </div>
+
+                            <!-- Smart Chart -->
+                            <div class="mt-6 bg-gray-50 rounded-xl p-4">
+                                <h4 class="font-bold text-gray-800 mb-4">نمودار پیش‌بینی فروش</h4>
+                                <div class="flex items-end justify-between h-24 space-x-1 space-x-reverse">
+                                    <div class="bg-[#227DB2] w-6 h-12 rounded-t opacity-60"></div>
+                                    <div class="bg-[#227DB2] w-6 h-16 rounded-t opacity-70"></div>
+                                    <div class="bg-[#227DB2] w-6 h-14 rounded-t opacity-80"></div>
+                                    <div class="bg-[#227DB2] w-6 h-20 rounded-t opacity-90"></div>
+                                    <div class="bg-gradient-to-t from-[#227DB2] to-green-400 w-6 h-24 rounded-t"></div>
+                                    <div
+                                        class="bg-gradient-to-t from-green-400 to-green-500 w-6 h-20 rounded-t opacity-50 border-2 border-dashed border-green-500">
+                                    </div>
+                                    <div
+                                        class="bg-gradient-to-t from-green-400 to-green-500 w-6 h-22 rounded-t opacity-50 border-2 border-dashed border-green-500">
+                                    </div>
+                                </div>
+                                <div class="flex justify-between text-xs text-gray-600 mt-2">
+                                    <span>مهر</span>
+                                    <span>آبان</span>
+                                    <span>آذر</span>
+                                    <span>دی</span>
+                                    <span>بهمن</span>
+                                    <span class="text-green-600">اسفند</span>
+                                    <span class="text-green-600">فروردین</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AI Features -->
+                    <div class="space-y-6">
+                        <div class="flex items-start space-x-4 space-x-reverse">
+                            <div
+                                class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <span class="material-icons text-purple-600">psychology</span>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-gray-800 mb-2">تحلیل رفتار مشتری</h3>
+                                <p class="text-gray-600">شناسایی الگوهای خرید و پیش‌بینی نیازهای آتی مشتریان</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-4 space-x-reverse">
+                            <div
+                                class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <span class="material-icons text-blue-600">auto_graph</span>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-gray-800 mb-2">پیش‌بینی فروش</h3>
+                                <p class="text-gray-600">تخمین دقیق فروش آینده بر اساس داده‌های تاریخی و روندهای بازار
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-4 space-x-reverse">
+                            <div
+                                class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <span class="material-icons text-green-600">inventory_2</span>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-gray-800 mb-2">بهینه‌سازی موجودی</h3>
+                                <p class="text-gray-600">مدیریت هوشمند انبار و کاهش هزینه‌های نگهداری</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-4 space-x-reverse">
+                            <div
+                                class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <span class="material-icons text-orange-600">insights</span>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-gray-800 mb-2">گزارش‌های خودکار</h3>
+                                <p class="text-gray-600">تولید گزارش‌های تحلیلی جامع بدون نیاز به دخالت انسانی</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Product Management & Website Integration -->
+    <section class="py-20 bg-gray-100">
+        <div class="container mx-auto px-4">
+            <div class="max-w-6xl mx-auto">
+                <div class="text-center mb-16 fade-in">
+                    <h2 class="text-4xl font-bold text-gray-800 mb-6">مدیریت محصول و اتصال به وبسایت</h2>
+                    <p class="text-xl text-gray-600">همگام‌سازی کامل بین سیستم حسابداری و وبسایت شما</p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-12 items-center fade-in">
+                    <!-- Integration Diagram -->
+                    <div class="relative">
+                        <div class="bg-white rounded-3xl p-8 shadow-2xl">
+                            <h3 class="text-xl font-bold text-center mb-8 text-[#227DB2]">دیاگرام اتصال</h3>
+
+                            <!-- Karpardaz App -->
+                            <div class="text-center mb-8">
+                                <div
+                                    class="w-24 h-24 bg-[#227DB2] rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                    <span class="material-icons text-white text-3xl">account_balance</span>
+                                </div>
+                                <h4 class="font-bold text-gray-800">کارپرداز</h4>
+                                <p class="text-sm text-gray-600">سیستم حسابداری</p>
+                            </div>
+
+                            <!-- Connection Lines -->
+                            <div class="relative mb-8">
+                                <div class="absolute left-1/2 top-0 w-0.5 h-16 bg-[#227DB2] transform -translate-x-1/2">
+                                </div>
+                                <div
+                                    class="absolute left-1/2 top-4 w-4 h-4 bg-[#227DB2] rounded-full transform -translate-x-1/2 animate-pulse">
+                                </div>
+                                <div class="absolute left-1/2 top-8 w-4 h-4 bg-[#227DB2] rounded-full transform -translate-x-1/2 animate-pulse"
+                                    style="animation-delay: 0.5s;"></div>
+                                <div class="absolute left-1/2 top-12 w-4 h-4 bg-[#227DB2] rounded-full transform -translate-x-1/2 animate-pulse"
+                                    style="animation-delay: 1s;"></div>
+                            </div>
+
+                            <!-- API Layer -->
+                            <div class="text-center mb-8">
+                                <div
+                                    class="w-20 h-12 bg-green-500 rounded-xl flex items-center justify-center mx-auto mb-4">
+                                    <span class="material-icons text-white text-2xl">api</span>
+                                </div>
+                                <h4 class="font-bold text-gray-800">API</h4>
+                                <p class="text-sm text-gray-600">واسط برنامه‌نویسی</p>
+                            </div>
+
+                            <!-- Connection Lines -->
+                            <div class="relative mb-8">
+                                <div class="absolute left-1/2 top-0 w-0.5 h-16 bg-green-500 transform -translate-x-1/2">
+                                </div>
+                                <div class="flex justify-center space-x-8 space-x-reverse">
+                                    <div class="w-0.5 h-8 bg-green-500"></div>
+                                    <div class="w-0.5 h-8 bg-green-500"></div>
+                                </div>
+                            </div>
+
+                            <!-- Websites -->
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="text-center">
+                                    <div
+                                        class="w-16 h-16 bg-blue-500 rounded-xl flex items-center justify-center mx-auto mb-2">
+                                        <span class="material-icons text-white text-xl">language</span>
+                                    </div>
+                                    <h5 class="font-bold text-gray-800 text-sm">وبسایت</h5>
+                                    <p class="text-xs text-gray-600">فروشگاه آنلاین</p>
+                                </div>
+                                <div class="text-center">
+                                    <div
+                                        class="w-16 h-16 bg-purple-500 rounded-xl flex items-center justify-center mx-auto mb-2">
+                                        <span class="material-icons text-white text-xl">extension</span>
+                                    </div>
+                                    <h5 class="font-bold text-gray-800 text-sm">وردپرس</h5>
+                                    <p class="text-xs text-gray-600">افزونه اختصاصی</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Features List -->
+                    <div class="space-y-6">
+                        <div class="bg-white rounded-2xl p-6 shadow-lg">
+                            <div class="flex items-center space-x-4 space-x-reverse mb-4">
+                                <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                                    <span class="material-icons text-blue-600">inventory</span>
+                                </div>
+                                <h3 class="font-bold text-gray-800">مدیریت محصولات</h3>
+                            </div>
+                            <ul class="space-y-2 text-gray-600">
+                                <li class="flex items-center space-x-2 space-x-reverse">
+                                    <span class="material-icons text-green-500 text-sm">check_circle</span>
+                                    <span>افزودن و ویرایش محصولات</span>
+                                </li>
+                                <li class="flex items-center space-x-2 space-x-reverse">
+                                    <span class="material-icons text-green-500 text-sm">check_circle</span>
+                                    <span>مدیریت موجودی در زمان واقعی</span>
+                                </li>
+                                <li class="flex items-center space-x-2 space-x-reverse">
+                                    <span class="material-icons text-green-500 text-sm">check_circle</span>
+                                    <span>تنظیم قیمت‌گذاری پویا</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-white rounded-2xl p-6 shadow-lg">
+                            <div class="flex items-center space-x-4 space-x-reverse mb-4">
+                                <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                                    <span class="material-icons text-green-600">sync</span>
+                                </div>
+                                <h3 class="font-bold text-gray-800">همگام‌سازی خودکار</h3>
+                            </div>
+                            <ul class="space-y-2 text-gray-600">
+                                <li class="flex items-center space-x-2 space-x-reverse">
+                                    <span class="material-icons text-green-500 text-sm">check_circle</span>
+                                    <span>بروزرسانی لحظه‌ای موجودی</span>
+                                </li>
+                                <li class="flex items-center space-x-2 space-x-reverse">
+                                    <span class="material-icons text-green-500 text-sm">check_circle</span>
+                                    <span>انتقال سفارشات به سیستم</span>
+                                </li>
+                                <li class="flex items-center space-x-2 space-x-reverse">
+                                    <span class="material-icons text-green-500 text-sm">check_circle</span>
+                                    <span>گزارش‌گیری یکپارچه</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-white rounded-2xl p-6 shadow-lg">
+                            <div class="flex items-center space-x-4 space-x-reverse mb-4">
+                                <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                                    <span class="material-icons text-purple-600">extension</span>
+                                </div>
+                                <h3 class="font-bold text-gray-800">افزونه وردپرس</h3>
+                            </div>
+                            <ul class="space-y-2 text-gray-600">
+                                <li class="flex items-center space-x-2 space-x-reverse">
+                                    <span class="material-icons text-green-500 text-sm">check_circle</span>
+                                    <span>نصب آسان و سریع</span>
+                                </li>
+                                <li class="flex items-center space-x-2 space-x-reverse">
+                                    <span class="material-icons text-green-500 text-sm">check_circle</span>
+                                    <span>سازگار با ووکامرس</span>
+                                </li>
+                                <li class="flex items-center space-x-2 space-x-reverse">
+                                    <span class="material-icons text-green-500 text-sm">check_circle</span>
+                                    <span>پشتیبانی کامل فارسی</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Telegram Bot Integration -->
+    <section class="py-32 bg-gradient-to-br from-gray-50 to-blue-50">
+        <div class="container mx-auto px-6">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center mb-20 fade-in">
+                    <h2 class="text-5xl font-bold text-gray-800 mb-8">اتصال به ربات تلگرامی</h2>
+                    <p class="text-2xl text-gray-600 max-w-3xl mx-auto">مدیریت کسب‌وکار از طریق تلگرام با رابط کاربری
+                        واقعی</p>
+                </div>
+
+                <div class="grid lg:grid-cols-2 gap-16 items-center">
+                    <!-- Realistic Telegram Interface -->
+                    <div class="slide-in-left">
+                        <div class="bg-white rounded-3xl shadow-2xl overflow-hidden max-w-md mx-auto">
+                            <!-- Telegram Header -->
+                            <div class="bg-[#0088cc] text-white p-4 flex items-center space-x-3 space-x-reverse">
+                                <div
+                                    class="w-10 h-10 bg-gradient-to-br from-[#227DB2] to-blue-600 rounded-full flex items-center justify-center">
+                                    <span class="text-white font-bold text-sm">کپ</span>
+                                </div>
+                                <div class="flex-1">
+                                    <h3 class="font-semibold">کارپرداز بات</h3>
+                                    <p class="text-xs opacity-90 flex items-center">
+                                        <span class="w-2 h-2 bg-green-400 rounded-full ml-1"></span>
+                                        آنلاین
+                                    </p>
+                                </div>
+                                <div class="flex space-x-2 space-x-reverse">
+                                    <div class="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center">
+                                        <span class="material-icons text-sm">call</span>
+                                    </div>
+                                    <div class="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center">
+                                        <span class="material-icons text-sm">more_vert</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Chat Messages -->
+                            <div class="h-96 bg-[#e5ddd5] p-4 space-y-3 overflow-y-auto">
+                                <!-- Welcome Message -->
+                                <div class="flex justify-center">
+                                    <div class="bg-yellow-100 px-3 py-1 rounded-full text-xs text-gray-600">
+                                        امروز
+                                    </div>
+                                </div>
+
+                                <!-- Bot Message -->
+                                <div class="flex">
+                                    <div class="bg-white rounded-2xl rounded-tr-sm p-3 max-w-xs shadow-sm">
+                                        <p class="text-sm text-gray-800 mb-1">سلام! 👋</p>
+                                        <p class="text-sm text-gray-800 mb-2">من ربات کارپرداز هستم. چطور می‌تونم کمکتون
+                                            کنم؟</p>
+                                        <div class="text-xs text-gray-500 text-left">۱۴:۳۲</div>
+                                    </div>
+                                </div>
+
+                                <!-- User Message -->
+                                <div class="flex justify-end">
+                                    <div class="bg-[#dcf8c6] rounded-2xl rounded-tl-sm p-3 max-w-xs">
+                                        <p class="text-sm text-gray-800 mb-1">گزارش فروش امروز</p>
+                                        <div class="text-xs text-gray-500 text-left">۱۴:۳۳</div>
+                                    </div>
+                                </div>
+
+                                <!-- Bot Response with Data -->
+                                <div class="flex">
+                                    <div class="bg-white rounded-2xl rounded-tr-sm p-3 max-w-xs shadow-sm">
+                                        <div class="mb-2">
+                                            <div class="flex items-center mb-2">
+                                                <span class="text-lg">📊</span>
+                                                <span class="font-bold text-sm mr-2">گزارش فروش امروز</span>
+                                            </div>
+                                            <div class="bg-gray-50 rounded-lg p-3 space-y-2">
+                                                <div class="flex justify-between text-sm">
+                                                    <span>💰 کل فروش:</span>
+                                                    <span class="font-bold text-green-600">۲,۵۰۰,۰۰۰ ریال</span>
+                                                </div>
+                                                <div class="flex justify-between text-sm">
+                                                    <span>📦 تعداد سفارش:</span>
+                                                    <span class="font-bold">۱۲ مورد</span>
+                                                </div>
+                                                <div class="flex justify-between text-sm">
+                                                    <span>👥 مشتریان جدید:</span>
+                                                    <span class="font-bold text-blue-600">۳ نفر</span>
+                                                </div>
+                                                <div class="flex justify-between text-sm">
+                                                    <span>📈 رشد:</span>
+                                                    <span class="font-bold text-green-600">+۱۵%</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="text-xs text-gray-500 text-left">۱۴:۳۳</div>
+                                    </div>
+                                </div>
+
+                                <!-- User Message -->
+                                <div class="flex justify-end">
+                                    <div class="bg-[#dcf8c6] rounded-2xl rounded-tl-sm p-3 max-w-xs">
+                                        <p class="text-sm text-gray-800 mb-1">موجودی انبار چطوره؟</p>
+                                        <div class="text-xs text-gray-500 text-left">۱۴:۳۴</div>
+                                    </div>
+                                </div>
+
+                                <!-- Bot Inventory Response -->
+                                <div class="flex">
+                                    <div class="bg-white rounded-2xl rounded-tr-sm p-3 max-w-xs shadow-sm">
+                                        <div class="mb-2">
+                                            <div class="flex items-center mb-2">
+                                                <span class="text-lg">📦</span>
+                                                <span class="font-bold text-sm mr-2">وضعیت انبار</span>
+                                            </div>
+                                            <div class="space-y-2">
+                                                <div class="bg-green-50 rounded p-2 text-sm">
+                                                    <div class="flex justify-between">
+                                                        <span>محصول A</span>
+                                                        <span class="text-green-600 font-bold">۲۳ عدد ✅</span>
+                                                    </div>
+                                                </div>
+                                                <div class="bg-red-50 rounded p-2 text-sm">
+                                                    <div class="flex justify-between">
+                                                        <span>محصول B</span>
+                                                        <span class="text-red-600 font-bold">۲ عدد ⚠️</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="text-xs text-gray-500 text-left">۱۴:۳۴</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Input Area -->
+                            <div class="bg-white p-3 border-t border-gray-200">
+                                <div class="flex items-center space-x-2 space-x-reverse">
+                                    <div class="flex-1 bg-gray-100 rounded-full px-4 py-2">
+                                        <input type="text" placeholder="پیام خود را بنویسید..."
+                                            class="bg-transparent text-sm w-full outline-none" disabled>
+                                    </div>
+                                    <div class="w-8 h-8 bg-[#0088cc] rounded-full flex items-center justify-center">
+                                        <span class="material-icons text-white text-sm">send</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Quick Actions -->
+                            <div class="bg-gray-50 p-3 border-t border-gray-200">
+                                <div class="grid grid-cols-2 gap-2">
+                                    <button
+                                        class="bg-white rounded-lg p-2 text-center text-xs shadow-sm hover:shadow-md transition-shadow">
+                                        📊 گزارش فروش
+                                    </button>
+                                    <button
+                                        class="bg-white rounded-lg p-2 text-center text-xs shadow-sm hover:shadow-md transition-shadow">
+                                        📦 موجودی انبار
+                                    </button>
+                                    <button
+                                        class="bg-white rounded-lg p-2 text-center text-xs shadow-sm hover:shadow-md transition-shadow">
+                                        👥 مشتریان جدید
+                                    </button>
+                                    <button
+                                        class="bg-white rounded-lg p-2 text-center text-xs shadow-sm hover:shadow-md transition-shadow">
+                                        💳 تراکنش‌ها
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bot Features -->
+                    <div class="space-y-6">
+                        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6">
+                            <div class="flex items-center space-x-4 space-x-reverse mb-4">
+                                <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                                    <span class="material-icons text-blue-600">notifications</span>
+                                </div>
+                                <h3 class="font-bold text-gray-800">اعلان‌های هوشمند</h3>
+                            </div>
+                            <ul class="space-y-2 text-gray-600">
+                                <li class="flex items-center space-x-2 space-x-reverse">
+                                    <span class="material-icons text-green-500 text-sm">check_circle</span>
+                                    <span>اطلاع از سفارشات جدید</span>
+                                </li>
+                                <li class="flex items-center space-x-2 space-x-reverse">
+                                    <span class="material-icons text-green-500 text-sm">check_circle</span>
+                                    <span>هشدار کمبود موجودی</span>
+                                </li>
+                                <li class="flex items-center space-x-2 space-x-reverse">
+                                    <span class="material-icons text-green-500 text-sm">check_circle</span>
+                                    <span>گزارش روزانه خودکار</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl p-6">
+                            <div class="flex items-center space-x-4 space-x-reverse mb-4">
+                                <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                                    <span class="material-icons text-green-600">chat</span>
+                                </div>
+                                <h3 class="font-bold text-gray-800">دستورات صوتی و متنی</h3>
+                            </div>
+                            <ul class="space-y-2 text-gray-600">
+                                <li class="flex items-center space-x-2 space-x-reverse">
+                                    <span class="material-icons text-green-500 text-sm">check_circle</span>
+                                    <span>پرس‌وجو از گزارش‌ها</span>
+                                </li>
+                                <li class="flex items-center space-x-2 space-x-reverse">
+                                    <span class="material-icons text-green-500 text-sm">check_circle</span>
+                                    <span>ثبت سفارش سریع</span>
+                                </li>
+                                <li class="flex items-center space-x-2 space-x-reverse">
+                                    <span class="material-icons text-green-500 text-sm">check_circle</span>
+                                    <span>مدیریت مشتریان</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl p-6">
+                            <div class="flex items-center space-x-4 space-x-reverse mb-4">
+                                <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                                    <span class="material-icons text-purple-600">security</span>
+                                </div>
+                                <h3 class="font-bold text-gray-800">امنیت و کنترل دسترسی</h3>
+                            </div>
+                            <ul class="space-y-2 text-gray-600">
+                                <li class="flex items-center space-x-2 space-x-reverse">
+                                    <span class="material-icons text-green-500 text-sm">check_circle</span>
+                                    <span>احراز هویت دومرحله‌ای</span>
+                                </li>
+                                <li class="flex items-center space-x-2 space-x-reverse">
+                                    <span class="material-icons text-green-500 text-sm">check_circle</span>
+                                    <span>کنترل سطح دسترسی</span>
+                                </li>
+                                <li class="flex items-center space-x-2 space-x-reverse">
+                                    <span class="material-icons text-green-500 text-sm">check_circle</span>
+                                    <span>رمزنگاری end-to-end</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="py-20 bg-gray-100">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16 fade-in">
+                <h2 class="text-4xl font-bold text-gray-800 mb-6">چگونه کار می‌کند</h2>
+                <p class="text-xl text-gray-600">فرآیند ساده و مؤثر در ۴ مرحله</p>
+            </div>
+
+            <div class="max-w-6xl mx-auto">
+                <div class="grid md:grid-cols-4 gap-8 fade-in">
+                    <div class="text-center relative">
+                        <div
+                            class="w-20 h-20 bg-[#227DB2] rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+                            <span class="material-icons text-white text-3xl">input</span>
+                        </div>
+                        <h3 class="font-bold text-gray-800 mb-4">۱. ثبت داده</h3>
+                        <p class="text-gray-600">وارد کردن اطلاعات فروش، خرید و مالی</p>
+                        <div
+                            class="hidden md:block absolute top-10 left-full w-8 h-0.5 bg-[#227DB2] transform -translate-y-1/2">
+                        </div>
+                    </div>
+
+                    <div class="text-center relative">
+                        <div
+                            class="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+                            <span class="material-icons text-white text-3xl">settings</span>
+                        </div>
+                        <h3 class="font-bold text-gray-800 mb-4">۲. پردازش</h3>
+                        <p class="text-gray-600">تحلیل و پردازش خودکار داده‌ها</p>
+                        <div
+                            class="hidden md:block absolute top-10 left-full w-8 h-0.5 bg-green-500 transform -translate-y-1/2">
+                        </div>
+                    </div>
+
+                    <div class="text-center relative">
+                        <div
+                            class="w-20 h-20 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+                            <span class="material-icons text-white text-3xl">assessment</span>
+                        </div>
+                        <h3 class="font-bold text-gray-800 mb-4">۳. گزارش‌دهی</h3>
+                        <p class="text-gray-600">تولید گزارش‌های جامع و تحلیلی</p>
+                        <div
+                            class="hidden md:block absolute top-10 left-full w-8 h-0.5 bg-purple-500 transform -translate-y-1/2">
+                        </div>
+                    </div>
+
+                    <div class="text-center">
+                        <div
+                            class="w-20 h-20 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+                            <span class="material-icons text-white text-3xl">lightbulb</span>
+                        </div>
+                        <h3 class="font-bold text-gray-800 mb-4">۴. تصمیم‌گیری</h3>
+                        <p class="text-gray-600">اتخاذ تصمیمات آگاهانه بر اساس داده‌ها</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Key Features -->
+    <section class="py-20 bg-white" id="features">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16 fade-in">
+                <h2 class="text-4xl font-bold text-gray-800 mb-6">ویژگی‌های کلیدی</h2>
+                <p class="text-xl text-gray-600">تمام آنچه برای مدیریت مؤثر کسب‌وکار نیاز دارید</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto fade-in">
+                <div
+                    class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-8 text-center shadow-lg hover:shadow-2xl transition-all duration-300">
+                    <div class="w-16 h-16 bg-[#227DB2] rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <span class="material-icons text-white text-2xl">security</span>
+                    </div>
+                    <h3 class="font-bold text-gray-800 mb-4">امنیت بالا</h3>
+                    <p class="text-gray-600">رمزنگاری پیشرفته و حفاظت کامل از داده‌های شما</p>
+                </div>
+
+                <div
+                    class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-8 text-center shadow-lg hover:shadow-2xl transition-all duration-300">
+                    <div class="w-16 h-16 bg-green-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <span class="material-icons text-white text-2xl">extension</span>
+                    </div>
+                    <h3 class="font-bold text-gray-800 mb-4">ماژولاریت</h3>
+                    <p class="text-gray-600">قابلیت سفارشی‌سازی کامل بر اساس نیاز کسب‌وکار</p>
+                </div>
+
+                <div
+                    class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-8 text-center shadow-lg hover:shadow-2xl transition-all duration-300">
+                    <div class="w-16 h-16 bg-purple-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <span class="material-icons text-white text-2xl">speed</span>
+                    </div>
+                    <h3 class="font-bold text-gray-800 mb-4">سرعت بالا</h3>
+                    <p class="text-gray-600">پردازش سریع و پاسخ‌دهی فوری در تمام عملیات</p>
+                </div>
+
+                <div
+                    class="bg-gradient-to-br from-orange-50 to-red-50 rounded-2xl p-8 text-center shadow-lg hover:shadow-2xl transition-all duration-300">
+                    <div class="w-16 h-16 bg-orange-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <span class="material-icons text-white text-2xl">design_services</span>
+                    </div>
+                    <h3 class="font-bold text-gray-800 mb-4">UI مدرن</h3>
+                    <p class="text-gray-600">رابط کاربری زیبا و کاربرپسند با تجربه عالی</p>
+                </div>
+
+                <div
+                    class="bg-gradient-to-br from-cyan-50 to-blue-50 rounded-2xl p-8 text-center shadow-lg hover:shadow-2xl transition-all duration-300">
+                    <div class="w-16 h-16 bg-cyan-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <span class="material-icons text-white text-2xl">cloud</span>
+                    </div>
+                    <h3 class="font-bold text-gray-800 mb-4">پشتیبانی ابری</h3>
+                    <p class="text-gray-600">دسترسی از هر مکان و هر زمان با امنیت کامل</p>
+                </div>
+
+                <div
+                    class="bg-gradient-to-br from-teal-50 to-green-50 rounded-2xl p-8 text-center shadow-lg hover:shadow-2xl transition-all duration-300">
+                    <div class="w-16 h-16 bg-teal-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <span class="material-icons text-white text-2xl">api</span>
+                    </div>
+                    <h3 class="font-bold text-gray-800 mb-4">API باز</h3>
+                    <p class="text-gray-600">قابلیت اتصال و یکپارچگی با سایر سیستم‌ها</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Strengths & Weaknesses Analysis -->
+    <section class="py-20 bg-gray-100">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16 fade-in">
+                <h2 class="text-4xl font-bold text-gray-800 mb-6">تحلیل نقاط قوت و ضعف</h2>
+                <p class="text-xl text-gray-600">ارزیابی جامع سیستم کارپرداز</p>
+            </div>
+
+            <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 fade-in">
+                <!-- Strengths -->
+                <div class="bg-white rounded-3xl p-8 shadow-2xl">
+                    <div class="text-center mb-8">
+                        <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span class="material-icons text-green-600 text-3xl">thumb_up</span>
+                        </div>
+                        <h3 class="text-2xl font-bold text-green-600">نقاط قوت</h3>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-4 space-x-reverse p-4 bg-green-50 rounded-xl">
+                            <div
+                                class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                <span class="material-icons text-white text-sm">check</span>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-800">ماژولاریت کامل</h4>
+                                <p class="text-sm text-gray-600">سفارشی‌سازی برای هر صنعت</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center space-x-4 space-x-reverse p-4 bg-green-50 rounded-xl">
+                            <div
+                                class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                <span class="material-icons text-white text-sm">check</span>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-800">هوش مصنوعی پیشرفته</h4>
+                                <p class="text-sm text-gray-600">تحلیل و پیش‌بینی دقیق</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center space-x-4 space-x-reverse p-4 bg-green-50 rounded-xl">
+                            <div
+                                class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                <span class="material-icons text-white text-sm">check</span>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-800">یکپارچگی کامل</h4>
+                                <p class="text-sm text-gray-600">اتصال به وبسایت و تلگرام</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center space-x-4 space-x-reverse p-4 bg-green-50 rounded-xl">
+                            <div
+                                class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                <span class="material-icons text-white text-sm">check</span>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-800">پشتیبانی ۲۴/۷</h4>
+                                <p class="text-sm text-gray-600">خدمات مستمر و تخصصی</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center space-x-4 space-x-reverse p-4 bg-green-50 rounded-xl">
+                            <div
+                                class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                <span class="material-icons text-white text-sm">check</span>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-800">امنیت بالا</h4>
+                                <p class="text-sm text-gray-600">رمزنگاری و حفاظت کامل</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Areas for Improvement -->
+                <div class="bg-white rounded-3xl p-8 shadow-2xl">
+                    <div class="text-center mb-8">
+                        <div class="w-20 h-20 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span class="material-icons text-orange-600 text-3xl">construction</span>
+                        </div>
+                        <h3 class="text-2xl font-bold text-orange-600">نقاط قابل بهبود</h3>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-4 space-x-reverse p-4 bg-orange-50 rounded-xl">
+                            <div
+                                class="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                <span class="material-icons text-white text-sm">build</span>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-800">زمان پیاده‌سازی</h4>
+                                <p class="text-sm text-gray-600">کاهش زمان راه‌اندازی اولیه</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center space-x-4 space-x-reverse p-4 bg-orange-50 rounded-xl">
+                            <div
+                                class="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                <span class="material-icons text-white text-sm">build</span>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-800">آموزش کاربران</h4>
+                                <p class="text-sm text-gray-600">توسعه منابع آموزشی بیشتر</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center space-x-4 space-x-reverse p-4 bg-orange-50 rounded-xl">
+                            <div
+                                class="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                <span class="material-icons text-white text-sm">build</span>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-800">قیمت‌گذاری</h4>
+                                <p class="text-sm text-gray-600">بسته‌های مقرون‌به‌صرفه‌تر</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center space-x-4 space-x-reverse p-4 bg-blue-50 rounded-xl">
+                            <div
+                                class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                <span class="material-icons text-white text-sm">trending_up</span>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-800">ویژگی‌های آینده</h4>
+                                <p class="text-sm text-gray-600">اضافه شدن قابلیت‌های جدید</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center space-x-4 space-x-reverse p-4 bg-purple-50 rounded-xl">
+                            <div
+                                class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                <span class="material-icons text-white text-sm">language</span>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-800">پشتیبانی چندزبانه</h4>
+                                <p class="text-sm text-gray-600">گسترش به زبان‌های بیشتر</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="py-20 gradient-bg text-white relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute top-20 right-20 w-40 h-40 bg-white rounded-full floating"></div>
+            <div class="absolute bottom-10 left-10 w-32 h-32 bg-white rounded-full floating"
+                style="animation-delay: 1.5s;"></div>
+        </div>
+
+        <div class="container mx-auto px-4 text-center relative z-10">
+            <div class="max-w-4xl mx-auto fade-in">
+                <h2 class="text-5xl font-bold mb-8">آماده برای شروع هستید؟</h2>
+                <p class="text-xl mb-12 leading-relaxed">
+                    کارپرداز را امتحان کنید و تفاوت را در مدیریت کسب‌وکارتان احساس کنید
+                </p>
+
+                <div class="flex flex-col md:flex-row gap-6 justify-center items-center">
+                    <button
+                        class="bg-white text-[#227DB2] px-8 py-4 rounded-full text-xl font-bold ripple hover:shadow-2xl transition-all duration-300">
+                        <span class="material-icons align-middle ml-2">play_arrow</span>
+                        مشاهده نسخه آزمایشی
+                    </button>
+                    <button
+                        class="border-2 border-white text-white px-8 py-4 rounded-full text-xl font-bold hover:bg-white hover:text-[#227DB2] transition-all duration-300">
+                        <span class="material-icons align-middle ml-2">contact_support</span>
+                        درخواست مشاوره
+                    </button>
+                </div>
+
+                <div class="mt-16 grid md:grid-cols-3 gap-8 text-center">
+                    <div class="glass-effect rounded-2xl p-6">
+                        <span class="material-icons text-4xl mb-4 block">verified</span>
+                        <h3 class="font-bold mb-2">تضمین کیفیت</h3>
+                        <p class="text-sm opacity-90">۳۰ روز ضمانت بازگشت وجه</p>
+                    </div>
+                    <div class="glass-effect rounded-2xl p-6">
+                        <span class="material-icons text-4xl mb-4 block">support_agent</span>
+                        <h3 class="font-bold mb-2">پشتیبانی رایگان</h3>
+                        <p class="text-sm opacity-90">راه‌اندازی و آموزش کامل</p>
+                    </div>
+                    <div class="glass-effect rounded-2xl p-6">
+                        <span class="material-icons text-4xl mb-4 block">update</span>
+                        <h3 class="font-bold mb-2">بروزرسانی مداوم</h3>
+                        <p class="text-sm opacity-90">ویژگی‌های جدید هر ماه</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-16">
+        <div class="container mx-auto px-4">
+            <div class="grid md:grid-cols-4 gap-8 mb-12">
+                <div>
+                    <div class="flex items-center space-x-4 space-x-reverse mb-6">
+                        <img src="https://en-gamma.vercel.app/kp.png" alt="کارپرداز" class="h-12 w-auto">
+                        <h3 class="text-2xl font-bold">کارپرداز</h3>
+                    </div>
+                    <p class="text-gray-400 leading-relaxed">
+                        نسل جدید حسابداری هوشمند و ماژولار برای کسب‌وکارهای مدرن
+                    </p>
+                </div>
+
+                <div>
+                    <h4 class="font-bold mb-6">محصولات</h4>
+                    <ul class="space-y-3 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition-colors">سیستم حسابداری</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">مدیریت انبار</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">فروشگاه آنلاین</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">ربات تلگرام</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-bold mb-6">خدمات</h4>
+                    <ul class="space-y-3 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition-colors">پیاده‌سازی</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">آموزش</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">پشتیبانی</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">مشاوره</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-bold mb-6">تماس با ما</h4>
+                    <ul class="space-y-3 text-gray-400">
+                        <li class="flex items-center space-x-2 space-x-reverse">
+                            <span class="material-icons text-sm">phone</span>
+                            <span>۰۲۱-۱۲۳۴۵۶۷۸</span>
+                        </li>
+                        <li class="flex items-center space-x-2 space-x-reverse">
+                            <span class="material-icons text-sm">email</span>
+                            <span>info@karpardaz.com</span>
+                        </li>
+                        <li class="flex items-center space-x-2 space-x-reverse">
+                            <span class="material-icons text-sm">location_on</span>
+                            <span>تهران، ایران</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-800 pt-8 text-center">
+                <p class="text-gray-400 mb-4">
+                    © ۱۴۰۳ کارپرداز. تمامی حقوق محفوظ است.
+                </p>
+                <p class="text-sm text-gray-500">
+                    طراحی و توسعه توسط تیم AA Team - علی فخار
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Advanced Intersection Observer for all animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+
+                    // Special handling for reveal text
+                    if (entry.target.classList.contains('reveal-text')) {
+                        const spans = entry.target.querySelectorAll('span');
+                        spans.forEach((span, index) => {
+                            setTimeout(() => {
+                                span.style.transform = 'translateY(0)';
+                            }, index * 100);
+                        });
+                    }
+                }
+            });
+        }, observerOptions);
+
+        // Observe all animated elements
+        document.querySelectorAll('.fade-in, .slide-in-left, .slide-in-right, .scale-in, .reveal-text').forEach((el, index) => {
+            // Add stagger delay for elements with stagger class
+            if (el.style.getPropertyValue('--stagger')) {
+                const stagger = el.style.getPropertyValue('--stagger');
+                el.style.animationDelay = `${stagger * 0.2}s`;
+            }
+            observer.observe(el);
+        });
+
+        // Parallax effect for floating elements
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const parallax = document.querySelectorAll('.floating');
+            const speed = 0.5;
+
+            parallax.forEach(element => {
+                const yPos = -(scrolled * speed);
+                element.style.transform = `translateY(${yPos}px)`;
+            });
+        });
+
+        // Smooth reveal for text elements
+        document.querySelectorAll('.reveal-text').forEach(element => {
+            const text = element.textContent;
+            element.innerHTML = `<span>${text}</span>`;
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add ripple effect to buttons
+        document.querySelectorAll('.ripple').forEach(button => {
+            button.addEventListener('click', function (e) {
+                const ripple = document.createElement('span');
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                ripple.classList.add('ripple-effect');
+
+                this.appendChild(ripple);
+
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            });
+        });
+
+        // Add CSS for ripple effect
+        const style = document.createElement('style');
+        style.textContent = `
+            .ripple-effect {
+                position: absolute;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.6);
+                transform: scale(0);
+                animation: ripple-animation 0.6s linear;
+                pointer-events: none;
+            }
+            
+            @keyframes ripple-animation {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Counter animation for statistics
+        function animateCounter(element, target, duration = 2000) {
+            let start = 0;
+            const increment = target / (duration / 16);
+
+            const timer = setInterval(() => {
+                start += increment;
+                if (start >= target) {
+                    element.textContent = target;
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(start);
+                }
+            }, 16);
+        }
+
+        // Trigger counter animations when elements come into view
+        const counterObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const counters = entry.target.querySelectorAll('[data-count]');
+                    counters.forEach(counter => {
+                        const target = parseInt(counter.getAttribute('data-count'));
+                        animateCounter(counter, target);
+                    });
+                    counterObserver.unobserve(entry.target);
+                }
+            });
+        });
+
+        // Add data-count attributes to statistics
+        document.addEventListener('DOMContentLoaded', () => {
+            const stats = document.querySelectorAll('.text-4xl.font-bold');
+            stats.forEach(stat => {
+                const text = stat.textContent;
+                if (text.includes('۰.۵')) {
+                    stat.setAttribute('data-count', '0.5');
+                } else if (text.includes('۹۹.۹')) {
+                    stat.setAttribute('data-count', '99.9');
+                } else if (text.includes('۲۴')) {
+                    stat.setAttribute('data-count', '24');
+                }
+            });
+        });
+    </script>
+    <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'96db874854407d31',t:'MTc1NDk1NTEwNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
+</body>
+
+</html>
