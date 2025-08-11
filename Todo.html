@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>گشادی بسه - سیستم مدیریت لیست</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://unpkg.com/persian-date@latest/dist/persian-date.min.js"></script>
+    <script src="https://unpkg.com/persian-datepicker@latest/dist/js/persian-datepicker.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/persian-datepicker@latest/dist/css/persian-datepicker.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+        }
+
+        .material-card {
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .material-card:hover {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .fab {
+            box-shadow: 0 4px 8px rgba(33, 197, 93, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .fab:hover {
+            box-shadow: 0 6px 12px rgba(33, 197, 93, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .ripple {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ripple::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .ripple:active::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .status-green {
+            background-color: #22c55e;
+        }
+
+        .status-orange {
+            background-color: #f97316;
+        }
+
+        .status-red {
+            background-color: #ef4444;
+        }
+
+        .modal-backdrop {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .hamburger-menu {
+            transform: translateX(100%);
+            transition: transform 0.3s ease-in-out;
+            z-index: 70;
+        }
+
+        .hamburger-menu.open {
+            transform: translateX(0);
+        }
+
+        .dark-mode {
+            background-color: #1f2937 !important;
+            color: #f9fafb;
+        }
+
+        .dark-mode .bg-white {
+            background-color: #374151 !important;
+        }
+
+        .dark-mode .bg-gray-50 {
+            background-color: #1f2937 !important;
+        }
+
+        .dark-mode .text-gray-900 {
+            color: #f9fafb !important;
+        }
+
+        .dark-mode .text-gray-600 {
+            color: #d1d5db !important;
+        }
+
+        .dark-mode .text-gray-500 {
+            color: #9ca3af !important;
+        }
+
+        .dark-mode .border-gray-200 {
+            border-color: #4b5563 !important;
+        }
+
+        .dark-mode .border-gray-300 {
+            border-color: #6b7280 !important;
+        }
+
+        .dark-mode .hover\\:bg-gray-100:hover {
+            background-color: #4b5563 !important;
+        }
+
+        .dark-mode input,
+        .dark-mode textarea,
+        .dark-mode select {
+            background-color: #374151 !important;
+            color: #f9fafb !important;
+            border-color: #6b7280 !important;
+        }
+
+        .dark-mode input::placeholder,
+        .dark-mode textarea::placeholder {
+            color: #9ca3af !important;
+        }
+
+        .confirmation-modal {
+            animation: modalSlideIn 0.3s ease-out;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <h1 class="text-xl sm:text-2xl font-bold text-gray-900">گشادی بسه</h1>
+                <div class="flex items-center gap-3">
+                    <button id="themeToggle" class="material-icons text-gray-600 hover:text-gray-900 transition-colors">
+                        light_mode
+                    </button>
+                    <button id="menuBtn" class="material-icons text-gray-600 hover:text-gray-900 transition-colors">
+                        menu
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hamburger Menu -->
+    <div id="hamburgerMenu" class="hamburger-menu fixed top-0 right-0 w-80 h-full bg-white shadow-2xl p-6">
+        <div class="flex justify-between items-center mb-8">
+            <h2 class="text-xl font-bold text-gray-900">منو</h2>
+            <button id="closeMenuBtn" class="material-icons text-gray-600 hover:text-gray-900">
+                close
+            </button>
+        </div>
+        <nav class="space-y-4">
+            <a href="#" class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100 transition-colors">
+                <span class="material-icons text-green-500">dashboard</span>
+                <span>داشبورد</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100 transition-colors">
+                <span class="material-icons text-green-500">analytics</span>
+                <span>گزارشات</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100 transition-colors">
+                <span class="material-icons text-green-500">settings</span>
+                <span>تنظیمات</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100 transition-colors">
+                <span class="material-icons text-green-500">help</span>
+                <span>راهنما</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Menu Backdrop -->
+    <div id="menuBackdrop" class="fixed inset-0 bg-black bg-opacity-50 z-60 hidden"></div>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <!-- Add Item Form -->
+        <div class="material-card bg-white rounded-2xl p-4 sm:p-6 mb-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">افزودن آیتم جدید</h2>
+            <form id="addItemForm" class="space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="relative">
+                        <input type="text" id="itemTitle" name="title" required
+                            class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all"
+                            placeholder="عنوان آیتم">
+                        <input type="hidden" id="itemId" name="id">
+                    </div>
+                    <div class="relative">
+                        <select id="itemList" name="list_type" required
+                            class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all">
+                            <option value="">انتخاب لیست</option>
+                            <option value="list1">فعالیت های عرشیا</option>
+                            <option value="list2">فعالیت های علی</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="relative">
+                    <input type="text" id="itemDeadline" name="deadline" required readonly
+                        class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all cursor-pointer"
+                        placeholder="انتخاب تاریخ ددلاین">
+                    <span class="material-icons absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                        event
+                    </span>
+                </div>
+                <div class="relative">
+                    <textarea id="itemDescription" name="description" rows="3"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all resize-none"
+                        placeholder="توضیحات (اختیاری)"></textarea>
+                </div>
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <button type="submit" id="submitBtn"
+                        class="ripple bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-xl font-medium transition-all flex items-center justify-center gap-2">
+                        <span class="material-icons text-sm">add</span>
+                        <span id="submitText">افزودن آیتم</span>
+                    </button>
+                    <button type="button" id="cancelBtn" style="display: none;"
+                        class="ripple bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-xl font-medium transition-all">
+                        لغو
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Lists Container -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- List 1 -->
+            <div class="material-card bg-white rounded-2xl p-4 sm:p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                        <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                        فعالیت های عرشیا
+                    </h3>
+                    <span id="list1Count"
+                        class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">0</span>
+                </div>
+                <div id="list1Items" class="space-y-3 min-h-[200px]">
+                    <div class="text-center text-gray-500 py-8">
+                        <span class="material-icons text-4xl mb-2 block">inbox</span>
+                        هنوز آیتمی اضافه نشده
+                    </div>
+                </div>
+            </div>
+
+            <!-- List 2 -->
+            <div class="material-card bg-white rounded-2xl p-4 sm:p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                        <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                        فعالیت های علی
+                    </h3>
+                    <span id="list2Count"
+                        class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">0</span>
+                </div>
+                <div id="list2Items" class="space-y-3 min-h-[200px]">
+                    <div class="text-center text-gray-500 py-8">
+                        <span class="material-icons text-4xl mb-2 block">inbox</span>
+                        هنوز آیتمی اضافه نشده
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Floating Action Button
+    <button id="fabBtn"
+        class="fab fixed bottom-6 right-6 bg-green-500 hover:bg-green-600 text-white w-14 h-14 rounded-full flex items-center justify-center z-40">
+        <span class="material-icons">add</span>
+    </button> -->
+
+    <!-- Confirmation Modal -->
+    <div id="confirmationModal" class="fixed inset-0 modal-backdrop z-50 hidden flex items-center justify-center p-4">
+        <div class="confirmation-modal bg-white rounded-2xl max-w-sm w-full p-6">
+            <div class="text-center">
+                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
+                    <span class="material-icons text-red-600">warning</span>
+                </div>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">تأیید حذف</h3>
+                <p class="text-sm text-gray-500 mb-6">آیا از حذف این آیتم اطمینان دارید؟ این عمل قابل بازگشت نیست.</p>
+                <div class="flex gap-3">
+                    <button id="confirmDeleteBtn"
+                        class="flex-1 bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-xl font-medium transition-colors">
+                        حذف
+                    </button>
+                    <button id="cancelDeleteBtn"
+                        class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-2 px-4 rounded-xl font-medium transition-colors">
+                        لغو
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Details Modal -->
+    <div id="detailsModal" class="fixed inset-0 modal-backdrop z-50 hidden flex items-center justify-center p-4">
+        <div class="modal-content bg-white rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold text-gray-900">جزئیات فعالیت</h3>
+                    <button id="closeModalBtn" class="material-icons text-gray-500 hover:text-gray-700">
+                        close
+                    </button>
+                </div>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">عنوان</label>
+                        <p id="modalTitle" class="text-gray-900 font-medium"></p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">توضیحات</label>
+                        <p id="modalDescription" class="text-gray-600"></p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">لیست</label>
+                        <p id="modalList" class="text-gray-600"></p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">ددلاین</label>
+                        <div class="flex items-center gap-2">
+                            <div id="modalDeadlineStatus" class="w-3 h-3 rounded-full"></div>
+                            <p id="modalDeadline" class="text-gray-600"></p>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">تاریخ ایجاد</label>
+                        <p id="modalCreated" class="text-gray-600"></p>
+                    </div>
+                </div>
+                <div class="flex gap-3 mt-6">
+                    <button id="modalEditBtn"
+                        class="flex-1 bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-xl font-medium transition-colors">
+                        ویرایش
+                    </button>
+                    <button id="modalDeleteBtn"
+                        class="flex-1 bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-xl font-medium transition-colors">
+                        حذف
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast"
+        class="fixed top-20 left-1/2 transform -translate-x-1/2 translate-y-[-100px] bg-green-500 text-white px-6 py-3 rounded-xl shadow-lg transition-all duration-300 z-50 opacity-0">
+        <div class="flex items-center gap-2">
+            <span class="material-icons text-sm">check_circle</span>
+            <span id="toastMessage">عملیات با موفقیت انجام شد</span>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let items = {
+            list1: [],
+            list2: []
+        };
+        let editingId = null;
+        let selectedDeadlineDate = null; // Store the selected date
+
+        // DOM elements
+        const addItemForm = document.getElementById('addItemForm');
+        const itemTitle = document.getElementById('itemTitle');
+        const itemDescription = document.getElementById('itemDescription');
+        const itemList = document.getElementById('itemList');
+        const itemDeadline = document.getElementById('itemDeadline');
+        const itemId = document.getElementById('itemId');
+        const submitBtn = document.getElementById('submitBtn');
+        const submitText = document.getElementById('submitText');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const fabBtn = document.getElementById('fabBtn');
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+        const menuBtn = document.getElementById('menuBtn');
+        const closeMenuBtn = document.getElementById('closeMenuBtn');
+        const hamburgerMenu = document.getElementById('hamburgerMenu');
+        const menuBackdrop = document.getElementById('menuBackdrop');
+        const detailsModal = document.getElementById('detailsModal');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const themeToggle = document.getElementById('themeToggle');
+        const confirmationModal = document.getElementById('confirmationModal');
+        const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+        const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+        let pendingDeleteItem = null;
+
+        // Persian to English number conversion
+        function toEnglishNumbers(str) {
+            const persianNumbers = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+            const englishNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+
+            for (let i = 0; i < persianNumbers.length; i++) {
+                str = str.replace(new RegExp(persianNumbers[i], 'g'), englishNumbers[i]);
+            }
+            return str;
+        }
+
+        // English to Persian number conversion
+        function toPersianNumbers(str) {
+            const englishNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+            const persianNumbers = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+
+            for (let i = 0; i < englishNumbers.length; i++) {
+                str = str.replace(new RegExp(englishNumbers[i], 'g'), persianNumbers[i]);
+            }
+            return str;
+        }
+
+        // Convert Persian date string to JavaScript Date object
+        function persianToGregorian(persianDateStr) {
+            try {
+                // Remove Persian numbers and convert to English
+                const englishDateStr = toEnglishNumbers(persianDateStr);
+
+                // Parse the date (format: YYYY/MM/DD)
+                const parts = englishDateStr.split('/');
+                if (parts.length !== 3) return null;
+
+                const year = parseInt(parts[0]);
+                const month = parseInt(parts[1]);
+                const day = parseInt(parts[2]);
+
+                // Create Persian date object and convert to Gregorian
+                const pDate = new persianDate([year, month, day]);
+                return pDate.toDate();
+            } catch (error) {
+                console.error('Error converting Persian date:', error);
+                return null;
+            }
+        }
+
+        // Convert JavaScript Date to Persian date string
+        function gregorianToPersian(date) {
+            try {
+                if (!date) return '';
+
+                const pDate = new persianDate(date);
+                const persianStr = pDate.format('YYYY/MM/DD');
+                return toPersianNumbers(persianStr);
+            } catch (error) {
+                console.error('Error converting to Persian date:', error);
+                return '';
+            }
+        }
+
+        // Calculate days difference between two dates
+        function calculateDaysDifference(targetDate) {
+            if (!targetDate) return null;
+
+            const today = new Date();
+            const target = new Date(targetDate);
+
+            // Reset time to start of day for accurate comparison
+            today.setHours(0, 0, 0, 0);
+            target.setHours(0, 0, 0, 0);
+
+            const diffTime = target.getTime() - today.getTime();
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            return diffDays;
+        }
+
+        // Get deadline status with proper calculation
+        function getDeadlineStatus(deadlineDate) {
+            if (!deadlineDate) {
+                return {
+                    status: 'none',
+                    class: 'bg-gray-400',
+                    text: 'بدون ددلاین'
+                };
+            }
+
+            const daysDiff = calculateDaysDifference(deadlineDate);
+
+            if (daysDiff === null) {
+                return {
+                    status: 'none',
+                    class: 'bg-gray-400',
+                    text: 'نامشخص'
+                };
+            }
+
+            if (daysDiff < 0) {
+                const overdueDays = Math.abs(daysDiff);
+                return {
+                    status: 'overdue',
+                    class: 'status-red',
+                    text: toPersianNumbers(`${overdueDays} روز گذشته`)
+                };
+            } else if (daysDiff === 0) {
+                return {
+                    status: 'today',
+                    class: 'status-red',
+                    text: 'امروز'
+                };
+            } else if (daysDiff <= 3) {
+                return {
+                    status: 'urgent',
+                    class: 'status-red',
+                    text: toPersianNumbers(`${daysDiff} روز مانده`)
+                };
+            } else if (daysDiff <= 7) {
+                return {
+                    status: 'warning',
+                    class: 'status-orange',
+                    text: toPersianNumbers(`${daysDiff} روز مانده`)
+                };
+            } else {
+                return {
+                    status: 'safe',
+                    class: 'status-green',
+                    text: toPersianNumbers(`${daysDiff} روز مانده`)
+                };
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function () {
+            loadItems();
+            updateCounts();
+            initializeMenuEvents();
+            initializeModalEvents();
+            initializeTheme();
+            initializePersianDatePicker();
+        });
+
+        // Initialize Persian Date Picker
+        function initializePersianDatePicker() {
+            $('#itemDeadline').persianDatepicker({
+                format: 'YYYY/MM/DD',
+                initialValue: false,
+                autoClose: true,
+                calendar: {
+                    persian: {
+                        locale: 'fa'
+                    }
+                },
+                navigator: {
+                    enabled: true
+                },
+                toolbox: {
+                    enabled: true,
+                    calendarSwitch: {
+                        enabled: false
+                    }
+                },
+                onSelect: function (unix) {
+                    try {
+                        // Store the selected date
+                        selectedDeadlineDate = new Date(unix);
+
+                        // Display Persian date in the input
+                        const persianDateStr = gregorianToPersian(selectedDeadlineDate);
+                        $('#itemDeadline').val(persianDateStr);
+
+                        console.log('Selected date:', selectedDeadlineDate, 'Persian:', persianDateStr);
+                    } catch (error) {
+                        console.error('Error in date selection:', error);
+                    }
+                }
+            });
+        }
+
+        // Initialize theme
+        function initializeTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+                themeToggle.textContent = 'dark_mode';
+            }
+
+            themeToggle.addEventListener('click', function () {
+                document.body.classList.toggle('dark-mode');
+                const isDark = document.body.classList.contains('dark-mode');
+                themeToggle.textContent = isDark ? 'dark_mode' : 'light_mode';
+                localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            });
+        }
+
+        // Initialize menu events
+        function initializeMenuEvents() {
+            menuBtn.addEventListener('click', function () {
+                hamburgerMenu.classList.add('open');
+                menuBackdrop.classList.remove('hidden');
+            });
+
+            closeMenuBtn.addEventListener('click', closeMenu);
+            menuBackdrop.addEventListener('click', closeMenu);
+
+            function closeMenu() {
+                hamburgerMenu.classList.remove('open');
+                menuBackdrop.classList.add('hidden');
+            }
+        }
+
+        // Initialize modal events
+        function initializeModalEvents() {
+            closeModalBtn.addEventListener('click', closeModal);
+            detailsModal.addEventListener('click', function (e) {
+                if (e.target === detailsModal) {
+                    closeModal();
+                }
+            });
+
+            document.getElementById('modalEditBtn').addEventListener('click', function () {
+                const itemData = JSON.parse(detailsModal.dataset.itemData);
+                editItem(itemData.id, itemData.list_type);
+                closeModal();
+            });
+
+            document.getElementById('modalDeleteBtn').addEventListener('click', function () {
+                const itemData = JSON.parse(detailsModal.dataset.itemData);
+                showConfirmationModal(itemData.id, itemData.list_type);
+                closeModal();
+            });
+
+            // Confirmation modal events
+            confirmDeleteBtn.addEventListener('click', function () {
+                if (pendingDeleteItem) {
+                    performDelete(pendingDeleteItem.id, pendingDeleteItem.listType);
+                    closeConfirmationModal();
+                }
+            });
+
+            cancelDeleteBtn.addEventListener('click', closeConfirmationModal);
+            confirmationModal.addEventListener('click', function (e) {
+                if (e.target === confirmationModal) {
+                    closeConfirmationModal();
+                }
+            });
+        }
+
+        // Form submission
+        addItemForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const formData = new FormData(addItemForm);
+
+            const itemData = {
+                id: editingId || Date.now(),
+                title: formData.get('title').trim(),
+                description: formData.get('description').trim(),
+                list_type: formData.get('list_type'),
+                deadline: selectedDeadlineDate ? selectedDeadlineDate.toISOString() : null,
+                created_at: new Date().toISOString()
+            };
+
+            // Validation
+            if (!itemData.title) {
+                showToast('لطفا عنوان آیتم را وارد کنید', 'error');
+                return;
+            }
+
+            if (!itemData.list_type) {
+                showToast('لطفا لیست را انتخاب کنید', 'error');
+                return;
+            }
+
+            if (!selectedDeadlineDate) {
+                showToast('لطفا تاریخ ددلاین را انتخاب کنید', 'error');
+                return;
+            }
+
+            if (editingId) {
+                updateItem(itemData);
+            } else {
+                addItem(itemData);
+            }
+        });
+
+        // Add item
+        function addItem(itemData) {
+            items[itemData.list_type].push(itemData);
+            renderItems();
+            updateCounts();
+            resetForm();
+            showToast('آیتم با موفقیت اضافه شد');
+            saveItems();
+        }
+
+        // Update item
+        function updateItem(itemData) {
+            const listType = itemData.list_type;
+            const index = items[listType].findIndex(item => item.id == editingId);
+            if (index !== -1) {
+                items[listType][index] = itemData;
+                renderItems();
+                updateCounts();
+                resetForm();
+                showToast('آیتم با موفقیت ویرایش شد');
+                saveItems();
+            }
+        }
+
+        // Show confirmation modal
+        function showConfirmationModal(id, listType) {
+            pendingDeleteItem = { id, listType };
+            confirmationModal.classList.remove('hidden');
+        }
+
+        // Close confirmation modal
+        function closeConfirmationModal() {
+            confirmationModal.classList.add('hidden');
+            pendingDeleteItem = null;
+        }
+
+        // Perform actual delete
+        function performDelete(id, listType) {
+            items[listType] = items[listType].filter(item => item.id != id);
+            renderItems();
+            updateCounts();
+            showToast('آیتم با موفقیت حذف شد');
+            saveItems();
+        }
+
+        // Delete item
+        function deleteItem(id, listType) {
+            showConfirmationModal(id, listType);
+        }
+
+        // Edit item
+        function editItem(id, listType) {
+            const item = items[listType].find(item => item.id == id);
+            if (item) {
+                editingId = id;
+                itemTitle.value = item.title;
+                itemDescription.value = item.description || '';
+                itemList.value = item.list_type;
+
+                // Set the deadline date
+                if (item.deadline) {
+                    selectedDeadlineDate = new Date(item.deadline);
+                    const persianDateStr = gregorianToPersian(selectedDeadlineDate);
+                    $('#itemDeadline').val(persianDateStr);
+                }
+
+                itemId.value = id;
+
+                submitText.textContent = 'ویرایش آیتم';
+                submitBtn.querySelector('.material-icons').textContent = 'edit';
+                cancelBtn.style.display = 'block';
+
+                // Scroll to form
+                addItemForm.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // Reset form
+        function resetForm() {
+            addItemForm.reset();
+            $('#itemDeadline').val('');
+            selectedDeadlineDate = null;
+            editingId = null;
+            submitText.textContent = 'افزودن آیتم';
+            submitBtn.querySelector('.material-icons').textContent = 'add';
+            cancelBtn.style.display = 'none';
+            itemId.value = '';
+        }
+
+        // Show item details
+        function showItemDetails(id, listType) {
+            const item = items[listType].find(item => item.id == id);
+            if (!item) return;
+
+            const deadlineStatus = getDeadlineStatus(item.deadline);
+            const listName = listType === 'list1' ? 'فعالیت های عرشیا' : 'فعالیت های علی';
+
+            document.getElementById('modalTitle').textContent = item.title;
+            document.getElementById('modalDescription').textContent = item.description || 'توضیحاتی وارد نشده';
+            document.getElementById('modalList').textContent = listName;
+
+            if (item.deadline) {
+                const persianDeadline = gregorianToPersian(new Date(item.deadline));
+                document.getElementById('modalDeadline').textContent = `${persianDeadline} - ${deadlineStatus.text}`;
+            } else {
+                document.getElementById('modalDeadline').textContent = 'تعیین نشده';
+            }
+
+            document.getElementById('modalCreated').textContent = gregorianToPersian(new Date(item.created_at));
+
+            const statusElement = document.getElementById('modalDeadlineStatus');
+            statusElement.className = `w-3 h-3 rounded-full ${deadlineStatus.class}`;
+
+            detailsModal.dataset.itemData = JSON.stringify(item);
+            detailsModal.classList.remove('hidden');
+        }
+
+        // Close modal
+        function closeModal() {
+            detailsModal.classList.add('hidden');
+        }
+
+        // Cancel edit
+        cancelBtn.addEventListener('click', resetForm);
+
+        // Render items
+        function renderItems() {
+            renderList('list1');
+            renderList('list2');
+        }
+
+        function renderList(listType) {
+            const container = document.getElementById(`${listType}Items`);
+            const listItems = items[listType];
+
+            if (listItems.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-gray-500 py-8">
+                        <span class="material-icons text-4xl mb-2 block">inbox</span>
+                        هنوز آیتمی اضافه نشده
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = listItems.map(item => {
+                const deadlineStatus = getDeadlineStatus(item.deadline);
+                const createdDate = gregorianToPersian(new Date(item.created_at));
+
+                return `
+                <div class="slide-in bg-gray-50 rounded-xl p-4 border border-gray-200 hover:border-green-300 transition-all cursor-pointer"
+                     ondblclick="showItemDetails(${item.id}, '${listType}')">
+                    <div class="flex justify-between items-start gap-3">
+                        <div class="flex items-start gap-3 flex-1 min-w-0">
+                            <div class="w-3 h-3 rounded-full ${deadlineStatus.class} mt-1 flex-shrink-0"></div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <h4 class="font-medium text-gray-900 truncate">${escapeHtml(item.title)}</h4>
+                                </div>
+                                ${item.description ? `<p class="text-sm text-gray-600 mb-2 line-clamp-2">${escapeHtml(item.description)}</p>` : ''}
+                                <div class="flex items-center justify-between text-xs text-gray-500">
+                                    <span>${createdDate}</span>
+                                    <span class="text-xs ${deadlineStatus.status === 'overdue' || deadlineStatus.status === 'urgent' || deadlineStatus.status === 'today' ? 'text-red-600 font-medium' : deadlineStatus.status === 'warning' ? 'text-orange-600 font-medium' : ''}">${deadlineStatus.text}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex gap-1 flex-shrink-0">
+                            <button onclick="event.stopPropagation(); editItem(${item.id}, '${listType}')" 
+                                    class="ripple p-2 text-gray-500 hover:text-green-600 hover:bg-green-50 rounded-lg transition-all">
+                                <span class="material-icons text-sm">edit</span>
+                            </button>
+                            <button onclick="event.stopPropagation(); deleteItem(${item.id}, '${listType}')" 
+                                    class="ripple p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all">
+                                <span class="material-icons text-sm">delete</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        // Update counts
+        function updateCounts() {
+            document.getElementById('list1Count').textContent = toPersianNumbers(items.list1.length.toString());
+            document.getElementById('list2Count').textContent = toPersianNumbers(items.list2.length.toString());
+        }
+
+        // Show toast
+        function showToast(message, type = 'success') {
+            toastMessage.textContent = message;
+            toast.className = `fixed top-20 left-1/2 transform -translate-x-1/2 px-6 py-3 rounded-xl shadow-lg transition-all duration-300 z-50 ${type === 'error' ? 'bg-red-500' : 'bg-green-500'
+                } text-white`;
+
+            toast.style.transform = 'translateX(-50%) translateY(0)';
+            toast.style.opacity = '1';
+
+            setTimeout(() => {
+                toast.style.transform = 'translateX(-50%) translateY(-100px)';
+                toast.style.opacity = '0';
+            }, 3000);
+        }
+
+        // FAB click
+        fabBtn.addEventListener('click', function () {
+            addItemForm.scrollIntoView({ behavior: 'smooth' });
+            itemTitle.focus();
+        });
+
+        // Escape HTML
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Load items
+        function loadItems() {
+            const savedItems = localStorage.getItem('goshadi_bese_items');
+            if (savedItems) {
+                items = JSON.parse(savedItems);
+                renderItems();
+            }
+        }
+
+        // Save items
+        function saveItems() {
+            localStorage.setItem('goshadi_bese_items', JSON.stringify(items));
+        }
+    </script>
+    <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'96d8a2b22107dba1',t:'MTc1NDkyNDc3Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
+</body>
+
+</html>
