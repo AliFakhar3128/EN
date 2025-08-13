@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ali Fakhar - Creative Designer & Developer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            overflow-x: hidden;
+            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+                    rgba(147, 51, 234, 0.15) 0%,
+                    rgba(0, 0, 0, 0.9) 50%);
+        }
+
+        .animated-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background-image:
+                linear-gradient(rgba(147, 51, 234, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(147, 51, 234, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridMove 20s linear infinite;
+            transform: translate(var(--mouse-x, 0px), var(--mouse-y, 0px));
+            transition: transform 0.3s ease-out;
+        }
+
+        @keyframes gridMove {
+            0% {
+                background-position: 0 0;
+            }
+
+            100% {
+                background-position: 50px 50px;
+            }
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(147, 51, 234, 0.2);
+        }
+
+        .glass-dark {
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .liquid-gradient {
+            background: linear-gradient(135deg,
+                    rgba(147, 51, 234, 0.4) 0%,
+                    rgba(79, 70, 229, 0.4) 25%,
+                    rgba(59, 130, 246, 0.4) 50%,
+                    rgba(16, 185, 129, 0.4) 75%,
+                    rgba(245, 101, 101, 0.4) 100%);
+            background-size: 400% 400%;
+            animation: liquidFlow 6s ease-in-out infinite;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .liquid-gradient::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: liquidBubble 8s ease-in-out infinite;
+        }
+
+        @keyframes liquidFlow {
+
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+
+            33% {
+                background-position: 100% 0%;
+            }
+
+            66% {
+                background-position: 0% 100%;
+            }
+        }
+
+        @keyframes liquidBubble {
+
+            0%,
+            100% {
+                transform: translate(-50%, -50%) scale(0.8);
+                opacity: 0.3;
+            }
+
+            50% {
+                transform: translate(-30%, -30%) scale(1.2);
+                opacity: 0.6;
+            }
+        }
+
+        .floating {
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px) rotate(0deg);
+                filter: drop-shadow(0 10px 20px rgba(147, 51, 234, 0.3));
+            }
+
+            25% {
+                transform: translateY(-15px) rotate(2deg);
+                filter: drop-shadow(0 15px 30px rgba(79, 70, 229, 0.4));
+            }
+
+            50% {
+                transform: translateY(-25px) rotate(0deg);
+                filter: drop-shadow(0 20px 40px rgba(59, 130, 246, 0.5));
+            }
+
+            75% {
+                transform: translateY(-15px) rotate(-2deg);
+                filter: drop-shadow(0 15px 30px rgba(16, 185, 129, 0.4));
+            }
+        }
+
+        .water-drop {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .water-drop::before {
+            content: '';
+            position: absolute;
+            top: -100%;
+            left: -100%;
+            width: 300%;
+            height: 300%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+            animation: waterRipple 3s ease-in-out infinite;
+        }
+
+        @keyframes waterRipple {
+            0% {
+                transform: scale(0) rotate(0deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(1) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .glow {
+            box-shadow:
+                0 0 20px rgba(147, 51, 234, 0.4),
+                0 0 40px rgba(147, 51, 234, 0.3),
+                0 0 60px rgba(147, 51, 234, 0.2);
+            animation: glowPulse 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glowPulse {
+            0% {
+                box-shadow:
+                    0 0 20px rgba(147, 51, 234, 0.4),
+                    0 0 40px rgba(147, 51, 234, 0.3),
+                    0 0 60px rgba(147, 51, 234, 0.2);
+            }
+
+            100% {
+                box-shadow:
+                    0 0 30px rgba(147, 51, 234, 0.6),
+                    0 0 60px rgba(147, 51, 234, 0.4),
+                    0 0 90px rgba(147, 51, 234, 0.3);
+            }
+        }
+
+        .portfolio-card {
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .portfolio-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .portfolio-card:hover::before {
+            left: 100%;
+        }
+
+        .portfolio-card:hover {
+            transform: translateY(-15px) scale(1.03) rotateX(5deg);
+            box-shadow:
+                0 25px 50px rgba(0, 0, 0, 0.3),
+                0 0 30px rgba(147, 51, 234, 0.2);
+        }
+
+        #three-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            opacity: 1;
+        }
+
+        .skill-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .skill-bar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            animation: skillShimmer 2s ease-in-out infinite;
+        }
+
+        @keyframes skillShimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        .skill-progress {
+            height: 100%;
+            background: linear-gradient(90deg, #8b5cf6, #06b6d4, #10b981);
+            border-radius: 10px;
+            animation: skillLoad 3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .skill-progress::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 30px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            animation: skillGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes skillLoad {
+            from {
+                width: 0%;
+                transform: scaleX(0);
+            }
+
+            to {
+                transform: scaleX(1);
+            }
+        }
+
+        @keyframes skillGlow {
+            0% {
+                transform: translateX(-30px);
+            }
+
+            100% {
+                transform: translateX(calc(100vw + 30px));
+            }
+        }
+
+        .text-3d {
+            text-shadow:
+                0 1px 0 rgba(147, 51, 234, 0.8),
+                0 2px 0 rgba(147, 51, 234, 0.7),
+                0 3px 0 rgba(147, 51, 234, 0.6),
+                0 4px 0 rgba(147, 51, 234, 0.5),
+                0 5px 0 rgba(147, 51, 234, 0.4),
+                0 6px 1px rgba(0, 0, 0, 0.1),
+                0 0 5px rgba(147, 51, 234, 0.3),
+                0 1px 3px rgba(0, 0, 0, 0.3),
+                0 3px 5px rgba(0, 0, 0, 0.2),
+                0 5px 10px rgba(0, 0, 0, 0.25);
+            animation: text3dFloat 4s ease-in-out infinite;
+        }
+
+        @keyframes text3dFloat {
+
+            0%,
+            100% {
+                transform: perspective(400px) rotateX(0deg) rotateY(0deg);
+                text-shadow:
+                    0 1px 0 rgba(147, 51, 234, 0.8),
+                    0 2px 0 rgba(147, 51, 234, 0.7),
+                    0 3px 0 rgba(147, 51, 234, 0.6),
+                    0 4px 0 rgba(147, 51, 234, 0.5),
+                    0 5px 0 rgba(147, 51, 234, 0.4),
+                    0 6px 1px rgba(0, 0, 0, 0.1),
+                    0 0 5px rgba(147, 51, 234, 0.3);
+            }
+
+            50% {
+                transform: perspective(400px) rotateX(10deg) rotateY(5deg);
+                text-shadow:
+                    0 2px 0 rgba(147, 51, 234, 0.8),
+                    0 4px 0 rgba(147, 51, 234, 0.7),
+                    0 6px 0 rgba(147, 51, 234, 0.6),
+                    0 8px 0 rgba(147, 51, 234, 0.5),
+                    0 10px 0 rgba(147, 51, 234, 0.4),
+                    0 12px 2px rgba(0, 0, 0, 0.2),
+                    0 0 10px rgba(147, 51, 234, 0.5);
+            }
+        }
+
+        .liquid-button {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .liquid-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+            transition: all 0.6s ease;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .liquid-button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .liquid-button:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 10px 25px rgba(147, 51, 234, 0.3);
+        }
+
+        .rtl {
+            direction: rtl;
+        }
+
+        .ltr {
+            direction: ltr;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.8s ease-out;
+        }
+    </style>
+</head>
+
+<body class="bg-black text-white overflow-x-hidden">
+    <div class="animated-grid"></div>
+    <canvas id="three-canvas"></canvas>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 glass p-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="text-2xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
+                Ali Fakhar
+            </div>
+            <div class="flex items-center space-x-6">
+                <a href="#home" class="nav-link hover:text-purple-400 transition-colors" data-en="Home"
+                    data-fa="خانه">Home</a>
+                <a href="#about" class="nav-link hover:text-purple-400 transition-colors" data-en="About"
+                    data-fa="درباره">About</a>
+                <a href="#portfolio" class="nav-link hover:text-purple-400 transition-colors" data-en="Portfolio"
+                    data-fa="نمونه کار">Portfolio</a>
+                <a href="#contact" class="nav-link hover:text-purple-400 transition-colors" data-en="Contact"
+                    data-fa="تماس">Contact</a>
+                <button id="lang-toggle" class="glass px-3 py-1 rounded-full text-sm hover:glow transition-all">
+                    <i class="fas fa-language mr-1"></i>
+                    <span id="lang-text">فا</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="min-h-screen flex items-center justify-center relative">
+        <div class="text-center z-10">
+            <div class="floating mb-8">
+                <div class="w-32 h-32 mx-auto glass rounded-full flex items-center justify-center glow">
+                    <i class="fas fa-code text-4xl text-purple-400"></i>
+                </div>
+            </div>
+            <h1 class="text-6xl font-bold mb-4 text-3d text-white">
+                Ali Fakhar
+            </h1>
+            <p class="text-xl mb-8 text-gray-300" data-en="Graphic Designer • Video Editor • Web Developer"
+                data-fa="طراح گرافیک • ادیتور ویدیو • برنامه نویس وب">
+                Graphic Designer • Video Editor • Web Developer
+            </p>
+            <div class="flex justify-center space-x-4">
+                <button class="glass px-8 py-3 rounded-full liquid-button water-drop" data-en="View Portfolio"
+                    data-fa="مشاهده نمونه کار">
+                    View Portfolio
+                </button>
+                <button class="glass-dark px-8 py-3 rounded-full liquid-button water-drop" data-en="Contact Me"
+                    data-fa="تماس با من">
+                    Contact Me
+                </button>
+            </div>
+        </div>
+
+        <!-- Floating Elements -->
+        <div class="absolute top-20 left-20 w-20 h-20 glass rounded-full floating opacity-50"></div>
+        <div class="absolute bottom-20 right-20 w-16 h-16 glass rounded-full floating opacity-30"
+            style="animation-delay: -2s;"></div>
+        <div class="absolute top-1/2 left-10 w-12 h-12 glass rounded-full floating opacity-40"
+            style="animation-delay: -4s;"></div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-20 px-4">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-4xl font-bold text-center mb-16 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent"
+                data-en="About Me" data-fa="درباره من">
+                About Me
+            </h2>
+
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div class="glass p-8 rounded-3xl">
+                    <p class="text-lg leading-relaxed mb-6"
+                        data-en="I'm a passionate creative professional with expertise in graphic design, video editing, and web development. I love bringing ideas to life through innovative digital solutions."
+                        data-fa="من یک متخصص خلاق با تجربه در طراحی گرافیک، ادیت ویدیو و توسعه وب هستم. عاشق زنده کردن ایده‌ها از طریق راه‌حل‌های دیجیتال نوآورانه هستم.">
+                        I'm a passionate creative professional with expertise in graphic design, video editing, and web
+                        development. I love bringing ideas to life through innovative digital solutions.
+                    </p>
+
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <span data-en="Graphic Design" data-fa="طراحی گرافیک">Graphic Design</span>
+                                <span>95%</span>
+                            </div>
+                            <div class="skill-bar">
+                                <div class="skill-progress" style="width: 95%;"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <span data-en="Video Editing" data-fa="ادیت ویدیو">Video Editing</span>
+                                <span>90%</span>
+                            </div>
+                            <div class="skill-bar">
+                                <div class="skill-progress" style="width: 90%;"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <span data-en="Web Development" data-fa="توسعه وب">Web Development</span>
+                                <span>88%</span>
+                            </div>
+                            <div class="skill-bar">
+                                <div class="skill-progress" style="width: 88%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-6">
+                    <div class="glass p-6 rounded-2xl text-center">
+                        <i class="fas fa-palette text-3xl text-purple-400 mb-4"></i>
+                        <h3 class="font-semibold mb-2" data-en="Creative Design" data-fa="طراحی خلاق">Creative Design
+                        </h3>
+                        <p class="text-sm text-gray-400" data-en="Innovative visual solutions"
+                            data-fa="راه‌حل‌های بصری نوآورانه">Innovative visual solutions</p>
+                    </div>
+
+                    <div class="glass p-6 rounded-2xl text-center">
+                        <i class="fas fa-video text-3xl text-blue-400 mb-4"></i>
+                        <h3 class="font-semibold mb-2" data-en="Video Production" data-fa="تولید ویدیو">Video Production
+                        </h3>
+                        <p class="text-sm text-gray-400" data-en="Professional editing" data-fa="ادیت حرفه‌ای">
+                            Professional editing</p>
+                    </div>
+
+                    <div class="glass p-6 rounded-2xl text-center">
+                        <i class="fas fa-code text-3xl text-green-400 mb-4"></i>
+                        <h3 class="font-semibold mb-2" data-en="Web Development" data-fa="توسعه وب">Web Development</h3>
+                        <p class="text-sm text-gray-400" data-en="Modern websites" data-fa="وب‌سایت‌های مدرن">Modern
+                            websites</p>
+                    </div>
+
+                    <div class="glass p-6 rounded-2xl text-center">
+                        <i class="fas fa-mobile-alt text-3xl text-pink-400 mb-4"></i>
+                        <h3 class="font-semibold mb-2" data-en="Responsive Design" data-fa="طراحی ریسپانسیو">Responsive
+                            Design</h3>
+                        <p class="text-sm text-gray-400" data-en="All devices" data-fa="همه دستگاه‌ها">All devices</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Portfolio Section -->
+    <section id="portfolio" class="py-20 px-4">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-4xl font-bold text-center mb-16 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent"
+                data-en="Portfolio" data-fa="نمونه کار">
+                Portfolio
+            </h2>
+
+            <!-- Filter Buttons -->
+            <div class="flex justify-center mb-12 space-x-4">
+                <button class="filter-btn glass px-6 py-2 rounded-full active" data-filter="all" data-en="All"
+                    data-fa="همه">All</button>
+                <button class="filter-btn glass px-6 py-2 rounded-full" data-filter="design" data-en="Design"
+                    data-fa="طراحی">Design</button>
+                <button class="filter-btn glass px-6 py-2 rounded-full" data-filter="video" data-en="Video"
+                    data-fa="ویدیو">Video</button>
+                <button class="filter-btn glass px-6 py-2 rounded-full" data-filter="web" data-en="Web"
+                    data-fa="وب">Web</button>
+            </div>
+
+            <!-- Portfolio Grid -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8" id="portfolio-grid">
+                <!-- Design Projects -->
+                <div class="portfolio-card glass rounded-2xl overflow-hidden" data-category="design">
+                    <div class="h-48 liquid-gradient flex items-center justify-center">
+                        <i class="fas fa-paint-brush text-4xl text-white"></i>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-semibold mb-2" data-en="Brand Identity Design" data-fa="طراحی هویت برند">Brand
+                            Identity Design</h3>
+                        <p class="text-gray-400 text-sm mb-4" data-en="Complete branding solution for tech startup"
+                            data-fa="راه‌حل کامل برندینگ برای استارتاپ فناوری">Complete branding solution for tech
+                            startup</p>
+                        <div class="flex space-x-2">
+                            <span class="px-2 py-1 bg-purple-500/20 text-purple-300 text-xs rounded">Logo</span>
+                            <span class="px-2 py-1 bg-blue-500/20 text-blue-300 text-xs rounded">Branding</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="portfolio-card glass rounded-2xl overflow-hidden" data-category="design">
+                    <div class="h-48 liquid-gradient flex items-center justify-center">
+                        <i class="fas fa-image text-4xl text-white"></i>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-semibold mb-2" data-en="Digital Illustrations" data-fa="تصاویر دیجیتال">Digital
+                            Illustrations</h3>
+                        <p class="text-gray-400 text-sm mb-4" data-en="Creative artwork for social media campaigns"
+                            data-fa="آثار هنری خلاق برای کمپین‌های رسانه‌های اجتماعی">Creative artwork for social media
+                            campaigns</p>
+                        <div class="flex space-x-2">
+                            <span class="px-2 py-1 bg-green-500/20 text-green-300 text-xs rounded">Art</span>
+                            <span class="px-2 py-1 bg-pink-500/20 text-pink-300 text-xs rounded">Social</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Video Projects -->
+                <div class="portfolio-card glass rounded-2xl overflow-hidden" data-category="video">
+                    <div class="h-48 liquid-gradient flex items-center justify-center">
+                        <i class="fas fa-play-circle text-4xl text-white"></i>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-semibold mb-2" data-en="Corporate Video" data-fa="ویدیو شرکتی">Corporate Video
+                        </h3>
+                        <p class="text-gray-400 text-sm mb-4" data-en="Professional company introduction video"
+                            data-fa="ویدیو معرفی حرفه‌ای شرکت">Professional company introduction video</p>
+                        <div class="flex space-x-2">
+                            <span class="px-2 py-1 bg-red-500/20 text-red-300 text-xs rounded">Video</span>
+                            <span class="px-2 py-1 bg-yellow-500/20 text-yellow-300 text-xs rounded">Corporate</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="portfolio-card glass rounded-2xl overflow-hidden" data-category="video">
+                    <div class="h-48 liquid-gradient flex items-center justify-center">
+                        <i class="fas fa-film text-4xl text-white"></i>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-semibold mb-2" data-en="Motion Graphics" data-fa="موشن گرافیک">Motion Graphics
+                        </h3>
+                        <p class="text-gray-400 text-sm mb-4" data-en="Animated explainer videos and transitions"
+                            data-fa="ویدیوهای توضیحی انیمیشنی و ترانزیشن‌ها">Animated explainer videos and transitions
+                        </p>
+                        <div class="flex space-x-2">
+                            <span class="px-2 py-1 bg-purple-500/20 text-purple-300 text-xs rounded">Animation</span>
+                            <span class="px-2 py-1 bg-cyan-500/20 text-cyan-300 text-xs rounded">Motion</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Web Projects -->
+                <div class="portfolio-card glass rounded-2xl overflow-hidden" data-category="web">
+                    <div class="h-48 liquid-gradient flex items-center justify-center">
+                        <i class="fas fa-laptop-code text-4xl text-white"></i>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-semibold mb-2" data-en="E-commerce Platform" data-fa="پلتفرم فروشگاهی">
+                            E-commerce Platform</h3>
+                        <p class="text-gray-400 text-sm mb-4" data-en="Modern online store with advanced features"
+                            data-fa="فروشگاه آنلاین مدرن با امکانات پیشرفته">Modern online store with advanced features
+                        </p>
+                        <div class="flex space-x-2">
+                            <span class="px-2 py-1 bg-blue-500/20 text-blue-300 text-xs rounded">React</span>
+                            <span class="px-2 py-1 bg-green-500/20 text-green-300 text-xs rounded">Node.js</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="portfolio-card glass rounded-2xl overflow-hidden" data-category="web">
+                    <div class="h-48 liquid-gradient flex items-center justify-center">
+                        <i class="fas fa-mobile-alt text-4xl text-white"></i>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-semibold mb-2" data-en="Mobile App UI" data-fa="رابط کاربری اپلیکیشن">Mobile App
+                            UI</h3>
+                        <p class="text-gray-400 text-sm mb-4" data-en="Responsive design for fitness tracking app"
+                            data-fa="طراحی ریسپانسیو برای اپلیکیشن ردیابی تناسب اندام">Responsive design for fitness
+                            tracking app</p>
+                        <div class="flex space-x-2">
+                            <span class="px-2 py-1 bg-pink-500/20 text-pink-300 text-xs rounded">UI/UX</span>
+                            <span class="px-2 py-1 bg-orange-500/20 text-orange-300 text-xs rounded">Mobile</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 px-4">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-4xl font-bold text-center mb-16 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent"
+                data-en="Get In Touch" data-fa="در تماس باشید">
+                Get In Touch
+            </h2>
+
+            <div class="grid md:grid-cols-2 gap-12">
+                <div class="glass p-8 rounded-3xl">
+                    <h3 class="text-2xl font-semibold mb-6" data-en="Contact Information" data-fa="اطلاعات تماس">Contact
+                        Information</h3>
+
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-12 h-12 glass rounded-full flex items-center justify-center">
+                                <i class="fas fa-envelope text-purple-400"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium">Email</p>
+                                <p class="text-gray-400">ali.fakhar@example.com</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center space-x-4">
+                            <div class="w-12 h-12 glass rounded-full flex items-center justify-center">
+                                <i class="fas fa-phone text-blue-400"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium" data-en="Phone" data-fa="تلفن">Phone</p>
+                                <p class="text-gray-400">+98 912 345 6789</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center space-x-4">
+                            <div class="w-12 h-12 glass rounded-full flex items-center justify-center">
+                                <i class="fas fa-map-marker-alt text-green-400"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium" data-en="Location" data-fa="موقعیت">Location</p>
+                                <p class="text-gray-400" data-en="Tehran, Iran" data-fa="تهران، ایران">Tehran, Iran</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex space-x-4 mt-8">
+                        <a href="#"
+                            class="w-12 h-12 glass rounded-full flex items-center justify-center hover:glow transition-all">
+                            <i class="fab fa-instagram text-pink-400"></i>
+                        </a>
+                        <a href="#"
+                            class="w-12 h-12 glass rounded-full flex items-center justify-center hover:glow transition-all">
+                            <i class="fab fa-linkedin text-blue-400"></i>
+                        </a>
+                        <a href="#"
+                            class="w-12 h-12 glass rounded-full flex items-center justify-center hover:glow transition-all">
+                            <i class="fab fa-github text-gray-400"></i>
+                        </a>
+                        <a href="#"
+                            class="w-12 h-12 glass rounded-full flex items-center justify-center hover:glow transition-all">
+                            <i class="fab fa-behance text-purple-400"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="glass p-8 rounded-3xl">
+                    <form id="contact-form">
+                        <div class="mb-6">
+                            <label class="block mb-2" data-en="Name" data-fa="نام">Name</label>
+                            <input type="text"
+                                class="w-full glass p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400"
+                                placeholder="Your Name">
+                        </div>
+
+                        <div class="mb-6">
+                            <label class="block mb-2" data-en="Email" data-fa="ایمیل">Email</label>
+                            <input type="email"
+                                class="w-full glass p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400"
+                                placeholder="your@email.com">
+                        </div>
+
+                        <div class="mb-6">
+                            <label class="block mb-2" data-en="Message" data-fa="پیام">Message</label>
+                            <textarea rows="4"
+                                class="w-full glass p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400"
+                                data-placeholder-en="Your message here..."
+                                data-placeholder-fa="پیام شما اینجا..."></textarea>
+                        </div>
+
+                        <button type="submit" class="w-full glass py-3 rounded-lg hover:glow transition-all"
+                            data-en="Send Message" data-fa="ارسال پیام">
+                            Send Message
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-8 px-4 glass-dark">
+        <div class="max-w-6xl mx-auto text-center">
+            <p class="text-gray-400" data-en="© 2024 Ali Fakhar. All rights reserved."
+                data-fa="© ۲۰۲۴ علی فخار. تمام حقوق محفوظ است.">
+                © 2024 Ali Fakhar. All rights reserved.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Three.js Background Animation with 3D Text
+        let scene, camera, renderer, particles, textMesh, mouseX = 0, mouseY = 0;
+
+        function initThree() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('three-canvas'), alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
+            // Create enhanced particles with different sizes and colors
+            const geometry = new THREE.BufferGeometry();
+            const particleCount = 200;
+            const positions = new Float32Array(particleCount * 3);
+            const colors = new Float32Array(particleCount * 3);
+            const sizes = new Float32Array(particleCount);
+
+            const colorPalette = [
+                new THREE.Color(0x8b5cf6), // Purple
+                new THREE.Color(0x06b6d4), // Cyan
+                new THREE.Color(0x10b981), // Green
+                new THREE.Color(0xf59e0b), // Yellow
+                new THREE.Color(0xef4444)  // Red
+            ];
+
+            for (let i = 0; i < particleCount; i++) {
+                positions[i * 3] = (Math.random() - 0.5) * 30;
+                positions[i * 3 + 1] = (Math.random() - 0.5) * 30;
+                positions[i * 3 + 2] = (Math.random() - 0.5) * 30;
+
+                const color = colorPalette[Math.floor(Math.random() * colorPalette.length)];
+                colors[i * 3] = color.r;
+                colors[i * 3 + 1] = color.g;
+                colors[i * 3 + 2] = color.b;
+
+                sizes[i] = Math.random() * 0.1 + 0.05;
+            }
+
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+            geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+
+            const material = new THREE.PointsMaterial({
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.8,
+                sizeAttenuation: true
+            });
+
+            particles = new THREE.Points(geometry, material);
+            scene.add(particles);
+
+            // Add floating geometric shapes
+            createFloatingShapes();
+
+            camera.position.z = 10;
+
+            animate();
+        }
+
+        function createFloatingShapes() {
+            const shapes = [];
+            const shapeCount = 15;
+
+            for (let i = 0; i < shapeCount; i++) {
+                let geometry, material, mesh;
+
+                const shapeType = Math.floor(Math.random() * 3);
+                const color = new THREE.Color().setHSL(Math.random(), 0.7, 0.5);
+
+                switch (shapeType) {
+                    case 0:
+                        geometry = new THREE.SphereGeometry(0.2, 8, 6);
+                        break;
+                    case 1:
+                        geometry = new THREE.BoxGeometry(0.3, 0.3, 0.3);
+                        break;
+                    case 2:
+                        geometry = new THREE.OctahedronGeometry(0.25);
+                        break;
+                }
+
+                material = new THREE.MeshBasicMaterial({
+                    color: color,
+                    transparent: true,
+                    opacity: 0.3,
+                    wireframe: true
+                });
+
+                mesh = new THREE.Mesh(geometry, material);
+                mesh.position.set(
+                    (Math.random() - 0.5) * 20,
+                    (Math.random() - 0.5) * 20,
+                    (Math.random() - 0.5) * 20
+                );
+
+                mesh.userData = {
+                    rotationSpeed: {
+                        x: (Math.random() - 0.5) * 0.02,
+                        y: (Math.random() - 0.5) * 0.02,
+                        z: (Math.random() - 0.5) * 0.02
+                    },
+                    floatSpeed: Math.random() * 0.01 + 0.005,
+                    floatOffset: Math.random() * Math.PI * 2
+                };
+
+                shapes.push(mesh);
+                scene.add(mesh);
+            }
+
+            window.floatingShapes = shapes;
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            const time = Date.now() * 0.001;
+
+            // Animate particles with wave motion
+            const positions = particles.geometry.attributes.position.array;
+            for (let i = 0; i < positions.length; i += 3) {
+                positions[i + 1] += Math.sin(time + positions[i] * 0.1) * 0.002;
+                positions[i] += Math.cos(time + positions[i + 1] * 0.1) * 0.001;
+            }
+            particles.geometry.attributes.position.needsUpdate = true;
+
+            // Rotate particles based on mouse position
+            particles.rotation.x += (mouseY * 0.0001 - particles.rotation.x) * 0.05;
+            particles.rotation.y += (mouseX * 0.0001 - particles.rotation.y) * 0.05;
+            particles.rotation.z += 0.001;
+
+            // Animate floating shapes
+            if (window.floatingShapes) {
+                window.floatingShapes.forEach((shape, index) => {
+                    shape.rotation.x += shape.userData.rotationSpeed.x;
+                    shape.rotation.y += shape.userData.rotationSpeed.y;
+                    shape.rotation.z += shape.userData.rotationSpeed.z;
+
+                    shape.position.y += Math.sin(time * shape.userData.floatSpeed + shape.userData.floatOffset) * 0.01;
+                    shape.position.x += Math.cos(time * shape.userData.floatSpeed + shape.userData.floatOffset) * 0.005;
+                });
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        // Language Toggle
+        let currentLang = 'en';
+        const langToggle = document.getElementById('lang-toggle');
+        const langText = document.getElementById('lang-text');
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'fa' : 'en';
+            langText.textContent = currentLang === 'en' ? 'فا' : 'EN';
+
+            document.documentElement.setAttribute('lang', currentLang);
+            document.documentElement.setAttribute('dir', currentLang === 'fa' ? 'rtl' : 'ltr');
+
+            // Update all translatable elements
+            const elements = document.querySelectorAll('[data-en][data-fa]');
+            elements.forEach(el => {
+                if (currentLang === 'fa') {
+                    el.textContent = el.getAttribute('data-fa');
+                } else {
+                    el.textContent = el.getAttribute('data-en');
+                }
+            });
+
+            // Update placeholders
+            const textareas = document.querySelectorAll('textarea[data-placeholder-en][data-placeholder-fa]');
+            textareas.forEach(el => {
+                if (currentLang === 'fa') {
+                    el.placeholder = el.getAttribute('data-placeholder-fa');
+                } else {
+                    el.placeholder = el.getAttribute('data-placeholder-en');
+                }
+            });
+        }
+
+        langToggle.addEventListener('click', toggleLanguage);
+
+        // Portfolio Filter
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const portfolioItems = document.querySelectorAll('.portfolio-card');
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Remove active class from all buttons
+                filterBtns.forEach(b => b.classList.remove('glow'));
+                // Add active class to clicked button
+                btn.classList.add('glow');
+
+                const filter = btn.getAttribute('data-filter');
+
+                portfolioItems.forEach(item => {
+                    if (filter === 'all' || item.getAttribute('data-category') === filter) {
+                        item.style.display = 'block';
+                        setTimeout(() => {
+                            item.style.opacity = '1';
+                            item.style.transform = 'scale(1)';
+                        }, 100);
+                    } else {
+                        item.style.opacity = '0';
+                        item.style.transform = 'scale(0.8)';
+                        setTimeout(() => {
+                            item.style.display = 'none';
+                        }, 300);
+                    }
+                });
+            });
+        });
+
+        // Smooth Scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Contact Form
+        document.getElementById('contact-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            // Show success message
+            const button = this.querySelector('button[type="submit"]');
+            const originalText = button.textContent;
+
+            button.textContent = currentLang === 'fa' ? 'ارسال شد!' : 'Sent!';
+            button.classList.add('glow');
+
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.classList.remove('glow');
+                this.reset();
+            }, 2000);
+        });
+
+        // Resize handler
+        window.addEventListener('resize', () => {
+            if (renderer) {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            }
+        });
+
+        // Mouse tracking for interactive effects
+        document.addEventListener('mousemove', (e) => {
+            mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+            mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+
+            // Update CSS custom properties for background gradient
+            const x = (e.clientX / window.innerWidth) * 100;
+            const y = (e.clientY / window.innerHeight) * 100;
+            document.documentElement.style.setProperty('--mouse-x', x + '%');
+            document.documentElement.style.setProperty('--mouse-y', y + '%');
+
+            // Update grid position
+            const grid = document.querySelector('.animated-grid');
+            if (grid) {
+                const moveX = (e.clientX / window.innerWidth - 0.5) * 20;
+                const moveY = (e.clientY / window.innerHeight - 0.5) * 20;
+                grid.style.setProperty('--mouse-x', moveX + 'px');
+                grid.style.setProperty('--mouse-y', moveY + 'px');
+            }
+        });
+
+        // Add scroll-triggered animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('fade-in-up');
+                }
+            });
+        }, observerOptions);
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            initThree();
+
+            // Set initial active filter
+            document.querySelector('.filter-btn[data-filter="all"]').classList.add('glow');
+
+            // Observe elements for scroll animations
+            document.querySelectorAll('.portfolio-card, .glass').forEach(el => {
+                observer.observe(el);
+            });
+        });
+    </script>
+    <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'96ec053754c6d612',t:'MTc1NTEyODAzNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
+</body>
+
+</html>
