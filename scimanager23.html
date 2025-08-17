@@ -1,0 +1,1509 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سیستم مدیریت SCI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap');
+
+        * {
+            font-family: 'Vazirmatn', sans-serif;
+        }
+
+        .persian-calendar {
+            direction: rtl;
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .highlight-due {
+            background-color: #fef3c7 !important;
+        }
+
+        .card-view {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .table-view {
+                display: none;
+            }
+
+            .card-view {
+                display: block;
+            }
+        }
+
+        .status-check {
+            color: #f59e0b;
+        }
+
+        .status-cash {
+            color: #10b981;
+        }
+
+        .notification-bar {
+            background: linear-gradient(90deg, #dc2626, #b91c1c);
+            color: white;
+            padding: 8px;
+            text-align: center;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50">
+    <!-- Notification Bar -->
+    <div id="notificationBar" class="notification-bar hidden">
+        <span id="notificationText"></span>
+        <button onclick="hideNotification()" class="float-left text-white hover:text-gray-200">✕</button>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg">
+        <span id="toastMessage"></span>
+    </div>
+
+    <!-- Login Screen -->
+    <div id="loginScreen" class="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50 to-white">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md border-t-4 border-red-600">
+            <div class="text-center mb-8">
+                <div
+                    class="bg-red-600 text-white w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
+                    SCI
+                </div>
+                <h1 class="text-2xl font-bold text-gray-800">صنایع چدن اصفهان</h1>
+                <p class="text-gray-600 mt-2">سیستم مدیریت یکپارچه</p>
+            </div>
+
+            <form id="loginForm" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">نام کاربری</label>
+                    <select id="username"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500">
+                        <option value="">انتخاب کاربر</option>
+                        <option value="manager">مدیر</option>
+                        <option value="sales">کارشناس فروش</option>
+                        <option value="accountant">حسابدار</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">رمز عبور</label>
+                    <input type="password" id="password"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                        placeholder="رمز عبور را وارد کنید">
+                </div>
+
+                <button type="submit"
+                    class="w-full bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 transition duration-200 font-medium">
+                    ورود به سیستم
+                </button>
+            </form>
+
+            <div class="mt-6 text-sm text-gray-600 bg-gray-50 p-4 rounded-lg">
+                <p class="font-medium mb-2">اطلاعات ورود نمونه:</p>
+                <p>مدیر: manager123</p>
+                <p>کارشناس فروش: sales123</p>
+                <p>حسابدار: account123</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div id="mainApp" class="hidden">
+        <!-- Header -->
+        <header class="bg-white shadow-sm border-b border-gray-200">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-16">
+                    <div class="flex items-center">
+                        <div
+                            class="bg-red-600 text-white w-10 h-10 rounded-full flex items-center justify-center text-lg font-bold">
+                            SCI
+                        </div>
+                        <h1 class="mr-3 text-xl font-bold text-gray-900">صنایع چدن اصفهان</h1>
+                    </div>
+
+                    <div class="flex items-center space-x-4 space-x-reverse">
+                        <div class="text-sm">
+                            <span class="text-gray-600">کاربر:</span>
+                            <span id="currentUser" class="font-medium text-gray-900"></span>
+                            <span id="currentRole"
+                                class="text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full mr-2"></span>
+                        </div>
+                        <button onclick="logout()"
+                            class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition duration-200">
+                            خروج
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="bg-white shadow-sm">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex space-x-8 space-x-reverse">
+                    <button onclick="showModule('dashboard')"
+                        class="nav-btn px-3 py-4 text-sm font-medium text-gray-700 hover:text-red-600 border-b-2 border-transparent hover:border-red-600 transition duration-200">
+                        داشبورد
+                    </button>
+                    <button onclick="showModule('transactions')"
+                        class="nav-btn px-3 py-4 text-sm font-medium text-gray-700 hover:text-red-600 border-b-2 border-transparent hover:border-red-600 transition duration-200">
+                        تراکنش‌ها
+                    </button>
+                    <button id="addTransactionNav" onclick="showModule('addTransaction')"
+                        class="nav-btn px-3 py-4 text-sm font-medium text-gray-700 hover:text-red-600 border-b-2 border-transparent hover:border-red-600 transition duration-200 hidden">
+                        ثبت تراکنش
+                    </button>
+                    <button id="analyticsNav" onclick="showModule('analytics')"
+                        class="nav-btn px-3 py-4 text-sm font-medium text-gray-700 hover:text-red-600 border-b-2 border-transparent hover:border-red-600 transition duration-200 hidden">
+                        تحلیل داده‌ها
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <!-- Dashboard Module -->
+            <div id="dashboardModule" class="module">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                        <div class="flex items-center">
+                            <div class="bg-red-100 p-3 rounded-full">
+                                <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <div class="mr-4">
+                                <p class="text-sm font-medium text-gray-600">کل فاکتورها</p>
+                                <p id="totalInvoices" class="text-2xl font-bold text-gray-900">0</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                        <div class="flex items-center">
+                            <div class="bg-green-100 p-3 rounded-full">
+                                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1">
+                                    </path>
+                                </svg>
+                            </div>
+                            <div class="mr-4">
+                                <p class="text-sm font-medium text-gray-600">مجموع فروش</p>
+                                <p id="totalSales" class="text-2xl font-bold text-gray-900">0 ریال</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                        <div class="flex items-center">
+                            <div class="bg-yellow-100 p-3 rounded-full">
+                                <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <div class="mr-4">
+                                <p class="text-sm font-medium text-gray-600">کل تخفیف</p>
+                                <p id="totalDiscount" class="text-2xl font-bold text-gray-900">0 ریال</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                        <div class="flex items-center">
+                            <div class="bg-blue-100 p-3 rounded-full">
+                                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <div class="mr-4">
+                                <p class="text-sm font-medium text-gray-600">پرداخت نقدی</p>
+                                <p id="cashPayments" class="text-2xl font-bold text-gray-900">0 ریال</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Transactions -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4">آخرین تراکنش‌ها</h3>
+                    <div id="recentTransactions" class="space-y-3">
+                        <p class="text-gray-500 text-center py-8">هیچ تراکنشی ثبت نشده است</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add Transaction Module -->
+            <div id="addTransactionModule" class="module hidden">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <h2 class="text-xl font-bold text-gray-900 mb-6">ثبت تراکنش جدید</h2>
+
+                    <form id="transactionForm" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">شماره پیش فاکتور</label>
+                            <input type="text" id="preInvoiceNumber"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                                required>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">تاریخ پیش فاکتور</label>
+                            <input type="date" id="preInvoiceDate"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                                required>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">نام مشتری</label>
+                            <input type="text" id="customerName"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                                required>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">کد مشتری</label>
+                            <input type="text" id="customerCode"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                                required>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">استان</label>
+                            <select id="province"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                                required>
+                                <option value="">انتخاب استان</option>
+                                <option value="اصفهان">اصفهان</option>
+                                <option value="تهران">تهران</option>
+                                <option value="فارس">فارس</option>
+                                <option value="خراسان رضوی">خراسان رضوی</option>
+                                <option value="آذربایجان شرقی">آذربایجان شرقی</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">نام کارشناس فروش</label>
+                            <input type="text" id="salesExpert"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                                required>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">مبلغ ناخالص (ریال)</label>
+                            <input type="number" id="grossAmount"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                                required oninput="calculateNet()">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">درصد تخفیف</label>
+                            <input type="number" id="discountPercent"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                                min="0" max="100" oninput="calculateNet()">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">مبلغ تخفیف (ریال)</label>
+                            <input type="number" id="discountAmount"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 bg-gray-50"
+                                readonly>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">مبلغ خالص (ریال)</label>
+                            <input type="number" id="netAmount"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 bg-gray-50"
+                                readonly>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">نحوه تسویه</label>
+                            <select id="paymentMethod"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                                required onchange="togglePaymentFields()">
+                                <option value="">انتخاب نحوه تسویه</option>
+                                <option value="چک دو ماهه">چک دو ماهه</option>
+                                <option value="نقدی">نقدی</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">تاریخ ارسال بار</label>
+                            <input type="date" id="shipmentDate"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                                required>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">شماره فاکتور</label>
+                            <input type="text" id="invoiceNumber"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                                required>
+                        </div>
+
+                        <!-- Dynamic Payment Fields -->
+                        <div id="checkFields" class="hidden col-span-full">
+                            <div
+                                class="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">تاریخ سررسید چک</label>
+                                    <input type="date" id="checkDueDate"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">تاریخ دریافت چک</label>
+                                    <input type="date" id="checkReceiveDate"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="cashFields" class="hidden col-span-full">
+                            <div
+                                class="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 bg-green-50 rounded-lg border border-green-200">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">تاریخ واریز</label>
+                                    <input type="date" id="depositDate"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">نام بانک</label>
+                                    <input type="text" id="bankName"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-span-full">
+                            <button type="submit"
+                                class="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition duration-200 font-medium">
+                                ثبت تراکنش
+                            </button>
+                            <button type="button" onclick="resetForm()"
+                                class="mr-3 bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition duration-200 font-medium">
+                                پاک کردن فرم
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Transactions Module -->
+            <div id="transactionsModule" class="module hidden">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+                        <h2 class="text-xl font-bold text-gray-900 mb-4 sm:mb-0">لیست تراکنش‌ها</h2>
+
+                        <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 sm:space-x-reverse">
+                            <input type="text" id="searchInput" placeholder="جستجو..."
+                                class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                                oninput="filterTransactions()">
+
+                            <select id="provinceFilter"
+                                class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                                onchange="filterTransactions()">
+                                <option value="">همه استان‌ها</option>
+                                <option value="اصفهان">اصفهان</option>
+                                <option value="تهران">تهران</option>
+                                <option value="فارس">فارس</option>
+                            </select>
+
+                            <select id="paymentFilter"
+                                class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                                onchange="filterTransactions()">
+                                <option value="">همه پرداخت‌ها</option>
+                                <option value="نقدی">نقدی</option>
+                                <option value="چک دو ماهه">چک دو ماهه</option>
+                            </select>
+
+                            <button onclick="exportToCSV()"
+                                class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-200">
+                                خروجی Excel
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Table View -->
+                    <div class="table-view overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                                        onclick="sortTable('preInvoiceNumber')">
+                                        پیش فاکتور
+                                    </th>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                                        onclick="sortTable('customerName')">
+                                        مشتری
+                                    </th>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                                        onclick="sortTable('province')">
+                                        استان
+                                    </th>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                                        onclick="sortTable('netAmount')">
+                                        مبلغ خالص
+                                    </th>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                                        onclick="sortTable('paymentMethod')">
+                                        نحوه پرداخت
+                                    </th>
+                                    <th
+                                        class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        عملیات
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="transactionsTableBody" class="bg-white divide-y divide-gray-200">
+                                <tr>
+                                    <td colspan="6" class="px-6 py-4 text-center text-gray-500">
+                                        هیچ تراکنشی یافت نشد
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Card View for Mobile -->
+                    <div id="transactionsCardView" class="card-view space-y-4">
+                        <p class="text-center text-gray-500 py-8">هیچ تراکنشی یافت نشد</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Module -->
+            <div id="analyticsModule" class="module hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                        <h3 class="text-lg font-bold text-gray-900 mb-4">سهم کارشناسان فروش</h3>
+                        <canvas id="salesChart" width="400" height="300"></canvas>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                        <h3 class="text-lg font-bold text-gray-900 mb-4">روند فروش ماهانه</h3>
+                        <canvas id="monthlyChart" width="400" height="300"></canvas>
+                    </div>
+                </div>
+
+                <div class="mt-6 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4">گزارش تفصیلی</h3>
+                    <div id="detailedReport" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="text-center">
+                            <p class="text-2xl font-bold text-red-600" id="avgTransaction">0</p>
+                            <p class="text-sm text-gray-600">میانگین تراکنش</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-2xl font-bold text-green-600" id="cashRatio">0%</p>
+                            <p class="text-sm text-gray-600">نسبت پرداخت نقدی</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-2xl font-bold text-yellow-600" id="avgDiscount">0%</p>
+                            <p class="text-sm text-gray-600">میانگین تخفیف</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Edit Transaction Modal -->
+    <div id="editModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-xl max-w-4xl w-full mx-4 max-h-screen overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-lg font-bold text-gray-900">ویرایش تراکنش</h3>
+                    <button onclick="closeEditModal()" class="text-gray-400 hover:text-gray-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <form id="editTransactionForm" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Same fields as add form but with edit prefix -->
+                    <input type="hidden" id="editTransactionId">
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">شماره پیش فاکتور</label>
+                        <input type="text" id="editPreInvoiceNumber"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                            required>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">تاریخ پیش فاکتور</label>
+                        <input type="date" id="editPreInvoiceDate"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                            required>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">نام مشتری</label>
+                        <input type="text" id="editCustomerName"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                            required>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">کد مشتری</label>
+                        <input type="text" id="editCustomerCode"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                            required>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">استان</label>
+                        <select id="editProvince"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                            required>
+                            <option value="">انتخاب استان</option>
+                            <option value="اصفهان">اصفهان</option>
+                            <option value="تهران">تهران</option>
+                            <option value="فارس">فارس</option>
+                            <option value="خراسان رضوی">خراسان رضوی</option>
+                            <option value="آذربایجان شرقی">آذربایجان شرقی</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">نام کارشناس فروش</label>
+                        <input type="text" id="editSalesExpert"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                            required>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">مبلغ ناخالص (ریال)</label>
+                        <input type="number" id="editGrossAmount"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                            required oninput="calculateEditNet()">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">درصد تخفیف</label>
+                        <input type="number" id="editDiscountPercent"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                            min="0" max="100" oninput="calculateEditNet()">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">مبلغ تخفیف (ریال)</label>
+                        <input type="number" id="editDiscountAmount"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 bg-gray-50"
+                            readonly>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">مبلغ خالص (ریال)</label>
+                        <input type="number" id="editNetAmount"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 bg-gray-50"
+                            readonly>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">نحوه تسویه</label>
+                        <select id="editPaymentMethod"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                            required onchange="toggleEditPaymentFields()">
+                            <option value="">انتخاب نحوه تسویه</option>
+                            <option value="چک دو ماهه">چک دو ماهه</option>
+                            <option value="نقدی">نقدی</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">تاریخ ارسال بار</label>
+                        <input type="date" id="editShipmentDate"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                            required>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">شماره فاکتور</label>
+                        <input type="text" id="editInvoiceNumber"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                            required>
+                    </div>
+
+                    <!-- Dynamic Payment Fields for Edit -->
+                    <div id="editCheckFields" class="hidden col-span-full">
+                        <div
+                            class="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">تاریخ سررسید چک</label>
+                                <input type="date" id="editCheckDueDate"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">تاریخ دریافت چک</label>
+                                <input type="date" id="editCheckReceiveDate"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="editCashFields" class="hidden col-span-full">
+                        <div
+                            class="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 bg-green-50 rounded-lg border border-green-200">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">تاریخ واریز</label>
+                                <input type="date" id="editDepositDate"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">نام بانک</label>
+                                <input type="text" id="editBankName"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-span-full flex justify-end space-x-4 space-x-reverse">
+                        <button type="button" onclick="closeEditModal()"
+                            class="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition duration-200 font-medium">
+                            انصراف
+                        </button>
+                        <button type="submit"
+                            class="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition duration-200 font-medium">
+                            ذخیره تغییرات
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentUser = null;
+        let currentRole = null;
+        let transactions = JSON.parse(localStorage.getItem('sci_transactions')) || [];
+        let currentModule = 'dashboard';
+        let sortDirection = {};
+
+        // User credentials
+        const users = {
+            'manager': { password: 'manager123', role: 'مدیر', name: 'مدیر سیستم' },
+            'sales': { password: 'sales123', role: 'کارشناس فروش', name: 'کارشناس فروش' },
+            'accountant': { password: 'account123', role: 'حسابدار', name: 'حسابدار' }
+        };
+
+        // Initialize application
+        document.addEventListener('DOMContentLoaded', function () {
+            checkAuth();
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            // Login form
+            document.getElementById('loginForm').addEventListener('submit', handleLogin);
+
+            // Transaction form
+            document.getElementById('transactionForm').addEventListener('submit', handleAddTransaction);
+
+            // Edit transaction form
+            document.getElementById('editTransactionForm').addEventListener('submit', handleEditTransaction);
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function (e) {
+                if (e.ctrlKey && e.key === 'Enter') {
+                    if (currentModule === 'addTransaction') {
+                        document.getElementById('transactionForm').dispatchEvent(new Event('submit'));
+                    }
+                }
+            });
+        }
+
+        function checkAuth() {
+            const savedUser = localStorage.getItem('sci_current_user');
+            if (savedUser) {
+                const userData = JSON.parse(savedUser);
+                currentUser = userData.username;
+                currentRole = userData.role;
+                showMainApp();
+            } else {
+                showLoginScreen();
+            }
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (users[username] && users[username].password === password) {
+                currentUser = username;
+                currentRole = users[username].role;
+
+                // Save to localStorage
+                localStorage.setItem('sci_current_user', JSON.stringify({
+                    username: username,
+                    role: users[username].role,
+                    name: users[username].name
+                }));
+
+                showMainApp();
+                showToast('ورود موفقیت‌آمیز بود', 'success');
+            } else {
+                showToast('نام کاربری یا رمز عبور اشتباه است', 'error');
+            }
+        }
+
+        function showLoginScreen() {
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('mainApp').classList.add('hidden');
+        }
+
+        function showMainApp() {
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('mainApp').classList.remove('hidden');
+
+            // Update user info
+            document.getElementById('currentUser').textContent = users[currentUser].name;
+            document.getElementById('currentRole').textContent = currentRole;
+
+            // Setup role-based permissions
+            setupPermissions();
+
+            // Show dashboard by default
+            showModule('dashboard');
+
+            // Check for due checks
+            checkDueChecks();
+        }
+
+        function setupPermissions() {
+            const addTransactionNav = document.getElementById('addTransactionNav');
+            const analyticsNav = document.getElementById('analyticsNav');
+
+            if (currentUser === 'manager') {
+                // Manager can see everything
+                addTransactionNav.classList.remove('hidden');
+                analyticsNav.classList.remove('hidden');
+            } else if (currentUser === 'sales') {
+                // Sales expert can add transactions
+                addTransactionNav.classList.remove('hidden');
+                analyticsNav.classList.add('hidden');
+            } else if (currentUser === 'accountant') {
+                // Accountant can only view
+                addTransactionNav.classList.add('hidden');
+                analyticsNav.classList.add('hidden');
+            }
+        }
+
+        function showModule(moduleName) {
+            // Hide all modules
+            document.querySelectorAll('.module').forEach(module => {
+                module.classList.add('hidden');
+            });
+
+            // Remove active state from nav buttons
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('border-red-600', 'text-red-600');
+            });
+
+            // Show selected module
+            document.getElementById(moduleName + 'Module').classList.remove('hidden');
+
+            // Add active state to nav button
+            event.target.classList.add('border-red-600', 'text-red-600');
+
+            currentModule = moduleName;
+
+            // Load module-specific data
+            switch (moduleName) {
+                case 'dashboard':
+                    loadDashboard();
+                    break;
+                case 'transactions':
+                    loadTransactions();
+                    break;
+                case 'analytics':
+                    loadAnalytics();
+                    break;
+            }
+        }
+
+        function loadDashboard() {
+            const totalInvoices = transactions.length;
+            const totalSales = transactions.reduce((sum, t) => sum + (t.netAmount || 0), 0);
+            const totalDiscount = transactions.reduce((sum, t) => sum + (t.discountAmount || 0), 0);
+            const cashPayments = transactions.filter(t => t.paymentMethod === 'نقدی').reduce((sum, t) => sum + (t.netAmount || 0), 0);
+
+            document.getElementById('totalInvoices').textContent = totalInvoices.toLocaleString('fa-IR');
+            document.getElementById('totalSales').textContent = totalSales.toLocaleString('fa-IR') + ' ریال';
+            document.getElementById('totalDiscount').textContent = totalDiscount.toLocaleString('fa-IR') + ' ریال';
+            document.getElementById('cashPayments').textContent = cashPayments.toLocaleString('fa-IR') + ' ریال';
+
+            // Load recent transactions
+            const recentTransactions = transactions.slice(-5).reverse();
+            const recentContainer = document.getElementById('recentTransactions');
+
+            if (recentTransactions.length === 0) {
+                recentContainer.innerHTML = '<p class="text-gray-500 text-center py-8">هیچ تراکنشی ثبت نشده است</p>';
+            } else {
+                recentContainer.innerHTML = recentTransactions.map(transaction => `
+                    <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                        <div>
+                            <p class="font-medium">${transaction.customerName}</p>
+                            <p class="text-sm text-gray-600">${transaction.preInvoiceNumber}</p>
+                        </div>
+                        <div class="text-left">
+                            <p class="font-medium">${(transaction.netAmount || 0).toLocaleString('fa-IR')} ریال</p>
+                            <p class="text-sm ${transaction.paymentMethod === 'نقدی' ? 'status-cash' : 'status-check'}">${transaction.paymentMethod}</p>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function loadTransactions() {
+            displayTransactions(transactions);
+        }
+
+        function displayTransactions(transactionList) {
+            const tableBody = document.getElementById('transactionsTableBody');
+            const cardView = document.getElementById('transactionsCardView');
+
+            if (transactionList.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="6" class="px-6 py-4 text-center text-gray-500">هیچ تراکنشی یافت نشد</td></tr>';
+                cardView.innerHTML = '<p class="text-center text-gray-500 py-8">هیچ تراکنشی یافت نشد</p>';
+                return;
+            }
+
+            // Table view
+            tableBody.innerHTML = transactionList.map((transaction, index) => {
+                const isDue = isCheckDue(transaction);
+                const rowClass = isDue ? 'highlight-due' : '';
+
+                return `
+                    <tr class="${rowClass}">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                            ${transaction.preInvoiceNumber}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            <div>
+                                <p class="font-medium">${transaction.customerName}</p>
+                                <p class="text-xs text-gray-500">کد: ${transaction.customerCode}</p>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            ${transaction.province}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            ${(transaction.netAmount || 0).toLocaleString('fa-IR')} ریال
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                            <span class="${transaction.paymentMethod === 'نقدی' ? 'status-cash' : 'status-check'}">
+                                ${transaction.paymentMethod === 'نقدی' ? '✅' : '🕒'} ${transaction.paymentMethod}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button onclick="viewTransaction(${index})" class="text-blue-600 hover:text-blue-900 ml-2">نمایش</button>
+                            ${(currentUser === 'sales' || currentUser === 'manager') ? `<button onclick="editTransaction(${index})" class="text-green-600 hover:text-green-900 ml-2">ویرایش</button>` : ''}
+                            ${currentUser === 'manager' ? `<button onclick="deleteTransaction(${index})" class="text-red-600 hover:text-red-900">حذف</button>` : ''}
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            // Card view for mobile
+            cardView.innerHTML = transactionList.map((transaction, index) => {
+                const isDue = isCheckDue(transaction);
+                const cardClass = isDue ? 'border-yellow-400 bg-yellow-50' : 'border-gray-200';
+
+                return `
+                    <div class="border ${cardClass} rounded-lg p-4">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <h3 class="font-medium text-gray-900">${transaction.customerName}</h3>
+                                <p class="text-sm text-gray-600">پیش فاکتور: ${transaction.preInvoiceNumber}</p>
+                            </div>
+                            <span class="${transaction.paymentMethod === 'نقدی' ? 'status-cash' : 'status-check'} text-sm">
+                                ${transaction.paymentMethod === 'نقدی' ? '✅' : '🕒'} ${transaction.paymentMethod}
+                            </span>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-2 text-sm mb-3">
+                            <div>
+                                <span class="text-gray-600">استان:</span>
+                                <span class="font-medium">${transaction.province}</span>
+                            </div>
+                            <div>
+                                <span class="text-gray-600">مبلغ:</span>
+                                <span class="font-medium">${(transaction.netAmount || 0).toLocaleString('fa-IR')} ریال</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex space-x-2 space-x-reverse">
+                            <button onclick="viewTransaction(${index})" class="text-blue-600 hover:text-blue-900 text-sm">نمایش</button>
+                            ${(currentUser === 'sales' || currentUser === 'manager') ? `<button onclick="editTransaction(${index})" class="text-green-600 hover:text-green-900 text-sm">ویرایش</button>` : ''}
+                            ${currentUser === 'manager' ? `<button onclick="deleteTransaction(${index})" class="text-red-600 hover:text-red-900 text-sm">حذف</button>` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function handleAddTransaction(e) {
+            e.preventDefault();
+
+            const formData = new FormData(e.target);
+            const transaction = {
+                id: Date.now(),
+                preInvoiceNumber: document.getElementById('preInvoiceNumber').value,
+                preInvoiceDate: document.getElementById('preInvoiceDate').value,
+                customerName: document.getElementById('customerName').value,
+                customerCode: document.getElementById('customerCode').value,
+                province: document.getElementById('province').value,
+                salesExpert: document.getElementById('salesExpert').value,
+                grossAmount: parseFloat(document.getElementById('grossAmount').value) || 0,
+                discountPercent: parseFloat(document.getElementById('discountPercent').value) || 0,
+                discountAmount: parseFloat(document.getElementById('discountAmount').value) || 0,
+                netAmount: parseFloat(document.getElementById('netAmount').value) || 0,
+                paymentMethod: document.getElementById('paymentMethod').value,
+                shipmentDate: document.getElementById('shipmentDate').value,
+                invoiceNumber: document.getElementById('invoiceNumber').value,
+                createdAt: new Date().toISOString(),
+                createdBy: currentUser
+            };
+
+            // Add payment-specific fields
+            if (transaction.paymentMethod === 'چک دو ماهه') {
+                transaction.checkDueDate = document.getElementById('checkDueDate').value;
+                transaction.checkReceiveDate = document.getElementById('checkReceiveDate').value;
+            } else if (transaction.paymentMethod === 'نقدی') {
+                transaction.depositDate = document.getElementById('depositDate').value;
+                transaction.bankName = document.getElementById('bankName').value;
+            }
+
+            transactions.push(transaction);
+            saveTransactions();
+
+            showToast('تراکنش با موفقیت ثبت شد', 'success');
+            resetForm();
+
+            // Update dashboard if visible
+            if (currentModule === 'dashboard') {
+                loadDashboard();
+            }
+        }
+
+        function calculateNet() {
+            const grossAmount = parseFloat(document.getElementById('grossAmount').value) || 0;
+            const discountPercent = parseFloat(document.getElementById('discountPercent').value) || 0;
+
+            const discountAmount = (grossAmount * discountPercent) / 100;
+            const netAmount = grossAmount - discountAmount;
+
+            document.getElementById('discountAmount').value = discountAmount;
+            document.getElementById('netAmount').value = netAmount;
+        }
+
+        function calculateEditNet() {
+            const grossAmount = parseFloat(document.getElementById('editGrossAmount').value) || 0;
+            const discountPercent = parseFloat(document.getElementById('editDiscountPercent').value) || 0;
+
+            const discountAmount = (grossAmount * discountPercent) / 100;
+            const netAmount = grossAmount - discountAmount;
+
+            document.getElementById('editDiscountAmount').value = discountAmount;
+            document.getElementById('editNetAmount').value = netAmount;
+        }
+
+        function togglePaymentFields() {
+            const paymentMethod = document.getElementById('paymentMethod').value;
+            const checkFields = document.getElementById('checkFields');
+            const cashFields = document.getElementById('cashFields');
+
+            checkFields.classList.add('hidden');
+            cashFields.classList.add('hidden');
+
+            if (paymentMethod === 'چک دو ماهه') {
+                checkFields.classList.remove('hidden');
+            } else if (paymentMethod === 'نقدی') {
+                cashFields.classList.remove('hidden');
+            }
+        }
+
+        function toggleEditPaymentFields() {
+            const paymentMethod = document.getElementById('editPaymentMethod').value;
+            const checkFields = document.getElementById('editCheckFields');
+            const cashFields = document.getElementById('editCashFields');
+
+            checkFields.classList.add('hidden');
+            cashFields.classList.add('hidden');
+
+            if (paymentMethod === 'چک دو ماهه') {
+                checkFields.classList.remove('hidden');
+            } else if (paymentMethod === 'نقدی') {
+                cashFields.classList.remove('hidden');
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('transactionForm').reset();
+            document.getElementById('checkFields').classList.add('hidden');
+            document.getElementById('cashFields').classList.add('hidden');
+            document.getElementById('discountAmount').value = '';
+            document.getElementById('netAmount').value = '';
+        }
+
+        function editTransaction(index) {
+            if (currentUser !== 'sales' && currentUser !== 'manager') {
+                showToast('شما مجاز به ویرایش نیستید', 'error');
+                return;
+            }
+
+            const transaction = transactions[index];
+
+            // Fill edit form
+            document.getElementById('editTransactionId').value = index;
+            document.getElementById('editPreInvoiceNumber').value = transaction.preInvoiceNumber;
+            document.getElementById('editPreInvoiceDate').value = transaction.preInvoiceDate;
+            document.getElementById('editCustomerName').value = transaction.customerName;
+            document.getElementById('editCustomerCode').value = transaction.customerCode;
+            document.getElementById('editProvince').value = transaction.province;
+            document.getElementById('editSalesExpert').value = transaction.salesExpert;
+            document.getElementById('editGrossAmount').value = transaction.grossAmount;
+            document.getElementById('editDiscountPercent').value = transaction.discountPercent;
+            document.getElementById('editDiscountAmount').value = transaction.discountAmount;
+            document.getElementById('editNetAmount').value = transaction.netAmount;
+            document.getElementById('editPaymentMethod').value = transaction.paymentMethod;
+            document.getElementById('editShipmentDate').value = transaction.shipmentDate;
+            document.getElementById('editInvoiceNumber').value = transaction.invoiceNumber;
+
+            // Fill payment-specific fields
+            if (transaction.paymentMethod === 'چک دو ماهه') {
+                document.getElementById('editCheckDueDate').value = transaction.checkDueDate || '';
+                document.getElementById('editCheckReceiveDate').value = transaction.checkReceiveDate || '';
+            } else if (transaction.paymentMethod === 'نقدی') {
+                document.getElementById('editDepositDate').value = transaction.depositDate || '';
+                document.getElementById('editBankName').value = transaction.bankName || '';
+            }
+
+            toggleEditPaymentFields();
+            document.getElementById('editModal').classList.remove('hidden');
+            document.getElementById('editModal').classList.add('flex');
+        }
+
+        function handleEditTransaction(e) {
+            e.preventDefault();
+
+            const index = parseInt(document.getElementById('editTransactionId').value);
+            const transaction = {
+                ...transactions[index],
+                preInvoiceNumber: document.getElementById('editPreInvoiceNumber').value,
+                preInvoiceDate: document.getElementById('editPreInvoiceDate').value,
+                customerName: document.getElementById('editCustomerName').value,
+                customerCode: document.getElementById('editCustomerCode').value,
+                province: document.getElementById('editProvince').value,
+                salesExpert: document.getElementById('editSalesExpert').value,
+                grossAmount: parseFloat(document.getElementById('editGrossAmount').value) || 0,
+                discountPercent: parseFloat(document.getElementById('editDiscountPercent').value) || 0,
+                discountAmount: parseFloat(document.getElementById('editDiscountAmount').value) || 0,
+                netAmount: parseFloat(document.getElementById('editNetAmount').value) || 0,
+                paymentMethod: document.getElementById('editPaymentMethod').value,
+                shipmentDate: document.getElementById('editShipmentDate').value,
+                invoiceNumber: document.getElementById('editInvoiceNumber').value,
+                updatedAt: new Date().toISOString(),
+                updatedBy: currentUser
+            };
+
+            // Update payment-specific fields
+            if (transaction.paymentMethod === 'چک دو ماهه') {
+                transaction.checkDueDate = document.getElementById('editCheckDueDate').value;
+                transaction.checkReceiveDate = document.getElementById('editCheckReceiveDate').value;
+                delete transaction.depositDate;
+                delete transaction.bankName;
+            } else if (transaction.paymentMethod === 'نقدی') {
+                transaction.depositDate = document.getElementById('editDepositDate').value;
+                transaction.bankName = document.getElementById('editBankName').value;
+                delete transaction.checkDueDate;
+                delete transaction.checkReceiveDate;
+            }
+
+            transactions[index] = transaction;
+            saveTransactions();
+
+            closeEditModal();
+            showToast('تراکنش با موفقیت ویرایش شد', 'success');
+
+            if (currentModule === 'transactions') {
+                loadTransactions();
+            }
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').classList.add('hidden');
+            document.getElementById('editModal').classList.remove('flex');
+        }
+
+        function deleteTransaction(index) {
+            if (currentUser !== 'manager') {
+                showToast('شما مجاز به حذف نیستید', 'error');
+                return;
+            }
+
+            if (confirm('آیا از حذف این تراکنش اطمینان دارید؟')) {
+                transactions.splice(index, 1);
+                saveTransactions();
+                showToast('تراکنش حذف شد', 'success');
+
+                if (currentModule === 'transactions') {
+                    loadTransactions();
+                } else if (currentModule === 'dashboard') {
+                    loadDashboard();
+                }
+            }
+        }
+
+        function viewTransaction(index) {
+            const transaction = transactions[index];
+
+            let paymentDetails = '';
+            if (transaction.paymentMethod === 'چک دو ماهه') {
+                paymentDetails = `
+                    <p><strong>تاریخ سررسید چک:</strong> ${transaction.checkDueDate || 'نامشخص'}</p>
+                    <p><strong>تاریخ دریافت چک:</strong> ${transaction.checkReceiveDate || 'نامشخص'}</p>
+                `;
+            } else if (transaction.paymentMethod === 'نقدی') {
+                paymentDetails = `
+                    <p><strong>تاریخ واریز:</strong> ${transaction.depositDate || 'نامشخص'}</p>
+                    <p><strong>نام بانک:</strong> ${transaction.bankName || 'نامشخص'}</p>
+                `;
+            }
+
+            const details = `
+                <div class="space-y-2 text-sm">
+                    <p><strong>شماره پیش فاکتور:</strong> ${transaction.preInvoiceNumber}</p>
+                    <p><strong>تاریخ پیش فاکتور:</strong> ${transaction.preInvoiceDate}</p>
+                    <p><strong>نام مشتری:</strong> ${transaction.customerName}</p>
+                    <p><strong>کد مشتری:</strong> ${transaction.customerCode}</p>
+                    <p><strong>استان:</strong> ${transaction.province}</p>
+                    <p><strong>کارشناس فروش:</strong> ${transaction.salesExpert}</p>
+                    <p><strong>مبلغ ناخالص:</strong> ${(transaction.grossAmount || 0).toLocaleString('fa-IR')} ریال</p>
+                    <p><strong>درصد تخفیف:</strong> ${transaction.discountPercent || 0}%</p>
+                    <p><strong>مبلغ تخفیف:</strong> ${(transaction.discountAmount || 0).toLocaleString('fa-IR')} ریال</p>
+                    <p><strong>مبلغ خالص:</strong> ${(transaction.netAmount || 0).toLocaleString('fa-IR')} ریال</p>
+                    <p><strong>نحوه تسویه:</strong> ${transaction.paymentMethod}</p>
+                    <p><strong>تاریخ ارسال بار:</strong> ${transaction.shipmentDate}</p>
+                    <p><strong>شماره فاکتور:</strong> ${transaction.invoiceNumber}</p>
+                    ${paymentDetails}
+                </div>
+            `;
+
+            // Create modal for viewing
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50';
+            modal.innerHTML = `
+                <div class="bg-white rounded-xl shadow-xl max-w-2xl w-full mx-4 max-h-screen overflow-y-auto">
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-lg font-bold text-gray-900">جزئیات تراکنش</h3>
+                            <button onclick="this.closest('.fixed').remove()" class="text-gray-400 hover:text-gray-600">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        ${details}
+                        <div class="mt-6 flex justify-end">
+                            <button onclick="this.closest('.fixed').remove()" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition duration-200">
+                                بستن
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(modal);
+        }
+
+        function filterTransactions() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const provinceFilter = document.getElementById('provinceFilter').value;
+            const paymentFilter = document.getElementById('paymentFilter').value;
+
+            const filtered = transactions.filter(transaction => {
+                const matchesSearch = !searchTerm ||
+                    transaction.customerName.toLowerCase().includes(searchTerm) ||
+                    transaction.preInvoiceNumber.toLowerCase().includes(searchTerm) ||
+                    transaction.customerCode.toLowerCase().includes(searchTerm);
+
+                const matchesProvince = !provinceFilter || transaction.province === provinceFilter;
+                const matchesPayment = !paymentFilter || transaction.paymentMethod === paymentFilter;
+
+                return matchesSearch && matchesProvince && matchesPayment;
+            });
+
+            displayTransactions(filtered);
+        }
+
+        function sortTable(column) {
+            const direction = sortDirection[column] === 'asc' ? 'desc' : 'asc';
+            sortDirection[column] = direction;
+
+            const sorted = [...transactions].sort((a, b) => {
+                let aVal = a[column];
+                let bVal = b[column];
+
+                if (typeof aVal === 'string') {
+                    aVal = aVal.toLowerCase();
+                    bVal = bVal.toLowerCase();
+                }
+
+                if (direction === 'asc') {
+                    return aVal > bVal ? 1 : -1;
+                } else {
+                    return aVal < bVal ? 1 : -1;
+                }
+            });
+
+            displayTransactions(sorted);
+        }
+
+        function exportToCSV() {
+            if (transactions.length === 0) {
+                showToast('هیچ داده‌ای برای خروجی وجود ندارد', 'error');
+                return;
+            }
+
+            const headers = [
+                'شماره پیش فاکتور',
+                'تاریخ پیش فاکتور',
+                'نام مشتری',
+                'کد مشتری',
+                'استان',
+                'کارشناس فروش',
+                'مبلغ ناخالص',
+                'درصد تخفیف',
+                'مبلغ تخفیف',
+                'مبلغ خالص',
+                'نحوه تسویه',
+                'تاریخ ارسال بار',
+                'شماره فاکتور'
+            ];
+
+            const csvContent = [
+                headers.join(','),
+                ...transactions.map(t => [
+                    t.preInvoiceNumber,
+                    t.preInvoiceDate,
+                    t.customerName,
+                    t.customerCode,
+                    t.province,
+                    t.salesExpert,
+                    t.grossAmount || 0,
+                    t.discountPercent || 0,
+                    t.discountAmount || 0,
+                    t.netAmount || 0,
+                    t.paymentMethod,
+                    t.shipmentDate,
+                    t.invoiceNumber
+                ].join(','))
+            ].join('\n');
+
+            const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `SCI_Transactions_${new Date().toISOString().split('T')[0]}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            showToast('فایل Excel با موفقیت دانلود شد', 'success');
+        }
+
+        function loadAnalytics() {
+            if (currentUser !== 'manager') {
+                return;
+            }
+
+            // Sales expert pie chart
+            const salesData = {};
+            transactions.forEach(t => {
+                salesData[t.salesExpert] = (salesData[t.salesExpert] || 0) + (t.netAmount || 0);
+            });
+
+            const salesChart = document.getElementById('salesChart').getContext('2d');
+            new Chart(salesChart, {
+                type: 'pie',
+                data: {
+                    labels: Object.keys(salesData),
+                    datasets: [{
+                        data: Object.values(salesData),
+                        backgroundColor: [
+                            '#dc2626',
+                            '#f59e0b',
+                            '#10b981',
+                            '#3b82f6',
+                            '#8b5cf6'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+
+            // Monthly sales line chart
+            const monthlyData = {};
+            transactions.forEach(t => {
+                const month = t.preInvoiceDate ? t.preInvoiceDate.substring(0, 7) : 'نامشخص';
+                monthlyData[month] = (monthlyData[month] || 0) + (t.netAmount || 0);
+            });
+
+            const monthlyChart = document.getElementById('monthlyChart').getContext('2d');
+            new Chart(monthlyChart, {
+                type: 'line',
+                data: {
+                    labels: Object.keys(monthlyData).sort(),
+                    datasets: [{
+                        label: 'فروش ماهانه',
+                        data: Object.values(monthlyData),
+                        borderColor: '#dc2626',
+                        backgroundColor: 'rgba(220, 38, 38, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Detailed report
+            const totalTransactions = transactions.length;
+            const avgTransaction = totalTransactions > 0 ?
+                transactions.reduce((sum, t) => sum + (t.netAmount || 0), 0) / totalTransactions : 0;
+
+            const cashTransactions = transactions.filter(t => t.paymentMethod === 'نقدی').length;
+            const cashRatio = totalTransactions > 0 ? (cashTransactions / totalTransactions) * 100 : 0;
+
+            const avgDiscount = totalTransactions > 0 ?
+                transactions.reduce((sum, t) => sum + (t.discountPercent || 0), 0) / totalTransactions : 0;
+
+            document.getElementById('avgTransaction').textContent = avgTransaction.toLocaleString('fa-IR') + ' ریال';
+            document.getElementById('cashRatio').textContent = cashRatio.toFixed(1) + '%';
+            document.getElementById('avgDiscount').textContent = avgDiscount.toFixed(1) + '%';
+        }
+
+        function checkDueChecks() {
+            const today = new Date();
+            const dueChecks = transactions.filter(t => {
+                if (t.paymentMethod === 'چک دو ماهه' && t.checkDueDate) {
+                    const dueDate = new Date(t.checkDueDate);
+                    const diffTime = dueDate - today;
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    return diffDays <= 7 && diffDays >= 0;
+                }
+                return false;
+            });
+
+            if (dueChecks.length > 0) {
+                showNotification(`${dueChecks.length} چک در هفته آینده سررسید می‌شود`);
+            }
+        }
+
+        function isCheckDue(transaction) {
+            if (transaction.paymentMethod === 'چک دو ماهه' && transaction.checkDueDate) {
+                const today = new Date();
+                const dueDate = new Date(transaction.checkDueDate);
+                const diffTime = dueDate - today;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                return diffDays <= 7 && diffDays >= 0;
+            }
+            return false;
+        }
+
+        function showNotification(message) {
+            document.getElementById('notificationText').textContent = message;
+            document.getElementById('notificationBar').classList.remove('hidden');
+        }
+
+        function hideNotification() {
+            document.getElementById('notificationBar').classList.add('hidden');
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+
+            toastMessage.textContent = message;
+
+            if (type === 'error') {
+                toast.className = 'toast bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg';
+            } else {
+                toast.className = 'toast bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg';
+            }
+
+            toast.classList.add('show');
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        function saveTransactions() {
+            localStorage.setItem('sci_transactions', JSON.stringify(transactions));
+        }
+
+        function logout() {
+            localStorage.removeItem('sci_current_user');
+            currentUser = null;
+            currentRole = null;
+            showLoginScreen();
+            showToast('با موفقیت خارج شدید', 'success');
+        }
+
+        // Handle page refresh - require re-login
+        window.addEventListener('beforeunload', function () {
+            localStorage.removeItem('sci_current_user');
+        });
+    </script>
+    <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'970ce0102283bb37',t:'MTc1NTQ3MjU0NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
+</body>
+
+</html>
