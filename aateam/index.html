@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AATeam - Custom WordPress & Enterprise Solutions</title>
+    <meta name="description"
+        content="AATeam specializes in custom WordPress plugins, enterprise software, web solutions, and mobile app integrations. Professional development services.">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=JetBrains+Mono:wght@100;200;300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .tech-font {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .glass-dark {
+            background: rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        .ultra-glass {
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #F31F25, #dc2626);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .gradient-text-advanced {
+            background: linear-gradient(135deg, #F31F25, #f97316, #eab308);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradient-shift 3s ease-in-out infinite;
+        }
+
+        @keyframes gradient-shift {
+
+            0%,
+            100% {
+                filter: hue-rotate(0deg);
+            }
+
+            50% {
+                filter: hue-rotate(30deg);
+            }
+        }
+
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .animate-pulse-slow {
+            animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .scroll-smooth {
+            scroll-behavior: smooth;
+        }
+
+        .hover-lift {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(239, 68, 68, 0.2);
+        }
+
+        .mobile-menu {
+            transform: translateX(100%);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .mobile-menu.active {
+            transform: translateX(0);
+        }
+
+        @media (max-width: 768px) {
+            .floating-icon {
+                display: none !important;
+            }
+
+            .hero-content {
+                padding: 1rem;
+            }
+
+            .ultra-glass {
+                margin: 0.5rem;
+                padding: 1.5rem !important;
+            }
+
+            .text-6xl {
+                font-size: 3rem !important;
+            }
+
+            .text-8xl {
+                font-size: 4rem !important;
+            }
+
+            .hero-gradient {
+                background: linear-gradient(180deg,
+                        rgba(243, 31, 37, 0.08) 0%,
+                        rgba(243, 31, 37, 0.03) 50%,
+                        rgba(243, 31, 37, 0.05) 100%) !important;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+
+            .ultra-glass {
+                margin: 0.25rem;
+                padding: 1rem !important;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-black text-white overflow-x-hidden scroll-smooth">
+    <!-- Three.js Canvas Container -->
+    <div id="canvas-container"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 ultra-glass border-b rounded-none border-white/5">
+        <div class="container mx-auto px-4 ">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <div class="w-16 h-16 flex items-center justify-center">
+                        <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 858.38 489.41' class="w-32 h-32">
+                            <path fill='#F31F25'
+                                d='m567.01,488.57c-2.05,1.18-3.95.68-5.75.68-49.5.03-99-.02-148.49.12-4.16.01-6.16-1.23-8.02-5.1-13.98-29.15-28.36-58.1-42.41-87.21-1.57-3.26-3.39-4.19-6.85-4.19-48.17.11-96.35.13-144.52-.04-3.92-.01-5.55,1.45-7.06,4.69-13.48,28.77-27.19,57.43-40.61,86.22-1.92,4.11-4.15,5.68-8.86,5.67-49.12-.2-98.24-.13-147.36-.13-2.05,0-4.1,0-7.07,0,3.27-7.08,6.19-13.5,9.18-19.89,41.81-89.38,83.63-178.75,125.44-268.12,28.2-60.28,56.38-120.57,84.57-180.86C225.46,7.02,235.67,0,250.79.11c26.07.2,52.15.33,78.21-.1,6.52-.11,9.59,2.09,12.24,7.81,24.87,53.73,49.89,107.39,75.11,160.96,49.01,104.08,98.19,208.08,147.29,312.12,1.19,2.52,2.24,5.1,3.37,7.68ZM283.04,109.34c1.88.98,2.21,2.58,2.84,3.89,25.32,53.51,50.56,107.06,75.89,160.57,25.02,52.85,50.12,105.67,75.17,158.51.86,1.81,1.22,3.75,4.1,3.73,14.31-.13,28.62-.06,43.55-.06-1.03-2.41-1.76-4.29-2.64-6.11-23.91-49.83-47.95-99.59-71.72-149.49-35.73-75.03-71.29-150.14-106.82-225.27-1.26-2.67-2.68-3.53-5.51-3.48-9.07.16-18.15.36-27.2-.06-4.51-.21-6.58,1.37-8.44,5.35-23.73,50.56-47.61,101.04-71.52,151.51-35.34,74.59-70.73,149.15-106.05,223.75-.5,1.06-1.66,2.16-.68,3.81,13.49,0,27.09-.12,40.69.09,3.18.05,4.04-1.64,5.13-3.94,13.45-28.59,27.07-57.09,40.34-85.75,2.02-4.36,4.16-6.05,9.13-6.02,51.4.21,102.79.09,154.19.22,4.87.01,5.77-.73,3.42-5.42-12.09-24.03-23.86-48.21-35.74-72.34-5.81-11.8-11.62-23.59-17.67-35.88-1.06,1.86-1.86,3.12-2.52,4.44-9.73,19.56-19.43,39.14-29.18,58.69-.94,1.88-1.25,4.28-4.46,4.26-16.72-.12-33.44-.06-51.06-.06,29.18-62.18,57.97-123.53,86.77-184.92Z' />
+                            <path fill='#F31F25'
+                                d='m777.22,436c-11.74-24.49-23.1-48-34.31-71.58-42.83-90.17-85.62-180.37-128.41-270.56-5.97-12.57-12.02-25.11-17.72-37.81-1.57-3.49-3.5-4.59-7.24-4.46-8.49.3-17.01.26-25.5,0-3.19-.1-4.56,1.07-5.85,3.82-22.24,47.31-44.58,94.57-66.92,141.83-5.61,11.87-11.33,23.7-17.3,36.18-8.35-16.94-15.66-33.64-24.68-49.36-5.41-9.43-4.03-16.73.29-25.83,23.83-50.28,47.14-100.81,70.43-151.34,2.25-4.89,4.81-6.97,10.52-6.89,26.64.35,53.29.3,79.93.1,14.36-.11,24.3,5.98,30.36,19.07,20.62,44.53,41.44,88.98,62.13,133.47,40.75,87.63,81.46,175.27,122.2,262.9,10.62,22.85,21.19,45.72,32.1,68.43,2.38,4.96.97,5.39-3.63,5.38-48.75-.11-97.51-.09-146.26,0-3.31,0-5.43-.49-7.06-3.9-13.9-29.2-27.98-58.32-42.12-87.41-1.79-3.69-1.75-5.23,3.03-5.17,14.93.2,29.86.17,44.78-.01,3.27-.04,4.62,1.44,5.86,4.06,5.61,11.89,11.41,23.69,17.03,35.58,1.06,2.24,2.13,3.6,4.96,3.57,14.16-.14,28.32-.07,43.39-.07Z' />
+                            <path fill='#F31F25'
+                                d='m688.28,347.55h-6.22c-50.25,0-100.49-.07-150.74.12-4.31.02-6.21-1.47-7.95-5.11-8.11-16.97-16.25-33.93-24.9-50.62-2.92-5.64-2.73-10.25-.06-15.82,18.78-39.13,37.33-78.38,55.93-117.59,7.38-15.56,14.7-31.14,22.37-47.4,37.32,79.07,74.31,157.46,111.57,236.41Zm-112.35-119.98c-10.88,23.58-21.15,45.81-31.63,68.51h64.4c-10.95-22.89-21.6-45.16-32.77-68.51Z' />
+                        </svg>
+                    </div>
+                </div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="#home"
+                        class="hover:text-red-400 transition-all duration-300 hover:scale-105 font-medium">Home</a>
+                    <a href="#about"
+                        class="hover:text-red-400 transition-all duration-300 hover:scale-105 font-medium">About</a>
+                    <a href="#services"
+                        class="hover:text-red-400 transition-all duration-300 hover:scale-105 font-medium">Services</a>
+                    <a href="#portfolio"
+                        class="hover:text-red-400 transition-all duration-300 hover:scale-105 font-medium">Portfolio</a>
+                    <a href="#contact"
+                        class="hover:text-red-400 transition-all duration-300 hover:scale-105 font-medium">Contact</a>
+                </div>
+                <button onclick="toggleMobileMenu()"
+                    class="md:hidden text-white ultra-glass rounded-xl p-3 hover:bg-red-500/20 transition-colors">
+                    <i class="fas fa-bars text-xl" id="menuIcon"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="md:hidden fixed top-0 right-0 h-100 w-80 ultra-glass mobile-menu z-50">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-8">
+                    <div class="text-xl font-bold gradient-text tech-font">Menu</div>
+                    <button onclick="toggleMobileMenu()"
+                        class="ultra-glass rounded-xl p-2 hover:bg-red-500/20 transition-colors">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                <div class="space-y-4">
+                    <a href="#home" onclick="toggleMobileMenu()"
+                        class="block py-3 px-4 rounded-xl hover:bg-red-500/20 transition-colors font-medium">Home</a>
+                    <a href="#about" onclick="toggleMobileMenu()"
+                        class="block py-3 px-4 rounded-xl hover:bg-red-500/20 transition-colors font-medium">About</a>
+                    <a href="#services" onclick="toggleMobileMenu()"
+                        class="block py-3 px-4 rounded-xl hover:bg-red-500/20 transition-colors font-medium">Services</a>
+                    <a href="#portfolio" onclick="toggleMobileMenu()"
+                        class="block py-3 px-4 rounded-xl hover:bg-red-500/20 transition-colors font-medium">Portfolio</a>
+                    <a href="#contact" onclick="toggleMobileMenu()"
+                        class="block py-3 px-4 rounded-xl hover:bg-red-500/20 transition-colors font-medium">Contact</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Overlay -->
+        <div id="mobileOverlay" class="md:hidden fixed w-screen h-screen inset-0 bg-black/80 backdrop-blur-3xl z-40 hidden"
+            onclick="toggleMobileMenu()"></div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="min-h-screen flex items-center justify-center relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-br from-red-900/15 via-red-800/5 to-red-900/10 hero-gradient"></div>
+        <div class="container mx-auto px-4 md:px-6 text-center relative z-10 hero-content">
+            <div class="max-w-6xl mx-auto">
+                <!-- Floating Elements -->
+                <div class="absolute -top-20 -left-20 w-40 h-40 bg-red-500/10 rounded-full blur-3xl animate-pulse-slow">
+                </div>
+                <div class="absolute -bottom-20 -right-20 w-60 h-60 bg-blue-500/10 rounded-full blur-3xl animate-pulse-slow"
+                    style="animation-delay: 2s;"></div>
+
+                <!-- Main Content -->
+                <div class="relative">
+                    <div class="mb-8">
+                        <div class="inline-block ultra-glass rounded-2xl px-6 py-3 mb-6 border border-white/20">
+                            <span class="text-red-400 text-sm font-medium tech-font">🚀 Next-Gen Development Team</span>
+                        </div>
+                    </div>
+
+                    <h1 class="text-6xl md:text-8xl font-bold mb-8 leading-tight tech-font">
+                        <span class="gradient-text">AA </span><span class="text-white">Team</span>
+                    </h1>
+
+                    <div class="ultra-glass rounded-3xl p-6 md:p-12 mb-10 border border-white/10">
+                        <p class="text-xl md:text-3xl mb-6 text-white font-light">
+                            Crafting <span class="gradient-text tech-font">Digital Excellence</span>
+                        </p>
+                        <p class="text-base md:text-lg text-gray-300 max-w-3xl mx-auto leading-relaxed">
+                            We transform ideas into cutting-edge digital solutions. From custom WordPress plugins to
+                            enterprise-grade applications, we build the future of technology.
+                        </p>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-4 md:gap-6 justify-center items-center">
+                        <button
+                            class="group relative overflow-hidden bg-gradient-to-r from-[#F31F25] to-[#dc2626] px-8 md:px-10 py-4 md:py-5 rounded-2xl font-semibold transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-[#F31F25]/25 w-full sm:w-auto">
+                            <div
+                                class="absolute inset-0 bg-gradient-to-r from-[#F31F25] to-[#dc2626] opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                            </div>
+                            <span class="relative flex items-center justify-center">
+                                <i
+                                    class="fas fa-rocket mr-3 group-hover:rotate-12 transition-transform duration-500"></i>
+                                Start Your Project
+                            </span>
+                        </button>
+
+                        <button
+                            class="group ultra-glass border border-white/20 px-8 md:px-10 py-4 md:py-5 rounded-2xl font-semibold transition-all duration-500 hover:scale-105 hover:border-[#F31F25]/50 w-full sm:w-auto">
+                            <span class="flex items-center justify-center">
+                                <div class="w-3 h-3 bg-[#F31F25] rounded-full mr-3 group-hover:animate-ping"></div>
+                                Explore Portfolio
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Floating Tech Icons -->
+        <div class="floating-icon absolute top-20 left-8 ultra-glass rounded-xl p-3 animate-float z-20"
+            style="animation-delay: 0s;">
+            <i class="fab fa-react text-xl text-blue-400"></i>
+        </div>
+        <div class="floating-icon absolute top-32 right-12 ultra-glass rounded-xl p-3 animate-float z-20"
+            style="animation-delay: 1.5s;">
+            <i class="fab fa-node-js text-xl text-green-400"></i>
+        </div>
+        <div class="floating-icon absolute top-80 left-16 ultra-glass rounded-xl p-3 animate-float z-20"
+            style="animation-delay: 3s;">
+            <i class="fab fa-wordpress text-xl text-blue-300"></i>
+        </div>
+        <div class="floating-icon absolute bottom-40 right-8 ultra-glass rounded-xl p-3 animate-float z-20"
+            style="animation-delay: 4.5s;">
+            <i class="fab fa-js-square text-xl text-yellow-300"></i>
+        </div>
+        <div class="floating-icon absolute bottom-80 left-12 ultra-glass rounded-xl p-3 animate-float z-20"
+            style="animation-delay: 6s;">
+            <i class="fab fa-laravel text-xl text-red-400"></i>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-20">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold mb-6 gradient-text">About AATeam</h2>
+                <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+                    We're a highly skilled team of developers and innovators specializing in creating custom digital
+                    solutions that drive business growth.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="ultra-glass rounded-3xl p-8 hover-lift group">
+                    <div class="text-red-500 text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h3 class="text-2xl font-semibold mb-4">Expert Development</h3>
+                    <p class="text-gray-300">Years of experience in WordPress, PHP, JavaScript, and modern web
+                        technologies.</p>
+                </div>
+
+                <div class="ultra-glass rounded-3xl p-8 hover-lift group">
+                    <div class="text-red-500 text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <h3 class="text-2xl font-semibold mb-4">Innovation First</h3>
+                    <p class="text-gray-300">We stay ahead of technology trends to deliver cutting-edge solutions.</p>
+                </div>
+
+                <div class="ultra-glass rounded-3xl p-8 hover-lift group">
+                    <div class="text-red-500 text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <h3 class="text-2xl font-semibold mb-4">Client Success</h3>
+                    <p class="text-gray-300">Your success is our priority. We build lasting partnerships through quality
+                        work.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="py-20">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold mb-6 gradient-text">Our Services</h2>
+                <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+                    Comprehensive digital solutions tailored to your business needs
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="ultra-glass rounded-3xl p-8 hover-lift group">
+                    <div class="text-red-500 text-3xl mb-4 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fab fa-wordpress"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-4">WordPress Plugins</h3>
+                    <p class="text-gray-300 mb-4">Custom WordPress plugins that extend functionality and enhance user
+                        experience.</p>
+                    <ul class="text-sm text-gray-400 space-y-2">
+                        <li class="flex items-center"><i class="fas fa-check text-green-400 mr-2"></i>Custom
+                            functionality</li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-400 mr-2"></i>Performance
+                            optimized</li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-400 mr-2"></i>Security focused
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="ultra-glass rounded-3xl p-8 hover-lift group">
+                    <div class="text-red-500 text-3xl mb-4 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-4">Enterprise Software</h3>
+                    <p class="text-gray-300 mb-4">Scalable enterprise applications built for complex business
+                        requirements.</p>
+                    <ul class="text-sm text-gray-400 space-y-2">
+                        <li class="flex items-center"><i class="fas fa-check text-green-400 mr-2"></i>Custom CRM systems
+                        </li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-400 mr-2"></i>Business
+                            automation</li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-400 mr-2"></i>Data management
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="ultra-glass rounded-3xl p-8 hover-lift group">
+                    <div class="text-red-500 text-3xl mb-4 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-4">Web Solutions</h3>
+                    <p class="text-gray-300 mb-4">Modern, responsive websites and web applications that deliver results.
+                    </p>
+                    <ul class="text-sm text-gray-400 space-y-2">
+                        <li class="flex items-center"><i class="fas fa-check text-green-400 mr-2"></i>Responsive design
+                        </li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-400 mr-2"></i>SEO optimized</li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-400 mr-2"></i>Fast loading</li>
+                    </ul>
+                </div>
+
+                <div class="ultra-glass rounded-3xl p-8 hover-lift group">
+                    <div class="text-red-500 text-3xl mb-4 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-4">Mobile Integration</h3>
+                    <p class="text-gray-300 mb-4">Seamless mobile app integrations and progressive web applications.</p>
+                    <ul class="text-sm text-gray-400 space-y-2">
+                        <li class="flex items-center"><i class="fas fa-check text-green-400 mr-2"></i>API development
+                        </li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-400 mr-2"></i>Cross-platform
+                        </li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-400 mr-2"></i>Real-time sync
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="ultra-glass rounded-3xl p-8 hover-lift group">
+                    <div class="text-red-500 text-3xl mb-4 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-4">E-commerce Platforms</h3>
+                    <p class="text-gray-300 mb-4">Complete e-commerce solutions that drive sales and growth.</p>
+                    <ul class="text-sm text-gray-400 space-y-2">
+                        <li class="flex items-center"><i class="fas fa-check text-green-400 mr-2"></i>Payment
+                            integration</li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-400 mr-2"></i>Inventory
+                            management</li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-400 mr-2"></i>Analytics
+                            dashboard</li>
+                    </ul>
+                </div>
+
+                <div class="ultra-glass rounded-3xl p-8 hover-lift group">
+                    <div class="text-red-500 text-3xl mb-4 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-tools"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-4">Digital Tools</h3>
+                    <p class="text-gray-300 mb-4">Custom digital tools and utilities that streamline business
+                        operations.</p>
+                    <ul class="text-sm text-gray-400 space-y-2">
+                        <li class="flex items-center"><i class="fas fa-check text-green-400 mr-2"></i>Automation tools
+                        </li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-400 mr-2"></i>Data processing
+                        </li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-400 mr-2"></i>Workflow
+                            optimization</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Portfolio Section -->
+    <section id="portfolio" class="py-20">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold mb-6 gradient-text">Our Portfolio</h2>
+                <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+                    Showcasing our latest projects and successful implementations
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="ultra-glass rounded-3xl overflow-hidden hover-lift group cursor-pointer"
+                    onclick="openPortfolioModal('plugin')">
+                    <div
+                        class="h-48 bg-gradient-to-br from-red-500 to-red-700 flex items-center justify-center relative overflow-hidden">
+                        <div
+                            class="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors duration-300">
+                        </div>
+                        <i
+                            class="fas fa-plug text-6xl text-white group-hover:scale-110 transition-transform duration-300 relative z-10"></i>
+                        <div
+                            class="absolute bottom-4 right-4 ultra-glass rounded-full p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <i class="fas fa-eye text-white text-sm"></i>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold mb-2">Advanced WP Plugin</h3>
+                        <p class="text-gray-300 text-sm mb-4">Custom WordPress plugin with advanced features and
+                            integrations.</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-red-400 text-sm font-medium">WordPress</span>
+                            <div class="flex space-x-2">
+                                <span class="ultra-glass px-2 py-1 rounded-full text-xs">PHP</span>
+                                <span class="ultra-glass px-2 py-1 rounded-full text-xs">JS</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ultra-glass rounded-3xl overflow-hidden hover-lift group cursor-pointer"
+                    onclick="openPortfolioModal('dashboard')">
+                    <div
+                        class="h-48 bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center relative overflow-hidden">
+                        <div
+                            class="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors duration-300">
+                        </div>
+                        <i
+                            class="fas fa-chart-line text-6xl text-white group-hover:scale-110 transition-transform duration-300 relative z-10"></i>
+                        <div
+                            class="absolute bottom-4 right-4 ultra-glass rounded-full p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <i class="fas fa-eye text-white text-sm"></i>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold mb-2">Enterprise Dashboard</h3>
+                        <p class="text-gray-300 text-sm mb-4">Real-time analytics dashboard for enterprise clients.</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-red-400 text-sm font-medium">Enterprise</span>
+                            <div class="flex space-x-2">
+                                <span class="ultra-glass px-2 py-1 rounded-full text-xs">React</span>
+                                <span class="ultra-glass px-2 py-1 rounded-full text-xs">Node</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ultra-glass rounded-3xl overflow-hidden hover-lift group cursor-pointer"
+                    onclick="openPortfolioModal('ecommerce')">
+                    <div
+                        class="h-48 bg-gradient-to-br from-green-500 to-green-700 flex items-center justify-center relative overflow-hidden">
+                        <div
+                            class="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors duration-300">
+                        </div>
+                        <i
+                            class="fas fa-store text-6xl text-white group-hover:scale-110 transition-transform duration-300 relative z-10"></i>
+                        <div
+                            class="absolute bottom-4 right-4 ultra-glass rounded-full p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <i class="fas fa-eye text-white text-sm"></i>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold mb-2">E-commerce Platform</h3>
+                        <p class="text-gray-300 text-sm mb-4">Complete e-commerce solution with advanced features.</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-red-400 text-sm font-medium">E-commerce</span>
+                            <div class="flex space-x-2">
+                                <span class="ultra-glass px-2 py-1 rounded-full text-xs">Vue</span>
+                                <span class="ultra-glass px-2 py-1 rounded-full text-xs">Laravel</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Portfolio Modal -->
+            <div id="portfolioModal"
+                class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+                <div class="ultra-glass rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+                    <div class="p-8">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 id="modalTitle" class="text-3xl font-bold gradient-text"></h2>
+                            <button onclick="closePortfolioModal()"
+                                class="ultra-glass rounded-full p-3 hover:bg-red-500/20 transition-colors">
+                                <i class="fas fa-times text-xl"></i>
+                            </button>
+                        </div>
+
+                        <div id="modalContent" class="space-y-6">
+                            <!-- Content will be populated by JavaScript -->
+                        </div>
+
+                        <div class="flex justify-center mt-8">
+                            <button onclick="closePortfolioModal()"
+                                class="bg-gradient-to-r from-red-500 to-red-600 px-8 py-3 rounded-2xl font-semibold hover:scale-105 transition-transform">
+                                Close Details
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Co-Founders Section -->
+    <section class="py-20">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold mb-6 gradient-text">Meet Our Co-Founders</h2>
+                <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+                    The visionary minds behind AATeam's innovative solutions
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-12 max-w-4xl mx-auto">
+                <!-- Ali Fakhar -->
+                <div class="ultra-glass rounded-3xl p-8 hover-lift group text-center">
+                    <div class="relative mb-6">
+                        <div
+                            class="w-32 h-32 mx-auto bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center text-4xl font-bold text-black group-hover:scale-110 transition-transform duration-300">
+                            AF
+                        </div>
+                        <div class="absolute -bottom-2 -right-2 bg-yellow-500 rounded-full p-2">
+                            <i class="fas fa-crown text-black text-sm"></i>
+                        </div>
+                    </div>
+
+                    <h3 class="text-2xl font-bold mb-2 text-yellow-400">Ali Fakhar</h3>
+                    <p class="text-gray-300 mb-4">Co-Founder & Lead Developer</p>
+                    <p class="text-sm text-gray-400 mb-6">Specializing in enterprise solutions and cutting-edge web
+                        technologies. Passionate about creating scalable, innovative digital experiences.</p>
+
+                    <div class="flex justify-center space-x-4 mb-6">
+                        <span class="ultra-glass px-3 py-1 rounded-full text-xs">React</span>
+                        <span class="ultra-glass px-3 py-1 rounded-full text-xs">Node.js</span>
+                        <span class="ultra-glass px-3 py-1 rounded-full text-xs">Python</span>
+                    </div>
+
+                    <a href="https://en-gamma.vercel.app/ali" target="_blank"
+                        class="inline-flex items-center bg-gradient-to-r from-yellow-500 to-yellow-600 text-black px-6 py-3 rounded-2xl font-semibold hover:scale-105 transition-transform">
+                        <i class="fas fa-external-link-alt mr-2"></i>
+                        View Profile
+                    </a>
+                </div>
+
+                <!-- Arshia Ghorbani -->
+                <div class="ultra-glass rounded-3xl p-8 hover-lift group text-center">
+                    <div class="relative mb-6">
+                        <div
+                            class="w-32 h-32 mx-auto bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center text-4xl font-bold text-black group-hover:scale-110 transition-transform duration-300">
+                            AG
+                        </div>
+                        <div class="absolute -bottom-2 -right-2 bg-green-500 rounded-full p-2">
+                            <i class="fas fa-code text-black text-sm"></i>
+                        </div>
+                    </div>
+
+                    <h3 class="text-2xl font-bold mb-2 text-green-400">Arshia Ghorbani</h3>
+                    <p class="text-gray-300 mb-4">Co-Founder & Technical Architect</p>
+                    <p class="text-sm text-gray-400 mb-6">Expert in system architecture and full-stack development.
+                        Focused on building robust, high-performance applications that scale.</p>
+
+                    <div class="flex justify-center space-x-4 mb-6">
+                        <span class="ultra-glass px-3 py-1 rounded-full text-xs">Vue.js</span>
+                        <span class="ultra-glass px-3 py-1 rounded-full text-xs">Laravel</span>
+                        <span class="ultra-glass px-3 py-1 rounded-full text-xs">DevOps</span>
+                    </div>
+
+                    <a href="https://en-gamma.vercel.app/arshia" target="_blank"
+                        class="inline-flex items-center bg-gradient-to-r from-green-500 to-green-600 text-black px-6 py-3 rounded-2xl font-semibold hover:scale-105 transition-transform">
+                        <i class="fas fa-external-link-alt mr-2"></i>
+                        View Profile
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Process Section -->
+    <section class="py-20">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold mb-6 gradient-text">Our Process</h2>
+                <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+                    A streamlined approach to delivering exceptional results
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-4 gap-8">
+                <div class="text-center">
+                    <div
+                        class="ultra-glass rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4 group hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-comments text-2xl text-red-500 group-hover:text-red-400"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold mb-2">1. Consultation</h3>
+                    <p class="text-gray-300 text-sm">Understanding your needs and requirements</p>
+                </div>
+
+                <div class="text-center">
+                    <div
+                        class="ultra-glass rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4 group hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-drafting-compass text-2xl text-red-500 group-hover:text-red-400"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold mb-2">2. Planning</h3>
+                    <p class="text-gray-300 text-sm">Strategic planning and architecture design</p>
+                </div>
+
+                <div class="text-center">
+                    <div
+                        class="ultra-glass rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4 group hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-code text-2xl text-red-500 group-hover:text-red-400"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold mb-2">3. Development</h3>
+                    <p class="text-gray-300 text-sm">Building your solution with best practices</p>
+                </div>
+
+                <div class="text-center">
+                    <div
+                        class="ultra-glass rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4 group hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-rocket text-2xl text-red-500 group-hover:text-red-400"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold mb-2">4. Launch</h3>
+                    <p class="text-gray-300 text-sm">Deployment and ongoing support</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold mb-6 gradient-text">Get In Touch</h2>
+                <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+                    Ready to start your project? Let's discuss how we can help bring your vision to life.
+                </p>
+            </div>
+
+            <div class="max-w-2xl mx-auto">
+                <div class="ultra-glass rounded-3xl p-8">
+                    <form class="space-y-6">
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div class="group">
+                                <label
+                                    class="block text-sm font-medium mb-2 text-gray-300 group-focus-within:text-red-400 transition-colors">Name</label>
+                                <input type="text"
+                                    class="w-full px-4 py-3 rounded-2xl ultra-glass border-transparent focus:border-red-500 focus:outline-none transition-all duration-300 focus:scale-105"
+                                    placeholder="Your name">
+                            </div>
+                            <div class="group">
+                                <label
+                                    class="block text-sm font-medium mb-2 text-gray-300 group-focus-within:text-red-400 transition-colors">Email</label>
+                                <input type="email"
+                                    class="w-full px-4 py-3 rounded-2xl ultra-glass border-transparent focus:border-red-500 focus:outline-none transition-all duration-300 focus:scale-105"
+                                    placeholder="your@email.com">
+                            </div>
+                        </div>
+
+                        <div class="group">
+                            <label
+                                class="block text-sm font-medium mb-2 text-gray-300 group-focus-within:text-red-400 transition-colors">Project
+                                Type</label>
+                            <div class="relative">
+                                <button type="button" onclick="toggleProjectDropdown()"
+                                    class="w-full px-4 py-3 rounded-2xl ultra-glass border-transparent focus:border-red-500 focus:outline-none transition-all duration-300 text-left flex justify-between items-center">
+                                    <span id="selectedProject">Select Project Type</span>
+                                    <i class="fas fa-chevron-down transition-transform duration-300"
+                                        id="dropdownIcon"></i>
+                                </button>
+                                <div id="projectDropdown"
+                                    class="absolute top-full left-0 right-0 mt-2 ultra-glass rounded-2xl border border-white/10 hidden z-10">
+                                    <div class="p-2 space-y-1">
+                                        <button type="button" onclick="selectProject('WordPress Plugin')"
+                                            class="w-full text-left px-4 py-3 rounded-xl hover:bg-red-500/20 transition-colors flex items-center">
+                                            <i class="fab fa-wordpress text-red-400 mr-3"></i>WordPress Plugin
+                                        </button>
+                                        <button type="button" onclick="selectProject('Enterprise Software')"
+                                            class="w-full text-left px-4 py-3 rounded-xl hover:bg-red-500/20 transition-colors flex items-center">
+                                            <i class="fas fa-building text-red-400 mr-3"></i>Enterprise Software
+                                        </button>
+                                        <button type="button" onclick="selectProject('Web Application')"
+                                            class="w-full text-left px-4 py-3 rounded-xl hover:bg-red-500/20 transition-colors flex items-center">
+                                            <i class="fas fa-globe text-red-400 mr-3"></i>Web Application
+                                        </button>
+                                        <button type="button" onclick="selectProject('E-commerce Platform')"
+                                            class="w-full text-left px-4 py-3 rounded-xl hover:bg-red-500/20 transition-colors flex items-center">
+                                            <i class="fas fa-shopping-cart text-red-400 mr-3"></i>E-commerce Platform
+                                        </button>
+                                        <button type="button" onclick="selectProject('Mobile Integration')"
+                                            class="w-full text-left px-4 py-3 rounded-xl hover:bg-red-500/20 transition-colors flex items-center">
+                                            <i class="fas fa-mobile-alt text-red-400 mr-3"></i>Mobile Integration
+                                        </button>
+                                        <button type="button" onclick="selectProject('Other')"
+                                            class="w-full text-left px-4 py-3 rounded-xl hover:bg-red-500/20 transition-colors flex items-center">
+                                            <i class="fas fa-ellipsis-h text-red-400 mr-3"></i>Other
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="group">
+                            <label
+                                class="block text-sm font-medium mb-2 text-gray-300 group-focus-within:text-red-400 transition-colors">Message</label>
+                            <textarea rows="5"
+                                class="w-full px-4 py-3 rounded-2xl ultra-glass border-transparent focus:border-red-500 focus:outline-none transition-all duration-300 focus:scale-105 resize-none"
+                                placeholder="Tell us about your project..."></textarea>
+                        </div>
+
+                        <button type="submit"
+                            class="group w-full bg-gradient-to-r from-red-500 to-red-600 px-8 py-4 rounded-2xl font-semibold transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-red-500/25 relative overflow-hidden">
+                            <div
+                                class="absolute inset-0 bg-gradient-to-r from-red-400 to-red-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            </div>
+                            <span class="relative flex items-center justify-center">
+                                <i
+                                    class="fas fa-paper-plane mr-2 group-hover:rotate-12 transition-transform duration-300"></i>
+                                Send Message
+                            </span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 border-t border-gray-800">
+        <div class="container mx-auto px-6">
+            <div class="text-center">
+                <div class="flex items-center justify-center mb-4">
+                    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 858.38 489.41' class="w-8 h-8 mr-3">
+                        <path fill='#F31F25'
+                            d='m567.01,488.57c-2.05,1.18-3.95.68-5.75.68-49.5.03-99-.02-148.49.12-4.16.01-6.16-1.23-8.02-5.1-13.98-29.15-28.36-58.1-42.41-87.21-1.57-3.26-3.39-4.19-6.85-4.19-48.17.11-96.35.13-144.52-.04-3.92-.01-5.55,1.45-7.06,4.69-13.48,28.77-27.19,57.43-40.61,86.22-1.92,4.11-4.15,5.68-8.86,5.67-49.12-.2-98.24-.13-147.36-.13-2.05,0-4.1,0-7.07,0,3.27-7.08,6.19-13.5,9.18-19.89,41.81-89.38,83.63-178.75,125.44-268.12,28.2-60.28,56.38-120.57,84.57-180.86C225.46,7.02,235.67,0,250.79.11c26.07.2,52.15.33,78.21-.1,6.52-.11,9.59,2.09,12.24,7.81,24.87,53.73,49.89,107.39,75.11,160.96,49.01,104.08,98.19,208.08,147.29,312.12,1.19,2.52,2.24,5.1,3.37,7.68ZM283.04,109.34c1.88.98,2.21,2.58,2.84,3.89,25.32,53.51,50.56,107.06,75.89,160.57,25.02,52.85,50.12,105.67,75.17,158.51.86,1.81,1.22,3.75,4.1,3.73,14.31-.13,28.62-.06,43.55-.06-1.03-2.41-1.76-4.29-2.64-6.11-23.91-49.83-47.95-99.59-71.72-149.49-35.73-75.03-71.29-150.14-106.82-225.27-1.26-2.67-2.68-3.53-5.51-3.48-9.07.16-18.15.36-27.2-.06-4.51-.21-6.58,1.37-8.44,5.35-23.73,50.56-47.61,101.04-71.52,151.51-35.34,74.59-70.73,149.15-106.05,223.75-.5,1.06-1.66,2.16-.68,3.81,13.49,0,27.09-.12,40.69.09,3.18.05,4.04-1.64,5.13-3.94,13.45-28.59,27.07-57.09,40.34-85.75,2.02-4.36,4.16-6.05,9.13-6.02,51.4.21,102.79.09,154.19.22,4.87.01,5.77-.73,3.42-5.42-12.09-24.03-23.86-48.21-35.74-72.34-5.81-11.8-11.62-23.59-17.67-35.88-1.06,1.86-1.86,3.12-2.52,4.44-9.73,19.56-19.43,39.14-29.18,58.69-.94,1.88-1.25,4.28-4.46,4.26-16.72-.12-33.44-.06-51.06-.06,29.18-62.18,57.97-123.53,86.77-184.92Z' />
+                        <path fill='#F31F25'
+                            d='m777.22,436c-11.74-24.49-23.1-48-34.31-71.58-42.83-90.17-85.62-180.37-128.41-270.56-5.97-12.57-12.02-25.11-17.72-37.81-1.57-3.49-3.5-4.59-7.24-4.46-8.49.3-17.01.26-25.5,0-3.19-.1-4.56,1.07-5.85,3.82-22.24,47.31-44.58,94.57-66.92,141.83-5.61,11.87-11.33,23.7-17.3,36.18-8.35-16.94-15.66-33.64-24.68-49.36-5.41-9.43-4.03-16.73.29-25.83,23.83-50.28,47.14-100.81,70.43-151.34,2.25-4.89,4.81-6.97,10.52-6.89,26.64.35,53.29.3,79.93.1,14.36-.11,24.3,5.98,30.36,19.07,20.62,44.53,41.44,88.98,62.13,133.47,40.75,87.63,81.46,175.27,122.2,262.9,10.62,22.85,21.19,45.72,32.1,68.43,2.38,4.96.97,5.39-3.63,5.38-48.75-.11-97.51-.09-146.26,0-3.31,0-5.43-.49-7.06-3.9-13.9-29.2-27.98-58.32-42.12-87.41-1.79-3.69-1.75-5.23,3.03-5.17,14.93.2,29.86.17,44.78-.01,3.27-.04,4.62,1.44,5.86,4.06,5.61,11.89,11.41,23.69,17.03,35.58,1.06,2.24,2.13,3.6,4.96,3.57,14.16-.14,28.32-.07,43.39-.07Z' />
+                        <path fill='#F31F25'
+                            d='m688.28,347.55h-6.22c-50.25,0-100.49-.07-150.74.12-4.31.02-6.21-1.47-7.95-5.11-8.11-16.97-16.25-33.93-24.9-50.62-2.92-5.64-2.73-10.25-.06-15.82,18.78-39.13,37.33-78.38,55.93-117.59,7.38-15.56,14.7-31.14,22.37-47.4,37.32,79.07,74.31,157.46,111.57,236.41Zm-112.35-119.98c-10.88,23.58-21.15,45.81-31.63,68.51h64.4c-10.95-22.89-21.6-45.16-32.77-68.51Z' />
+                    </svg>
+                    <div class="text-3xl font-bold gradient-text tech-font">AATeam</div>
+                </div>
+                <p class="text-gray-400 mb-6">Crafting digital excellence, one project at a time.</p>
+                <div class="flex justify-center space-x-6 mb-6">
+                    <a href="#" class="text-gray-400 hover:text-red-400 transition-colors">
+                        <i class="fab fa-linkedin text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-red-400 transition-colors">
+                        <i class="fab fa-github text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-red-400 transition-colors">
+                        <i class="fab fa-twitter text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-red-400 transition-colors">
+                        <i class="fas fa-envelope text-xl"></i>
+                    </a>
+                </div>
+                <p class="text-gray-500 text-sm">© 2024 AATeam. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Three.js Scene Setup
+        let scene, camera, renderer, particles, mouseX = 0, mouseY = 0;
+        let windowHalfX = window.innerWidth / 2;
+        let windowHalfY = window.innerHeight / 2;
+
+        function init() {
+            // Scene
+            scene = new THREE.Scene();
+
+            // Camera
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 3000);
+            camera.position.z = 1000;
+
+            // Renderer
+            renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setClearColor(0x000000, 0);
+            document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+            // Particles
+            const geometry = new THREE.BufferGeometry();
+            const vertices = [];
+            const colors = [];
+
+            for (let i = 0; i < 15000; i++) {
+                vertices.push(
+                    Math.random() * 4000 - 2000,
+                    Math.random() * 4000 - 2000,
+                    Math.random() * 4000 - 2000
+                );
+
+                // Red color variations
+                colors.push(
+                    0.8 + Math.random() * 0.2,
+                    0.2 + Math.random() * 0.3,
+                    0.2 + Math.random() * 0.3
+                );
+            }
+
+            geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+            geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+
+            const material = new THREE.PointsMaterial({
+                size: 2,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.8,
+                blending: THREE.AdditiveBlending
+            });
+
+            particles = new THREE.Points(geometry, material);
+            scene.add(particles);
+
+            // Event listeners
+            document.addEventListener('mousemove', onDocumentMouseMove, false);
+            window.addEventListener('resize', onWindowResize, false);
+        }
+
+        function onDocumentMouseMove(event) {
+            mouseX = event.clientX - windowHalfX;
+            mouseY = event.clientY - windowHalfY;
+        }
+
+        function onWindowResize() {
+            windowHalfX = window.innerWidth / 2;
+            windowHalfY = window.innerHeight / 2;
+
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            render();
+        }
+
+        function render() {
+            const time = Date.now() * 0.00005;
+
+            camera.position.x += (mouseX - camera.position.x) * 0.05;
+            camera.position.y += (-mouseY - camera.position.y) * 0.05;
+            camera.lookAt(scene.position);
+
+            particles.rotation.x = time * 0.5;
+            particles.rotation.y = time * 0.3;
+
+            renderer.render(scene, camera);
+        }
+
+        // Initialize Three.js
+        init();
+        animate();
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Portfolio Modal Functions
+        const portfolioData = {
+            plugin: {
+                title: 'Advanced WordPress Plugin',
+                description: 'A comprehensive WordPress plugin solution with advanced features and seamless integrations.',
+                features: [
+                    'Custom post types and fields',
+                    'Advanced user management',
+                    'Real-time notifications',
+                    'API integrations',
+                    'Performance optimization',
+                    'Security enhancements'
+                ],
+                technologies: ['PHP', 'JavaScript', 'MySQL', 'WordPress API'],
+                timeline: '6-8 weeks',
+                complexity: 'High'
+            },
+            dashboard: {
+                title: 'Enterprise Analytics Dashboard',
+                description: 'Real-time analytics dashboard for enterprise clients with advanced data visualization.',
+                features: [
+                    'Real-time data processing',
+                    'Interactive charts and graphs',
+                    'Custom reporting tools',
+                    'User role management',
+                    'Export functionality',
+                    'Mobile responsive design'
+                ],
+                technologies: ['React', 'Node.js', 'MongoDB', 'Chart.js'],
+                timeline: '10-12 weeks',
+                complexity: 'Very High'
+            },
+            ecommerce: {
+                title: 'E-commerce Platform',
+                description: 'Complete e-commerce solution with advanced features for modern online businesses.',
+                features: [
+                    'Product catalog management',
+                    'Shopping cart and checkout',
+                    'Payment gateway integration',
+                    'Inventory management',
+                    'Order tracking system',
+                    'Customer analytics'
+                ],
+                technologies: ['Vue.js', 'Laravel', 'MySQL', 'Stripe API'],
+                timeline: '12-16 weeks',
+                complexity: 'Very High'
+            }
+        };
+
+        function openPortfolioModal(projectType) {
+            const modal = document.getElementById('portfolioModal');
+            const data = portfolioData[projectType];
+
+            document.getElementById('modalTitle').textContent = data.title;
+
+            const content = `
+                <div class="ultra-glass rounded-2xl p-6 mb-6">
+                    <p class="text-lg text-gray-300 leading-relaxed">${data.description}</p>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-6 mb-6">
+                    <div class="ultra-glass rounded-2xl p-6">
+                        <h3 class="text-xl font-semibold mb-4 text-red-400">Key Features</h3>
+                        <ul class="space-y-2">
+                            ${data.features.map(feature => `<li class="flex items-center text-gray-300"><i class="fas fa-check text-green-400 mr-3"></i>${feature}</li>`).join('')}
+                        </ul>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="ultra-glass rounded-2xl p-6">
+                            <h3 class="text-lg font-semibold mb-3 text-red-400">Technologies</h3>
+                            <div class="flex flex-wrap gap-2">
+                                ${data.technologies.map(tech => `<span class="ultra-glass px-3 py-1 rounded-full text-sm">${tech}</span>`).join('')}
+                            </div>
+                        </div>
+                        
+                        <div class="ultra-glass rounded-2xl p-6">
+                            <h3 class="text-lg font-semibold mb-3 text-red-400">Project Details</h3>
+                            <div class="space-y-2 text-gray-300">
+                                <p><strong>Timeline:</strong> ${data.timeline}</p>
+                                <p><strong>Complexity:</strong> ${data.complexity}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('modalContent').innerHTML = content;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePortfolioModal() {
+            const modal = document.getElementById('portfolioModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Custom Dropdown Functions
+        function toggleProjectDropdown() {
+            const dropdown = document.getElementById('projectDropdown');
+            const icon = document.getElementById('dropdownIcon');
+
+            if (dropdown.classList.contains('hidden')) {
+                dropdown.classList.remove('hidden');
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                dropdown.classList.add('hidden');
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        function selectProject(projectType) {
+            document.getElementById('selectedProject').textContent = projectType;
+            toggleProjectDropdown();
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function (event) {
+            const dropdown = document.getElementById('projectDropdown');
+            const button = event.target.closest('button[onclick="toggleProjectDropdown()"]');
+
+            if (!button && !dropdown.contains(event.target)) {
+                dropdown.classList.add('hidden');
+                document.getElementById('dropdownIcon').style.transform = 'rotate(0deg)';
+            }
+        });
+
+        // Mobile Menu Functions
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            const mobileOverlay = document.getElementById('mobileOverlay');
+            const menuIcon = document.getElementById('menuIcon');
+
+            if (mobileMenu.classList.contains('active')) {
+                mobileMenu.classList.remove('active');
+                mobileOverlay.classList.add('hidden');
+                menuIcon.className = 'fas fa-bars text-xl';
+                document.body.style.overflow = 'auto';
+            } else {
+                mobileMenu.classList.add('active');
+                mobileOverlay.classList.remove('hidden');
+                menuIcon.className = 'fas fa-times text-xl';
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        // Form submission
+        document.querySelector('form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            alert('Thank you for your message! We\'ll get back to you soon.');
+        });
+
+        // Performance optimization
+        let ticking = false;
+
+        function updateParticles() {
+            if (!ticking) {
+                requestAnimationFrame(function () {
+                    // Particle updates here
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        }
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe elements for scroll animations
+        document.querySelectorAll('.glass-dark').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+
+
+    </script>
+    <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'972483235731dbf3',t:'MTc1NTcyMDM5Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
+</body>
+
+</html>

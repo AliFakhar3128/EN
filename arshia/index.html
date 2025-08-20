@@ -1,0 +1,1419 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عرشیا قربانی - متخصص سئو و وب دیزاینر</title>
+
+    <!-- Vazir Font CDN -->
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/font-face.css" rel="stylesheet">
+
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <script>
+        // تنظیمات Tailwind برای رنگ سفارشی
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#21C55D',
+                        'primary-dark': '#16A34A',
+                        'primary-light': '#4ADE80'
+                    },
+                    fontFamily: {
+                        vazir: ['Vazir', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        * {
+            font-family: 'Vazir', sans-serif;
+        }
+
+        /* انیمیشن های نرم و ظریف */
+        .smooth-transition {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .fade-in {
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .slide-up {
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* استایل های Material Design 3 */
+        .material-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .glass-effect {
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(15px);
+        }
+
+        /* Three.js Canvas */
+        #three-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+
+        /* پاپ آپ استایل */
+        .popup-overlay {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+        }
+
+        /* اسکرول نرم */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* هاور افکت های زیبا */
+        .hover-lift:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(33, 197, 93, 0.3);
+        }
+
+        /* هاور افکت های زیبا */
+        .hover-lift2:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(239, 68, 68, 0.3);
+        }
+
+        /* گرادیانت متن */
+        .gradient-text {
+            background: linear-gradient(135deg, #21C55D, #4ADE80);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
+</head>
+
+<body class="bg-black text-white font-vazir overflow-x-hidden">
+    <!-- Three.js Background Canvas -->
+    <canvas id="three-canvas"></canvas>
+
+    <!-- Navigation Bar -->
+    <nav class="fixed top-0 w-full z-50 glass-effect border-b border-primary/20">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <!-- لوگو -->
+                <div class="text-2xl font-bold gradient-text">
+                    عرشیا قربانی
+                </div>
+
+                <!-- منوی ناوبری -->
+                <div class="hidden md:flex space-x-reverse space-x-8">
+                    <a href="#home" class="smooth-transition hover:text-primary">
+                        خانه
+                    </a>
+                    <a href="#about" class="smooth-transition hover:text-primary">
+                        درباره من
+                    </a>
+                    <a href="#skills" class="smooth-transition hover:text-primary">
+                        مهارت‌ها
+                    </a>
+                    <a href="#companies" class="smooth-transition hover:text-primary">
+                        شرکت‌ها
+                    </a>
+                    <a href="#projects" class="smooth-transition hover:text-primary">
+                        پروژه‌ها
+                    </a>
+                    <a href="#contact" class="smooth-transition hover:text-primary">
+                        تماس
+                    </a>
+                </div>
+
+                <!-- منوی موبایل -->
+                <button id="mobile-menu-btn" class="md:hidden">
+                    <span class="material-icons">menu</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- منوی موبایل -->
+    <div id="mobile-menu" class="fixed inset-0 z-40 glass-effect hidden">
+        <div class="flex flex-col items-center justify-center h-full space-y-8 text-xl">
+            <a href="#home" class="mobile-menu-item smooth-transition hover:text-primary">خانه</a>
+            <a href="#about" class="mobile-menu-item smooth-transition hover:text-primary">درباره من</a>
+            <a href="#skills" class="mobile-menu-item smooth-transition hover:text-primary">مهارت‌ها</a>
+            <a href="#companies" class="mobile-menu-item smooth-transition hover:text-primary">شرکت‌ها</a>
+            <a href="#projects" class="mobile-menu-item smooth-transition hover:text-primary">پروژه‌ها</a>
+            <a href="#contact" class="mobile-menu-item smooth-transition hover:text-primary">تماس</a>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section id="home" class="min-h-screen flex items-center justify-center pt-20">
+        <div class="container mx-auto px-6 text-center">
+            <div class="fade-in">
+                <h1 class="text-5xl md:text-7xl font-bold mb-6 gradient-text">
+                    عرشیا قربانی
+                </h1>
+                <p class="text-xl md:text-2xl mb-8 text-gray-300">
+                    متخصص سئو و وب دیزاینر حرفه‌ای
+                </p>
+                <p class="text-lg mb-12 text-gray-400 max-w-2xl mx-auto">
+                    با بیش از ۵ سال تجربه در زمینه بهینه‌سازی موتورهای جستجو و طراحی وب،
+                    آماده ارائه بهترین خدمات دیجیتال به شما هستم
+                </p>
+
+                <!-- دکمه های اکشن -->
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button onclick="scrollToSection('companies')"
+                        class="bg-primary hover:bg-primary-dark smooth-transition px-8 py-4 rounded-full font-semibold hover-lift flex items-center justify-center gap-2">
+                        <span class="material-icons">visibility</span>
+                        مشاهده شرکت‌ها
+                    </button>
+                    <button onclick="scrollToSection('contact')"
+                        class="border-2 border-primary text-primary hover:bg-primary hover:text-black smooth-transition px-8 py-4 rounded-full font-semibold hover-lift flex items-center justify-center gap-2">
+                        <span class="material-icons">contact_mail</span>
+                        تماس با من
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-20">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16 slide-up">
+                <h2 class="text-4xl font-bold mb-4 gradient-text flex items-center justify-center gap-3">
+                    <span class="material-icons text-4xl">person</span>
+                    درباره من
+                </h2>
+                <p class="text-gray-400 max-w-2xl mx-auto">
+                    بیایید بیشتر با من آشنا شوید
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <!-- متن درباره -->
+                <div class="slide-up">
+                    <div class="material-card rounded-3xl p-8 hover-lift smooth-transition">
+                        <h3 class="text-2xl font-bold mb-6 text-primary">داستان من</h3>
+                        <p class="text-gray-300 leading-relaxed mb-6">
+                            من عرشیا قربانی هستم، یک متخصص سئو و وب دیزاینر با بیش از ۵ سال تجربه کاری.
+                            علاقه‌مند به تکنولوژی‌های نوین و همیشه در تلاش برای یادگیری و بهبود مهارت‌هایم.
+                        </p>
+                        <p class="text-gray-300 leading-relaxed mb-6">
+                            یکی از موسسان پلتفرم آموزشی <span class="text-primary font-semibold">PyCod</span> هستم که
+                            یک پلتفرم جامع برای آموزش پایتون و کتابخانه‌های مرتبط با آن می‌باشد. همچنین خالق و موسس
+                            <span class="text-red-500 font-semibold">AATeam</span> هستم که یک تیم خفن و حرفه‌ای در زمینه
+                            تولید افزونه، اپلیکیشن و انجام پروژه‌های مختلف تکنولوژی است.
+                        </p>
+
+                        <!-- آمار شخصی -->
+                        <div class="grid grid-cols-2 gap-4 mt-8">
+                            <div class="text-center p-4 bg-black/30 rounded-xl">
+                                <div class="text-2xl font-bold text-primary">۵+</div>
+                                <div class="text-sm text-gray-400">سال تجربه</div>
+                            </div>
+                            <div class="text-center p-4 bg-black/30 rounded-xl">
+                                <div class="text-2xl font-bold text-primary">۱۰۰+</div>
+                                <div class="text-sm text-gray-400">پروژه موفق</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- اطلاعات تماس -->
+                <div class="slide-up">
+                    <div class="material-card rounded-3xl p-8 hover-lift smooth-transition">
+                        <h3 class="text-2xl font-bold mb-6 text-primary">اطلاعات تماس</h3>
+
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-4 p-4 bg-black/30 rounded-xl">
+                                <span class="material-icons text-primary">email</span>
+                                <div>
+                                    <div class="font-semibold">ایمیل</div>
+                                    <div class="text-gray-400">arshia@example.com</div>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-4 p-4 bg-black/30 rounded-xl">
+                                <span class="material-icons text-primary">phone</span>
+                                <div>
+                                    <div class="font-semibold">تلفن</div>
+                                    <div class="text-gray-400">۰۹۱۲۳۴۵۶۷۸۹</div>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-4 p-4 bg-black/30 rounded-xl">
+                                <span class="material-icons text-primary">location_on</span>
+                                <div>
+                                    <div class="font-semibold">موقعیت</div>
+                                    <div class="text-gray-400">تهران، ایران</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills" class="py-20">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16 slide-up">
+                <h2 class="text-4xl font-bold mb-4 gradient-text flex items-center justify-center gap-3">
+                    <span class="material-icons text-4xl">psychology</span>
+                    مهارت‌ها و تخصص‌ها
+                </h2>
+                <p class="text-gray-400 max-w-2xl mx-auto">
+                    تکنولوژی‌ها و ابزارهایی که با آن‌ها کار می‌کنم
+                </p>
+            </div>
+
+            <!-- مهارت های اصلی -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+                <!-- SEO -->
+                <div class="material-card rounded-3xl p-8 hover-lift smooth-transition slide-up">
+                    <div class="flex items-center gap-4 mb-6">
+                        <span class="material-icons text-3xl text-primary">search</span>
+                        <h3 class="text-xl font-bold">سئو (SEO)</h3>
+                    </div>
+                    <p class="text-gray-400 mb-4">
+                        بهینه‌سازی موتورهای جستجو، تحلیل کلمات کلیدی، و افزایش رتبه وب‌سایت
+                    </p>
+                    <div class="w-full bg-gray-700 rounded-full h-2">
+                        <div class="bg-primary h-2 rounded-full" style="width: 95%"></div>
+                    </div>
+                    <div class="text-right text-sm text-primary mt-2">۹۵%</div>
+                </div>
+
+                <!-- UI Design -->
+                <div class="material-card rounded-3xl p-8 hover-lift smooth-transition slide-up">
+                    <div class="flex items-center gap-4 mb-6">
+                        <span class="material-icons text-3xl text-primary">design_services</span>
+                        <h3 class="text-xl font-bold">طراحی UI</h3>
+                    </div>
+                    <p class="text-gray-400 mb-4">
+                        طراحی رابط کاربری مدرن، UX/UI، و ایجاد تجربه کاربری بهینه
+                    </p>
+                    <div class="w-full bg-gray-700 rounded-full h-2">
+                        <div class="bg-primary h-2 rounded-full" style="width: 92%"></div>
+                    </div>
+                    <div class="text-right text-sm text-primary mt-2">۹۲%</div>
+                </div>
+
+                <!-- WordPress -->
+                <div class="material-card rounded-3xl p-8 hover-lift smooth-transition slide-up">
+                    <div class="flex items-center gap-4 mb-6">
+                        <span class="material-icons text-3xl text-primary">web</span>
+                        <h3 class="text-xl font-bold">وردپرس</h3>
+                    </div>
+                    <p class="text-gray-400 mb-4">
+                        توسعه قالب، افزونه‌های سفارشی، و بهینه‌سازی وردپرس
+                    </p>
+                    <div class="w-full bg-gray-700 rounded-full h-2">
+                        <div class="bg-primary h-2 rounded-full" style="width: 90%"></div>
+                    </div>
+                    <div class="text-right text-sm text-primary mt-2">۹۰%</div>
+                </div>
+
+                <!-- Plugin Development -->
+                <div class="material-card rounded-3xl p-8 hover-lift smooth-transition slide-up">
+                    <div class="flex items-center gap-4 mb-6">
+                        <span class="material-icons text-3xl text-primary">extension</span>
+                        <h3 class="text-xl font-bold">توسعه افزونه</h3>
+                    </div>
+                    <p class="text-gray-400 mb-4">
+                        ساخت افزونه‌های وردپرسی سفارشی و حرفه‌ای
+                    </p>
+                    <div class="w-full bg-gray-700 rounded-full h-2">
+                        <div class="bg-primary h-2 rounded-full" style="width: 88%"></div>
+                    </div>
+                    <div class="text-right text-sm text-primary mt-2">۸۸%</div>
+                </div>
+
+
+
+                <!-- Content Strategy -->
+                <div class="material-card rounded-3xl p-8 hover-lift smooth-transition slide-up">
+                    <div class="flex items-center gap-4 mb-6">
+                        <span class="material-icons text-3xl text-primary">article</span>
+                        <h3 class="text-xl font-bold">استراتژی محتوا</h3>
+                    </div>
+                    <p class="text-gray-400 mb-4">
+                        تولید محتوای بهینه، کپی‌رایتینگ، و مدیریت محتوای وب‌سایت
+                    </p>
+                    <div class="w-full bg-gray-700 rounded-full h-2">
+                        <div class="bg-primary h-2 rounded-full" style="width: 87%"></div>
+                    </div>
+                    <div class="text-right text-sm text-primary mt-2">۸۷%</div>
+                </div>
+            </div>
+
+            <!-- ابزارها و نرم‌افزارها -->
+            <div class="mb-16">
+                <h3 class="text-2xl font-bold mb-8 text-center gradient-text">ابزارها و نرم‌افزارها</h3>
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- SEO Tools -->
+                    <div class="material-card rounded-2xl p-6 hover-lift smooth-transition slide-up">
+                        <h4 class="text-lg font-semibold mb-4 text-primary">ابزارهای سئو</h4>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-300">Google Analytics</span>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-16 h-2 bg-gray-700 rounded-full">
+                                        <div class="h-2 bg-primary rounded-full" style="width: 95%"></div>
+                                    </div>
+                                    <span class="text-xs text-primary">95%</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-300">SEMrush</span>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-16 h-2 bg-gray-700 rounded-full">
+                                        <div class="h-2 bg-primary rounded-full" style="width: 90%"></div>
+                                    </div>
+                                    <span class="text-xs text-primary">90%</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-300">Ahrefs</span>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-16 h-2 bg-gray-700 rounded-full">
+                                        <div class="h-2 bg-primary rounded-full" style="width: 88%"></div>
+                                    </div>
+                                    <span class="text-xs text-primary">88%</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-300">Yoast SEO</span>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-16 h-2 bg-gray-700 rounded-full">
+                                        <div class="h-2 bg-primary rounded-full" style="width: 92%"></div>
+                                    </div>
+                                    <span class="text-xs text-primary">92%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Design Tools -->
+                    <div class="material-card rounded-2xl p-6 hover-lift smooth-transition slide-up">
+                        <h4 class="text-lg font-semibold mb-4 text-primary">ابزارهای طراحی</h4>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-300">Figma</span>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-16 h-2 bg-gray-700 rounded-full">
+                                        <div class="h-2 bg-primary rounded-full" style="width: 93%"></div>
+                                    </div>
+                                    <span class="text-xs text-primary">93%</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-300">Photoshop</span>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-16 h-2 bg-gray-700 rounded-full">
+                                        <div class="h-2 bg-primary rounded-full" style="width: 85%"></div>
+                                    </div>
+                                    <span class="text-xs text-primary">85%</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-300">Adobe XD</span>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-16 h-2 bg-gray-700 rounded-full">
+                                        <div class="h-2 bg-primary rounded-full" style="width: 80%"></div>
+                                    </div>
+                                    <span class="text-xs text-primary">80%</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-300">Canva</span>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-16 h-2 bg-gray-700 rounded-full">
+                                        <div class="h-2 bg-primary rounded-full" style="width: 90%"></div>
+                                    </div>
+                                    <span class="text-xs text-primary">90%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Development Tools -->
+                    <div class="material-card rounded-2xl p-6 hover-lift smooth-transition slide-up">
+                        <h4 class="text-lg font-semibold mb-4 text-primary">ابزارهای توسعه</h4>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-300">VS Code</span>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-16 h-2 bg-gray-700 rounded-full">
+                                        <div class="h-2 bg-primary rounded-full" style="width: 95%"></div>
+                                    </div>
+                                    <span class="text-xs text-primary">95%</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-300">Git & GitHub</span>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-16 h-2 bg-gray-700 rounded-full">
+                                        <div class="h-2 bg-primary rounded-full" style="width: 88%"></div>
+                                    </div>
+                                    <span class="text-xs text-primary">88%</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-300">Chrome DevTools</span>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-16 h-2 bg-gray-700 rounded-full">
+                                        <div class="h-2 bg-primary rounded-full" style="width: 90%"></div>
+                                    </div>
+                                    <span class="text-xs text-primary">90%</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-300">Docker</span>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-16 h-2 bg-gray-700 rounded-full">
+                                        <div class="h-2 bg-primary rounded-full" style="width: 75%"></div>
+                                    </div>
+                                    <span class="text-xs text-primary">75%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- WordPress Tools -->
+                    <div class="material-card rounded-2xl p-6 hover-lift smooth-transition slide-up">
+                        <h4 class="text-lg font-semibold mb-4 text-primary">ابزارهای وردپرس</h4>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-300">Elementor</span>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-16 h-2 bg-gray-700 rounded-full">
+                                        <div class="h-2 bg-primary rounded-full" style="width: 92%"></div>
+                                    </div>
+                                    <span class="text-xs text-primary">92%</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-300">WooCommerce</span>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-16 h-2 bg-gray-700 rounded-full">
+                                        <div class="h-2 bg-primary rounded-full" style="width: 88%"></div>
+                                    </div>
+                                    <span class="text-xs text-primary">88%</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-300">ACF Pro</span>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-16 h-2 bg-gray-700 rounded-full">
+                                        <div class="h-2 bg-primary rounded-full" style="width: 85%"></div>
+                                    </div>
+                                    <span class="text-xs text-primary">85%</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-300">WP Rocket</span>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-16 h-2 bg-gray-700 rounded-full">
+                                        <div class="h-2 bg-primary rounded-full" style="width: 90%"></div>
+                                    </div>
+                                    <span class="text-xs text-primary">90%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Companies Section -->
+    <section id="companies" class="py-20">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16 slide-up">
+                <h2 class="text-4xl font-bold mb-4 gradient-text flex items-center justify-center gap-3">
+                    <span class="material-icons text-4xl">business</span>
+                    شرکت‌ها و پروژه‌های فعال
+                </h2>
+                <p class="text-gray-400 max-w-2xl mx-auto">
+                    شرکت‌ها و پروژه‌هایی که در حال حاضر با آن‌ها همکاری دارم
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-12">
+                <!-- PyCod -->
+                <div class="material-card rounded-3xl p-8 hover-lift smooth-transition slide-up">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div
+                            class="w-16 h-16 bg-gradient-to-br from-primary to-primary-dark rounded-2xl flex items-center justify-center">
+                            <span class="material-icons text-2xl text-white">school</span>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-primary">PyCod</h3>
+                            <p class="text-gray-400">پلتفرم آموزشی پایتون</p>
+                        </div>
+                    </div>
+
+                    <p class="text-gray-300 leading-relaxed mb-6">
+                        <span class="text-primary font-semibold">PyCod</span> یک پلتفرم جامع برای آموزش زبان
+                        برنامه‌نویسی پایتون و کتابخانه‌های مرتبط با آن است.
+                        به عنوان یکی از موسسان این پلتفرم، مسئولیت بهینه‌سازی سئو و مدیریت محتوای آموزشی را بر عهده
+                        دارم.
+                    </p>
+
+                    <div class="space-y-4 mb-6">
+                        <div class="flex items-center gap-3">
+                            <span class="material-icons text-primary text-sm">check_circle</span>
+                            <span class="text-gray-300">موسس و شریک تجاری</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="material-icons text-primary text-sm">check_circle</span>
+                            <span class="text-gray-300">متخصص سئو و بهینه‌سازی</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="material-icons text-primary text-sm">check_circle</span>
+                            <span class="text-gray-300">مدیر محتوای آموزشی</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="material-icons text-primary text-sm">check_circle</span>
+                            <span class="text-gray-300">طراح تجربه کاربری</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="text-center p-4 bg-black/30 rounded-xl">
+                            <div class="text-xl font-bold text-primary">۱۰K+</div>
+                            <div class="text-sm text-gray-400">کاربر فعال</div>
+                        </div>
+                        <div class="text-center p-4 bg-black/30 rounded-xl">
+                            <div class="text-xl font-bold text-primary">۲ سال</div>
+                            <div class="text-sm text-gray-400">فعالیت</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AATeam -->
+                <div class="material-card rounded-3xl p-8 hover-lift2 smooth-transition slide-up">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div
+                            class="w-16 h-16 bg-red-500 rounded-2xl flex items-center justify-center">
+                            <span class="material-icons text-2xl text-white">groups</span>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-red-500">AATeam</h3>
+                            <p class="text-gray-400">تیم توسعه و نوآوری</p>
+                        </div>
+                    </div>
+
+                    <p class="text-gray-300 leading-relaxed mb-6">
+                        <span class="text-red-500 font-semibold">AATeam</span> یک تیم خفن و حرفه‌ای در زمینه تولید
+                        افزونه، اپلیکیشن و انجام پروژه‌های مختلف تکنولوژی است.
+                        به عنوان خالق و موسس این تیم، مسئولیت هدایت پروژه‌ها و نظارت بر کیفیت محصولات را بر عهده دارم.
+                    </p>
+
+                    <div class="space-y-4 mb-6">
+                        <div class="flex items-center gap-3">
+                            <span class="material-icons text-red-500 text-sm">check_circle</span>
+                            <span class="text-gray-300">خالق و موسس تیم</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="material-icons text-red-500 text-sm">check_circle</span>
+                            <span class="text-gray-300">تولید افزونه‌های وردپرسی</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="material-icons text-red-500 text-sm">check_circle</span>
+                            <span class="text-gray-300">توسعه اپلیکیشن‌های موبایل</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="material-icons text-red-500 text-sm">check_circle</span>
+                            <span class="text-gray-300">پروژه‌های وب و دیجیتال</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="p-4 bg-black/30 rounded-xl">
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="material-icons text-red-500">extension</span>
+                                <h4 class="font-semibold">توسعه افزونه</h4>
+                            </div>
+                            <p class="text-gray-400 text-sm">ساخت افزونه‌های وردپرسی حرفه‌ای و سفارشی</p>
+                        </div>
+
+                        <div class="p-4 bg-black/30 rounded-xl">
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="material-icons text-red-500">phone_android</span>
+                                <h4 class="font-semibold">اپلیکیشن موبایل</h4>
+                            </div>
+                            <p class="text-gray-400 text-sm">توسعه اپ‌های اندروید و iOS</p>
+                        </div>
+
+                        <div class="p-4 bg-black/30 rounded-xl">
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="material-icons text-red-500">web</span>
+                                <h4 class="font-semibold">پروژه‌های وب</h4>
+                            </div>
+                            <p class="text-gray-400 text-sm">طراحی و توسعه وب‌سایت‌های پیشرفته</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="py-20">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16 slide-up">
+                <h2 class="text-4xl font-bold mb-4 gradient-text flex items-center justify-center gap-3">
+                    <span class="material-icons text-4xl">work</span>
+                    پروژه‌های من
+                </h2>
+                <p class="text-gray-400 max-w-2xl mx-auto">
+                    نمونه‌ای از کارهای انجام شده
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- پروژه PyCod -->
+                <div class="material-card rounded-3xl overflow-hidden hover-lift smooth-transition slide-up cursor-pointer"
+                    onclick="openProjectModal('pycod')">
+                    <div class="h-48 bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center">
+                        <span class="material-icons text-6xl text-white">school</span>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-3 text-primary">PyCod</h3>
+                        <p class="text-gray-400 mb-4">
+                            پلتفرم آموزشی جامع پایتون و کتابخانه‌های مرتبط
+                        </p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="bg-primary/20 text-primary px-3 py-1 rounded-full text-sm">Python</span>
+                            <span class="bg-primary/20 text-primary px-3 py-1 rounded-full text-sm">آموزش</span>
+                            <span class="bg-primary/20 text-primary px-3 py-1 rounded-full text-sm">SEO</span>
+                        </div>
+                        <button class="text-primary hover:text-primary-light smooth-transition flex items-center gap-2">
+                            <span>مشاهده جزئیات</span>
+                            <span class="material-icons text-sm">arrow_back</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- پروژه فروشگاه آنلاین -->
+                <div class="material-card rounded-3xl overflow-hidden hover-lift smooth-transition slide-up cursor-pointer"
+                    onclick="openProjectModal('ecommerce')">
+                    <div class="h-48 bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
+                        <span class="material-icons text-6xl text-white">shopping_cart</span>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-3 text-primary">فروشگاه آنلاین</h3>
+                        <p class="text-gray-400 mb-4">
+                            طراحی و بهینه‌سازی فروشگاه آنلاین با افزایش ۲۰۰% فروش
+                        </p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="bg-primary/20 text-primary px-3 py-1 rounded-full text-sm">E-commerce</span>
+                            <span class="bg-primary/20 text-primary px-3 py-1 rounded-full text-sm">SEO</span>
+                            <span class="bg-primary/20 text-primary px-3 py-1 rounded-full text-sm">UX/UI</span>
+                        </div>
+                        <button class="text-primary hover:text-primary-light smooth-transition flex items-center gap-2">
+                            <span>مشاهده جزئیات</span>
+                            <span class="material-icons text-sm">arrow_back</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- پروژه وب‌سایت شرکتی -->
+                <div class="material-card rounded-3xl overflow-hidden hover-lift smooth-transition slide-up cursor-pointer"
+                    onclick="openProjectModal('corporate')">
+                    <div class="h-48 bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center">
+                        <span class="material-icons text-6xl text-white">business</span>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-3 text-primary">وب‌سایت شرکتی</h3>
+                        <p class="text-gray-400 mb-4">
+                            طراحی وب‌سایت شرکتی مدرن با تمرکز بر تجربه کاربری
+                        </p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="bg-primary/20 text-primary px-3 py-1 rounded-full text-sm">Corporate</span>
+                            <span class="bg-primary/20 text-primary px-3 py-1 rounded-full text-sm">Responsive</span>
+                            <span class="bg-primary/20 text-primary px-3 py-1 rounded-full text-sm">Modern</span>
+                        </div>
+                        <button class="text-primary hover:text-primary-light smooth-transition flex items-center gap-2">
+                            <span>مشاهده جزئیات</span>
+                            <span class="material-icons text-sm">arrow_back</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- پروژه اپلیکیشن وب -->
+                <div class="material-card rounded-3xl overflow-hidden hover-lift smooth-transition slide-up cursor-pointer"
+                    onclick="openProjectModal('webapp')">
+                    <div class="h-48 bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center">
+                        <span class="material-icons text-6xl text-white">web</span>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-3 text-primary">اپلیکیشن وب</h3>
+                        <p class="text-gray-400 mb-4">
+                            توسعه اپلیکیشن وب پیشرفته با React و Node.js
+                        </p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="bg-primary/20 text-primary px-3 py-1 rounded-full text-sm">React</span>
+                            <span class="bg-primary/20 text-primary px-3 py-1 rounded-full text-sm">Node.js</span>
+                            <span class="bg-primary/20 text-primary px-3 py-1 rounded-full text-sm">API</span>
+                        </div>
+                        <button class="text-primary hover:text-primary-light smooth-transition flex items-center gap-2">
+                            <span>مشاهده جزئیات</span>
+                            <span class="material-icons text-sm">arrow_back</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- پروژه بلاگ شخصی -->
+                <div class="material-card rounded-3xl overflow-hidden hover-lift smooth-transition slide-up cursor-pointer"
+                    onclick="openProjectModal('blog')">
+                    <div class="h-48 bg-gradient-to-br from-teal-500 to-cyan-500 flex items-center justify-center">
+                        <span class="material-icons text-6xl text-white">article</span>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-3 text-primary">بلاگ تخصصی</h3>
+                        <p class="text-gray-400 mb-4">
+                            طراحی و بهینه‌سازی بلاگ تخصصی با محتوای کیفیت
+                        </p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="bg-primary/20 text-primary px-3 py-1 rounded-full text-sm">Blog</span>
+                            <span class="bg-primary/20 text-primary px-3 py-1 rounded-full text-sm">Content</span>
+                            <span class="bg-primary/20 text-primary px-3 py-1 rounded-full text-sm">SEO</span>
+                        </div>
+                        <button class="text-primary hover:text-primary-light smooth-transition flex items-center gap-2">
+                            <span>مشاهده جزئیات</span>
+                            <span class="material-icons text-sm">arrow_back</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- پروژه پورتفولیو -->
+                <div class="material-card rounded-3xl overflow-hidden hover-lift smooth-transition slide-up cursor-pointer"
+                    onclick="openProjectModal('portfolio')">
+                    <div class="h-48 bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center">
+                        <span class="material-icons text-6xl text-white">palette</span>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-3 text-primary">پورتفولیو هنرمند</h3>
+                        <p class="text-gray-400 mb-4">
+                            طراحی پورتفولیو آنلاین برای هنرمند با گالری تعاملی
+                        </p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="bg-primary/20 text-primary px-3 py-1 rounded-full text-sm">Portfolio</span>
+                            <span class="bg-primary/20 text-primary px-3 py-1 rounded-full text-sm">Gallery</span>
+                            <span class="bg-primary/20 text-primary px-3 py-1 rounded-full text-sm">Art</span>
+                        </div>
+                        <button class="text-primary hover:text-primary-light smooth-transition flex items-center gap-2">
+                            <span>مشاهده جزئیات</span>
+                            <span class="material-icons text-sm">arrow_back</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16 slide-up">
+                <h2 class="text-4xl font-bold mb-4 gradient-text flex items-center justify-center gap-3">
+                    <span class="material-icons text-4xl">contact_mail</span>
+                    تماس با من
+                </h2>
+                <p class="text-gray-400 max-w-2xl mx-auto">
+                    آماده همکاری و پاسخگویی به سوالات شما هستم
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-12">
+                <!-- فرم تماس -->
+                <div class="slide-up">
+                    <div class="material-card rounded-3xl p-8">
+                        <h3 class="text-2xl font-bold mb-6 text-primary">پیام بفرستید</h3>
+                        <form class="space-y-6" onsubmit="handleContactForm(event)">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">نام و نام خانوادگی</label>
+                                <input type="text" required
+                                    class="w-full px-4 py-3 bg-black/30 border border-gray-600 rounded-xl focus:border-primary focus:outline-none smooth-transition">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium mb-2">ایمیل</label>
+                                <input type="email" required
+                                    class="w-full px-4 py-3 bg-black/30 border border-gray-600 rounded-xl focus:border-primary focus:outline-none smooth-transition">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium mb-2">موضوع</label>
+                                <input type="text" required
+                                    class="w-full px-4 py-3 bg-black/30 border border-gray-600 rounded-xl focus:border-primary focus:outline-none smooth-transition">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium mb-2">پیام</label>
+                                <textarea rows="5" required
+                                    class="w-full px-4 py-3 bg-black/30 border border-gray-600 rounded-xl focus:border-primary focus:outline-none smooth-transition resize-none"></textarea>
+                            </div>
+
+                            <button type="submit"
+                                class="w-full bg-primary hover:bg-primary-dark smooth-transition px-6 py-3 rounded-xl font-semibold hover-lift flex items-center justify-center gap-2">
+                                <span class="material-icons">send</span>
+                                ارسال پیام
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- اطلاعات تماس و شبکه های اجتماعی -->
+                <div class="slide-up">
+                    <div class="material-card rounded-3xl p-8 mb-8">
+                        <h3 class="text-2xl font-bold mb-6 text-primary">راه‌های ارتباطی</h3>
+
+                        <div class="space-y-6">
+                            <div
+                                class="flex items-center gap-4 p-4 bg-black/30 rounded-xl hover:bg-black/50 smooth-transition">
+                                <span class="material-icons text-primary text-2xl">email</span>
+                                <div>
+                                    <div class="font-semibold">ایمیل</div>
+                                    <div class="text-gray-400">arshia.ghorbani@example.com</div>
+                                </div>
+                            </div>
+
+                            <div
+                                class="flex items-center gap-4 p-4 bg-black/30 rounded-xl hover:bg-black/50 smooth-transition">
+                                <span class="material-icons text-primary text-2xl">phone</span>
+                                <div>
+                                    <div class="font-semibold">تلفن همراه</div>
+                                    <div class="text-gray-400">+۹۸ ۹۱۲ ۳۴۵ ۶۷۸۹</div>
+                                </div>
+                            </div>
+
+                            <div
+                                class="flex items-center gap-4 p-4 bg-black/30 rounded-xl hover:bg-black/50 smooth-transition">
+                                <span class="material-icons text-primary text-2xl">location_on</span>
+                                <div>
+                                    <div class="font-semibold">آدرس</div>
+                                    <div class="text-gray-400">تهران، ایران</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- شبکه های اجتماعی -->
+                    <div class="material-card rounded-3xl p-8">
+                        <h3 class="text-xl font-bold mb-6 text-primary">شبکه‌های اجتماعی</h3>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <a href="#"
+                                class="flex items-center gap-3 p-4 bg-black/30 rounded-xl hover:bg-primary/20 smooth-transition hover-lift">
+                                <span class="material-icons text-primary">language</span>
+                                <span>LinkedIn</span>
+                            </a>
+
+                            <a href="#"
+                                class="flex items-center gap-3 p-4 bg-black/30 rounded-xl hover:bg-primary/20 smooth-transition hover-lift">
+                                <span class="material-icons text-primary">code</span>
+                                <span>GitHub</span>
+                            </a>
+
+                            <a href="#"
+                                class="flex items-center gap-3 p-4 bg-black/30 rounded-xl hover:bg-primary/20 smooth-transition hover-lift">
+                                <span class="material-icons text-primary">chat</span>
+                                <span>Telegram</span>
+                            </a>
+
+                            <a href="#"
+                                class="flex items-center gap-3 p-4 bg-black/30 rounded-xl hover:bg-primary/20 smooth-transition hover-lift">
+                                <span class="material-icons text-primary">camera_alt</span>
+                                <span>Instagram</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 border-t border-primary/20">
+        <div class="container mx-auto px-6 text-center">
+            <div class="mb-8">
+                <h3 class="text-2xl font-bold gradient-text mb-4">عرشیا قربانی</h3>
+                <p class="text-gray-400 max-w-md mx-auto">
+                    متخصص سئو و وب دیزاینر | موسس پلتفرم آموزشی PyCod
+                </p>
+            </div>
+
+            <div class="flex justify-center space-x-reverse space-x-6 mb-8">
+                <a href="#home" class="text-gray-400 hover:text-primary smooth-transition">خانه</a>
+                <a href="#about" class="text-gray-400 hover:text-primary smooth-transition">درباره من</a>
+                <a href="#skills" class="text-gray-400 hover:text-primary smooth-transition">مهارت‌ها</a>
+                <a href="#companies" class="text-gray-400 hover:text-primary smooth-transition">شرکت‌ها</a>
+                <a href="#projects" class="text-gray-400 hover:text-primary smooth-transition">پروژه‌ها</a>
+                <a href="#contact" class="text-gray-400 hover:text-primary smooth-transition">تماس</a>
+            </div>
+
+            <div class="text-gray-500 text-sm">
+                © ۲۰۲۴ عرشیا قربانی. تمامی حقوق محفوظ است.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Project Modal -->
+    <div id="project-modal" class="fixed inset-0 z-50 popup-overlay hidden">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="material-card rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+                <div class="p-8">
+                    <!-- هدر مودال -->
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 id="modal-title" class="text-3xl font-bold gradient-text"></h2>
+                        <button onclick="closeProjectModal()" class="text-gray-400 hover:text-white smooth-transition">
+                            <span class="material-icons text-3xl">close</span>
+                        </button>
+                    </div>
+
+                    <!-- محتوای مودال -->
+                    <div id="modal-content" class="space-y-6">
+                        <!-- محتوا به صورت داینامیک اضافه می‌شود -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // متغیرهای Three.js
+        let scene, camera, renderer, particles;
+
+        // راه‌اندازی Three.js
+        function initThreeJS() {
+            // ایجاد صحنه
+            scene = new THREE.Scene();
+
+            // ایجاد دوربین
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 5;
+
+            // ایجاد رندرر
+            renderer = new THREE.WebGLRenderer({
+                canvas: document.getElementById('three-canvas'),
+                alpha: true
+            });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+
+            // ایجاد ذرات
+            createParticles();
+
+            // شروع انیمیشن
+            animate();
+
+            // مدیریت تغییر اندازه صفحه
+            window.addEventListener('resize', onWindowResize);
+        }
+
+        // ایجاد ذرات زیبا
+        function createParticles() {
+            const geometry = new THREE.BufferGeometry();
+            const particleCount = 1000;
+
+            const positions = new Float32Array(particleCount * 3);
+            const colors = new Float32Array(particleCount * 3);
+
+            // رنگ سبز اصلی
+            const color = new THREE.Color(0x21C55D);
+
+            for (let i = 0; i < particleCount; i++) {
+                // موقعیت تصادفی
+                positions[i * 3] = (Math.random() - 0.5) * 20;
+                positions[i * 3 + 1] = (Math.random() - 0.5) * 20;
+                positions[i * 3 + 2] = (Math.random() - 0.5) * 20;
+
+                // رنگ با تنوع
+                const intensity = Math.random() * 0.5 + 0.5;
+                colors[i * 3] = color.r * intensity;
+                colors[i * 3 + 1] = color.g * intensity;
+                colors[i * 3 + 2] = color.b * intensity;
+            }
+
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+            // متریال ذرات
+            const material = new THREE.PointsMaterial({
+                size: 0.05,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.8,
+                blending: THREE.AdditiveBlending
+            });
+
+            particles = new THREE.Points(geometry, material);
+            scene.add(particles);
+        }
+
+        // انیمیشن
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // چرخش نرم ذرات
+            if (particles) {
+                particles.rotation.x += 0.001;
+                particles.rotation.y += 0.002;
+
+                // حرکت موجی
+                const positions = particles.geometry.attributes.position.array;
+                const time = Date.now() * 0.001;
+
+                for (let i = 0; i < positions.length; i += 3) {
+                    positions[i + 1] += Math.sin(time + positions[i] * 0.1) * 0.001;
+                }
+
+                particles.geometry.attributes.position.needsUpdate = true;
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        // مدیریت تغییر اندازه
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        // اسکرول نرم به بخش
+        function scrollToSection(sectionId) {
+            document.getElementById(sectionId).scrollIntoView({
+                behavior: 'smooth'
+            });
+        }
+
+        // مدیریت منوی موبایل
+        document.getElementById('mobile-menu-btn').addEventListener('click', function () {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // بستن منوی موبایل هنگام کلیک روی آیتم
+        document.querySelectorAll('.mobile-menu-item').forEach(item => {
+            item.addEventListener('click', function () {
+                document.getElementById('mobile-menu').classList.add('hidden');
+            });
+        });
+
+        // مدیریت فرم تماس
+        function handleContactForm(event) {
+            event.preventDefault();
+
+            // نمایش پیام موفقیت (نمونه)
+            alert('پیام شما با موفقیت ارسال شد! به زودی با شما تماس خواهم گرفت.');
+
+            // ریست کردن فرم
+            event.target.reset();
+        }
+
+        // داده‌های پروژه‌ها
+        const projectsData = {
+            pycod: {
+                title: 'PyCod - پلتفرم آموزشی پایتون',
+                description: 'PyCod یک پلتفرم جامع و کامل برای آموزش زبان برنامه‌نویسی پایتون و کتابخانه‌های مرتبط با آن است که با هدف ارائه بهترین محتوای آموزشی به زبان فارسی طراحی شده است.',
+                features: [
+                    'آموزش کامل پایتون از مبتدی تا پیشرفته',
+                    'پروژه‌های عملی و کاربردی',
+                    'کتابخانه‌های محبوب مثل Django، Flask، NumPy',
+                    'سیستم تست آنلاین کد',
+                    'انجمن پرسش و پاسخ',
+                    'گواهینامه معتبر پس از اتمام دوره'
+                ],
+                technologies: ['Python', 'Django', 'PostgreSQL', 'Redis', 'Docker', 'AWS'],
+                role: 'موسس، متخصص سئو و مدیر محتوا',
+                duration: '۲ سال',
+                status: 'فعال',
+                achievements: [
+                    'بیش از ۱۰,۰۰۰ کاربر فعال',
+                    'رتبه اول در جستجوی "آموزش پایتون"',
+                    'افزایش ۳۰۰% ترافیک ارگانیک',
+                    'نرخ تبدیل ۱۵% از بازدیدکننده به کاربر'
+                ]
+            },
+            ecommerce: {
+                title: 'فروشگاه آنلاین مد و پوشاک',
+                description: 'طراحی و توسعه فروشگاه آنلاین مدرن برای برند مد و پوشاک با تمرکز بر تجربه کاربری بهینه و افزایش نرخ تبدیل.',
+                features: [
+                    'طراحی ریسپانسیو و مدرن',
+                    'سیستم مدیریت محصولات پیشرفته',
+                    'درگاه پرداخت امن',
+                    'سیستم مدیریت سفارشات',
+                    'پنل مدیریت جامع',
+                    'بهینه‌سازی سئو کامل'
+                ],
+                technologies: ['WordPress', 'WooCommerce', 'PHP', 'MySQL', 'JavaScript', 'CSS3'],
+                role: 'طراح و توسعه‌دهنده فول‌استک',
+                duration: '۴ ماه',
+                status: 'تکمیل شده',
+                achievements: [
+                    'افزایش ۲۰۰% در فروش آنلاین',
+                    'کاهش ۴۰% نرخ خروج از سایت',
+                    'افزایش ۱۵۰% زمان حضور در سایت',
+                    'رتبه‌بندی در صفحه اول گوگل'
+                ]
+            },
+            corporate: {
+                title: 'وب‌سایت شرکت مهندسی',
+                description: 'طراحی و توسعه وب‌سایت شرکتی مدرن برای شرکت مهندسی با تمرکز بر نمایش خدمات و جذب مشتریان جدید.',
+                features: [
+                    'طراحی حرفه‌ای و مدرن',
+                    'نمایش پروژه‌ها و خدمات',
+                    'فرم تماس پیشرفته',
+                    'بلاگ تخصصی',
+                    'پنل مدیریت محتوا',
+                    'بهینه‌سازی سرعت بارگذاری'
+                ],
+                technologies: ['HTML5', 'CSS3', 'JavaScript', 'PHP', 'MySQL', 'Bootstrap'],
+                role: 'طراح UI/UX و توسعه‌دهنده فرانت‌اند',
+                duration: '۳ ماه',
+                status: 'تکمیل شده',
+                achievements: [
+                    'افزایش ۱۸۰% درخواست مشاوره',
+                    'بهبود ۶۰% در رتبه‌بندی سئو',
+                    'کاهش ۵۰% زمان بارگذاری صفحات',
+                    'افزایش ۲۵% نرخ تبدیل'
+                ]
+            },
+            webapp: {
+                title: 'اپلیکیشن مدیریت پروژه',
+                description: 'توسعه اپلیکیشن وب پیشرفته برای مدیریت پروژه‌ها و تیم‌ها با امکانات کامل ردیابی وظایف و گزارش‌گیری.',
+                features: [
+                    'داشبورد تعاملی و زیبا',
+                    'مدیریت پروژه‌ها و وظایف',
+                    'سیستم اعلانات real-time',
+                    'گزارش‌گیری پیشرفته',
+                    'مدیریت تیم و کاربران',
+                    'تقویم و زمان‌بندی'
+                ],
+                technologies: ['React', 'Node.js', 'MongoDB', 'Socket.io', 'Express', 'Material-UI'],
+                role: 'توسعه‌دهنده فول‌استک',
+                duration: '۶ ماه',
+                status: 'در حال توسعه',
+                achievements: [
+                    'بیش از ۵۰۰ کاربر فعال',
+                    'کاهش ۴۰% زمان مدیریت پروژه',
+                    'افزایش ۳۰% بهره‌وری تیم‌ها',
+                    'رضایت ۹۵% کاربران'
+                ]
+            },
+            blog: {
+                title: 'بلاگ تخصصی تکنولوژی',
+                description: 'طراحی و توسعه بلاگ تخصصی در حوزه تکنولوژی و برنامه‌نویسی با تمرکز بر تولید محتوای باکیفیت و سئو.',
+                features: [
+                    'طراحی مینیمال و خوانا',
+                    'سیستم مدیریت محتوا',
+                    'دسته‌بندی و تگ‌گذاری هوشمند',
+                    'سیستم نظرات',
+                    'اشتراک‌گذاری اجتماعی',
+                    'بهینه‌سازی سئو کامل'
+                ],
+                technologies: ['WordPress', 'PHP', 'MySQL', 'JavaScript', 'SCSS', 'Gulp'],
+                role: 'طراح و توسعه‌دهنده',
+                duration: '۲ ماه',
+                status: 'تکمیل شده',
+                achievements: [
+                    'افزایش ۴۰۰% ترافیک ارگانیک',
+                    'رتبه اول در ۲۰+ کلمه کلیدی',
+                    'افزایش ۲۵۰% زمان حضور',
+                    'بیش از ۱۰۰ مقاله منتشر شده'
+                ]
+            },
+            portfolio: {
+                title: 'پورتفولیو آنلاین هنرمند',
+                description: 'طراحی پورتفولیو آنلاین منحصر به فرد برای هنرمند با گالری تعاملی و امکانات نمایش آثار هنری.',
+                features: [
+                    'گالری تصاویر تعاملی',
+                    'طراحی منحصر به فرد',
+                    'انیمیشن‌های نرم و زیبا',
+                    'بخش درباره هنرمند',
+                    'فرم تماس و سفارش',
+                    'بهینه‌سازی برای موبایل'
+                ],
+                technologies: ['HTML5', 'CSS3', 'JavaScript', 'GSAP', 'Lightbox', 'Sass'],
+                role: 'طراح UI/UX و توسعه‌دهنده',
+                duration: '۶ هفته',
+                status: 'تکمیل شده',
+                achievements: [
+                    'افزایش ۳۰۰% درخواست سفارش',
+                    'بهبود ۸۰% تجربه کاربری',
+                    'افزایش ۲۰۰% فالوور اجتماعی',
+                    'جایزه بهترین طراحی سال'
+                ]
+            }
+        };
+
+        // باز کردن مودال پروژه
+        function openProjectModal(projectId) {
+            const project = projectsData[projectId];
+            if (!project) return;
+
+            const modal = document.getElementById('project-modal');
+            const title = document.getElementById('modal-title');
+            const content = document.getElementById('modal-content');
+
+            title.textContent = project.title;
+
+            content.innerHTML = `
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-xl font-bold mb-4 text-primary">توضیحات پروژه</h3>
+                        <p class="text-gray-300 leading-relaxed mb-6">${project.description}</p>
+                        
+                        <h4 class="text-lg font-semibold mb-3 text-primary">ویژگی‌های کلیدی:</h4>
+                        <ul class="space-y-2 mb-6">
+                            ${project.features.map(feature => `
+                                <li class="flex items-center gap-2 text-gray-300">
+                                    <span class="material-icons text-primary text-sm">check_circle</span>
+                                    ${feature}
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h4 class="text-lg font-semibold mb-3 text-primary">اطلاعات پروژه:</h4>
+                        <div class="space-y-4 mb-6">
+                            <div class="flex justify-between p-3 bg-black/30 rounded-lg">
+                                <span class="text-gray-400">نقش من:</span>
+                                <span class="text-white">${project.role}</span>
+                            </div>
+                            <div class="flex justify-between p-3 bg-black/30 rounded-lg">
+                                <span class="text-gray-400">مدت زمان:</span>
+                                <span class="text-white">${project.duration}</span>
+                            </div>
+                            <div class="flex justify-between p-3 bg-black/30 rounded-lg">
+                                <span class="text-gray-400">وضعیت:</span>
+                                <span class="text-primary">${project.status}</span>
+                            </div>
+                        </div>
+                        
+                        <h4 class="text-lg font-semibold mb-3 text-primary">تکنولوژی‌های استفاده شده:</h4>
+                        <div class="flex flex-wrap gap-2 mb-6">
+                            ${project.technologies.map(tech => `
+                                <span class="bg-primary/20 text-primary px-3 py-1 rounded-full text-sm">${tech}</span>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-8">
+                    <h4 class="text-lg font-semibold mb-4 text-primary">دستاوردها و نتایج:</h4>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        ${project.achievements.map(achievement => `
+                            <div class="flex items-center gap-3 p-4 bg-black/30 rounded-lg">
+                                <span class="material-icons text-primary">trending_up</span>
+                                <span class="text-gray-300">${achievement}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // بستن مودال پروژه
+        function closeProjectModal() {
+            const modal = document.getElementById('project-modal');
+            modal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        // بستن مودال با کلیک روی پس‌زمینه
+        document.getElementById('project-modal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                closeProjectModal();
+            }
+        });
+
+        // انیمیشن اسکرول
+        function handleScrollAnimations() {
+            const elements = document.querySelectorAll('.slide-up, .fade-in');
+
+            elements.forEach(element => {
+                const elementTop = element.getBoundingClientRect().top;
+                const elementVisible = 150;
+
+                if (elementTop < window.innerHeight - elementVisible) {
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
+                }
+            });
+        }
+
+        // راه‌اندازی اولیه
+        document.addEventListener('DOMContentLoaded', function () {
+            // راه‌اندازی Three.js
+            initThreeJS();
+
+            // انیمیشن اسکرول
+            window.addEventListener('scroll', handleScrollAnimations);
+            handleScrollAnimations();
+
+            // تنظیم انیمیشن اولیه عناصر
+            const animatedElements = document.querySelectorAll('.slide-up, .fade-in');
+            animatedElements.forEach(element => {
+                element.style.opacity = '0';
+                element.style.transform = 'translateY(30px)';
+                element.style.transition = 'all 0.6s ease-out';
+            });
+        });
+    </script>
+    <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'9724113861cc975a',t:'MTc1NTcxNTczMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
+</body>
+
+</html>
