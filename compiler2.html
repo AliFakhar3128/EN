@@ -21,10 +21,6 @@
             }
         }
     </script>
-
-    <!-- Vazir Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Vazir:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
     <!-- Roboto Mono for code -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 
@@ -33,13 +29,155 @@
 
     <!-- CodeMirror CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/default.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css">
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/moxer.min.css"> -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/show-hint.min.css">
 
     <style>
+        .cm-s-moxer.CodeMirror {
+            background-color: #111827;
+            color: #8e95b4;
+            line-height: 1.8;
+            border: none;
+        }
+
+        .cm-s-moxer .CodeMirror-gutters {
+            background: #111827;
+            color: #35394b;
+            border-right: solid 1px #1e283d;
+        }
+
+        .cm-s-moxer .CodeMirror-guttermarker,
+        .cm-s-moxer .CodeMirror-guttermarker-subtle,
+        .cm-s-moxer .CodeMirror-linenumber {
+            color: #35394b
+        }
+
+        .cm-s-moxer .CodeMirror-cursor {
+            border-left: 1px solid #fc0
+        }
+
+        .cm-s-moxer div.CodeMirror-selected {
+            background: rgba(128, 203, 196, .2)
+        }
+
+        .cm-s-moxer.CodeMirror-focused div.CodeMirror-selected {
+            background: #212431
+        }
+
+        .cm-s-moxer .CodeMirror-line::selection,
+        .cm-s-moxer .CodeMirror-line>span::selection,
+        .cm-s-moxer .CodeMirror-line>span>span::selection {
+            background: #212431
+        }
+
+        .cm-s-moxer .CodeMirror-line::-moz-selection,
+        .cm-s-moxer .CodeMirror-line>span::-moz-selection,
+        .cm-s-moxer .CodeMirror-line>span>span::-moz-selection {
+            background: #212431
+        }
+
+        .cm-s-moxer .CodeMirror-activeline-background,
+        .cm-s-moxer .CodeMirror-activeline-gutter .CodeMirror-linenumber {
+            background: rgba(33, 36, 49, .5)
+        }
+
+        .cm-s-moxer .cm-keyword {
+            color: #d46c6c
+        }
+
+        .cm-s-moxer .cm-operator {
+            color: #d46c6c
+        }
+
+        .cm-s-moxer .cm-variable-2 {
+            color: #81c5da
+        }
+
+        .cm-s-moxer .cm-type,
+        .cm-s-moxer .cm-variable-3 {
+            color: #f07178
+        }
+
+        .cm-s-moxer .cm-builtin {
+            color: #ffcb6b
+        }
+
+        .cm-s-moxer .cm-atom {
+            color: #a99be2
+        }
+
+        .cm-s-moxer .cm-number {
+            color: #7ca4c0
+        }
+
+        .cm-s-moxer .cm-def {
+            color: #f5dfa5
+        }
+
+        .cm-s-moxer .CodeMirror-line .cm-def~.cm-def {
+            color: #81c5da
+        }
+
+        .cm-s-moxer .cm-string {
+            color: #b2e4ae
+        }
+
+        .cm-s-moxer .cm-string-2 {
+            color: #f07178
+        }
+
+        .cm-s-moxer .cm-comment {
+            color: #3f445a
+        }
+
+        .cm-s-moxer .cm-variable {
+            color: #8e95b4
+        }
+
+        .cm-s-moxer .cm-tag {
+            color: #ff5370
+        }
+
+        .cm-s-moxer .cm-meta {
+            color: #ffcb6b
+        }
+
+        .cm-s-moxer .cm-attribute {
+            color: #c792ea
+        }
+
+        .cm-s-moxer .cm-property {
+            color: #81c5da
+        }
+
+        .cm-s-moxer .cm-qualifier {
+            color: #decb6b
+        }
+
+        .cm-s-moxer .cm-type,
+        .cm-s-moxer .cm-variable-3 {
+            color: #decb6b
+        }
+
+        .cm-s-moxer .cm-error {
+            color: #fff;
+            background-color: #ff5370
+        }
+
+        .cm-s-moxer .CodeMirror-matchingbracket {
+            text-decoration: underline;
+            color: #fff !important
+        }
+
+
+
+        @font-face {
+            font-family: morabba;
+            src: url(./Morabba.ttf);
+        }
+
         body {
-            font-family: 'Vazir', sans-serif;
+            font-family: 'morabba', sans-serif;
         }
 
         .CodeMirror {
@@ -147,13 +285,42 @@
         <header
             class="flex flex-col sm:flex-row justify-between items-center mb-8 bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 transition-colors duration-300">
             <div class="flex items-center space-x-4 space-x-reverse mb-4 sm:mb-0">
-                <div
-                    class="w-10 h-10 bg-gradient-to-br from-primary to-primary-dark rounded-lg flex items-center justify-center">
-                    <i class="fab fa-python text-white text-lg"></i>
-                </div>
+                <svg class="w-16" id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 514.51 434.35">
+                    <defs>
+                        <style>
+                            .cls-1,
+                            .cls-2 {
+                                fill: #21c55d;
+                                stroke-width: 0px;
+                            }
+
+                            .cls-2 {
+                                isolation: isolate;
+                                opacity: .35;
+                            }
+                        </style>
+                    </defs>
+                    <g id="Layer_1-2" data-name="Layer 1">
+                        <path class="cls-1"
+                            d="m426.54,320.98c-11.86-1.34-22.04,4.61-25.9,15.37-.91,2.53-2.18,3.4-4.86,3.29-5.37-.22-10.77-.19-16.15-.03-18.15.53-32.14,15.18-31.07,31.75.39,6.01.21,12.08.04,18.11-.22,8.08-2.25,15.57-8.19,21.5-6.03,6.03-13.51,10.1-21.66,11.19-10.97,1.46-22.18,1.09-33.28,1.66-3.04.16-3.77-1.03-3.76-3.86.1-25.21.22-50.42.04-75.62-.12-16.52,6.45-30.02,17.79-41.46,10.81-10.91,23.93-18.74,37.1-26.31,13.07-7.51,24.25-17.18,33.53-28.78,18.63-23.3,29.72-50.12,34.96-79.41.44-2.48,1.52-3.09,3.91-3.12,5.1-.07,10.28-.03,15.28-.89,12.57-2.18,22.92-8.03,29.31-19.62,4.43-8.03,4.95-17.08,6.1-25.81,1.05-8.01.64-16.25.48-24.38-.07-3.33.82-5.01,3.94-6.5,16.22-7.77,20.48-25.61,9.56-38.96-7.11-8.69-19.56-11.82-29.11-7.32-10.48,4.94-16.91,16.94-14.76,27.82,1.83,9.24,7.49,15.3,15.97,19.07,1.43.63,3.51,2.18,3.5,3.3-.09,12.32-.02,24.68-1.07,36.93-.73,8.46-4.89,15.63-12.37,20.54-8.95,5.87-18.84,5.37-28.59,5.05-1.22-9.48-2.28-18.69-3.6-27.86-1.87-13-4.46-25.87-10.08-37.85-9.87-21.04-23.36-39.42-41.09-54.58-17.83-15.24-37.85-26.31-60.88-31.4C278.61-.07,265.35-.07,252.09.03c-18.11.12-35.37,4.11-51.96,11.08-19.45,8.17-35.67,21.07-49.98,36.24-12.67,13.42-23.09,28.56-29.57,46.04-6.85,18.49-9.57,37.79-10.32,57.39-.12,3.2-.83,4.52-4.21,4.19-3.78-.38-7.61-.22-11.4-.5-16.07-1.16-27.98-13.32-28.39-29.28-.27-10.37-.04-20.74-.14-31.11-.02-2.17.76-3.26,2.82-4.02,9.19-3.4,14.94-9.96,16.98-19.54,3.5-16.46-10.01-34.53-29.86-30.72-11.82,2.26-19.51,11.78-20.56,24.24-.9,10.71,5.94,21.53,16.55,25.6,2.53.97,3.38,2.16,3.32,4.79-.17,7.35-.44,14.73.03,22.05.46,7.14.79,14.56,2.96,21.27,5.39,16.67,18.37,24.54,35.01,26.92,5.67.81,11.46.69,16.77.97,1.91,7.7,4.15,15.1,5.53,22.66,1.84,10.06,5.57,19.27,10.02,28.41,12.85,26.38,31.65,46.81,57.35,61.27,13.78,7.76,27.29,16.27,37.6,28.77,7.28,8.83,12.64,18.82,12.94,30.22.74,27.81.54,55.65.78,83.48.02,2.55-.94,3.43-3.49,3.38-6.82-.13-13.66-.22-20.48.03-8.03.3-15.57-1.17-22.86-4.62-10.17-4.82-17.28-12.18-18.56-23.59-1.06-9.47-1.1-19.07-1.38-28.62-.41-13.95-11.59-25.92-25.5-26.74-7.06-.42-14.15-.45-21.23-.39-2.65.02-3.75-.84-4.74-3.36-7.19-18.32-27.28-19.04-38.86-10.47-9.48,7.01-11.84,21-5.95,31.59,6.09,10.93,18.96,15.75,30.8,11.48,8.58-3.1,12.95-9.8,15.27-18.46,7.88,0,15.36,0,22.83,0,.53,0,1.05-.03,1.58,0,8.66.67,15.52,7.83,15.04,15.6-.42,6.8-.2,13.66.13,20.47.5,10.41,3.08,20.29,9.84,28.5,10.29,12.49,23.97,18.75,39.88,18.94,32.69.4,65.38,0,98.07.17,11.88.06,22.9-2.71,32.98-8.82,11.19-6.78,18.91-16.36,20.39-29.7.95-8.57.88-17.27,1.04-25.92.22-11.92,7.59-19.32,19.5-19.27,5.38.02,10.78.29,16.14-.06,3.38-.22,4.81.92,5.93,4.03,4.48,12.47,16.31,16.73,25.1,15.83,17.23-1.76,23.51-14.57,22.33-29.04-.91-11.24-9.93-19.08-21.65-20.4Zm14.43-255.46c.03-8.26,5.87-14.62,13.3-14.53,7.77.1,14.26,6.69,14.14,14.44-.11,6.62-6.27,14.35-13.95,13.46-7.82.83-13.51-7.13-13.49-13.37Zm-393.48-.7c.05-7.5,6.63-13.85,14.23-13.72,6.93.12,12.95,6.46,12.93,13.61-.03,8.01-5.88,14.07-13.67,14.14-7.08.07-13.53-6.65-13.49-14.03Zm45.16,294.33c-6.86.02-12.55-5.66-12.5-12.47.07-8.53,6.23-14.51,14.81-14.37,5.88.1,11.22,6.27,11.22,12.97,0,6.9-6.79,13.85-13.53,13.87Zm182.41-35.76c-3.58,9.73-3.32,19.88-3.44,29.93-.26,21.53-.07,43.06-.06,64.59,0,1.8,0,3.59,0,5.63h-27.19c0-3.32,0-6.43,0-9.54.03-22.05-.13-44.11.12-66.16.33-28.38-12.96-49.31-35.31-65.25-12.48-8.9-25.78-16.7-37.83-26.13-25.41-19.87-41.4-45.94-47.87-77.64-6.05-29.65-3.36-58.69,9.22-86.1,11.04-24.03,28.63-43.05,50.44-58.13,16.93-11.71,35.66-18.91,55.83-22.1,37.46-5.93,70.79,3.93,100.51,27.22,24.27,19.02,40.81,43.17,50.34,72.45,11.44,35.16,6.56,68.43-10.09,100.72-12.45,24.15-30.34,43.21-52.93,58.02-6.46,4.24-13.26,7.98-19.65,12.31-14.82,10.05-25.84,23.19-32.09,40.18Zm149.04,35.75c-6.92-.06-13.1-6.76-13-14.08.1-6.95,5.83-12.82,12.36-12.67,7.26.17,13.45,6.65,13.45,14.08,0,6.76-6.04,12.73-12.81,12.67Z" />
+                        <path class="cls-1"
+                            d="m513.76,192.34c-2.68-10.73-12.24-18.18-23.25-18.3-11.86-.13-21.32,6.52-24.22,17.41-.64,2.39-1.68,2.84-3.78,2.77-3.67-.12-7.36-.21-11.02-.06-10.54.43-19.15,4.74-25.77,13.02-6.11,7.63-7.05,16.81-7.56,25.98-.43,7.59-.01,15.23-.11,22.84-.15,12.54-6.98,22.31-18.94,26.08-4.91,1.55-10.24,1.96-15.42,2.35-7.04.54-14.23-.14-21.15.95-16.07,2.54-28.64,10.87-37.56,24.66-8.43,13.02-11.41,27.45-11.49,42.66-.09,16.54-.05,33.09-.04,49.63,0,.99.17,1.97.29,3.39,1.01-.68,1.68-1.04,2.22-1.52,5.77-5.12,8.12-11.79,8.2-19.27.13-12.08-.21-24.17.16-36.23.19-6.11.85-12.34,2.38-18.24,5.03-19.35,21.05-35.68,44.89-35.2,7.46.15,14.95-.18,22.39-.81,18.57-1.58,35.33-15.1,35.05-37.28-.11-9.06-.05-18.12.04-27.18.15-15.73,9.73-25.25,25.34-25.29,2.76,0,5.53.17,8.27-.05,2.38-.18,3.37.8,4.2,2.95,4.88,12.73,17.9,18.77,30.65,14.84,13.25-4.08,19.21-18.21,16.24-30.1Zm-23.75,19.5c-7.24-.02-12.89-5.64-12.75-12.69.16-8.15,5.01-13.37,12.33-13.28,7.69.1,13.18,5.63,13.09,13.17-.08,7.11-5.73,12.81-12.67,12.79Z" />
+                        <path class="cls-1"
+                            d="m86.54,229.57c.18,9.69-.16,19.44.77,29.07,1.49,15.45,8.69,27.28,23.92,33.05,7.01,2.66,14.3,2.87,21.68,3.08,8.36.24,16.94.21,25.02,2.07,21.68,4.99,32.78,25.55,33.61,45.66.59,14.15.08,28.35.4,42.52.19,8.5,3.14,15.8,11.12,20.51-.28-13.58-.49-26.68-.83-39.77-.25-9.7,0-19.47-1.16-29.06-1.9-15.73-8.46-29.5-20.85-39.81-11.41-9.5-24.99-12.48-39.62-12.52-7.78-.02-15.75-.64-23.3-2.4-11.57-2.71-18.06-11.01-19.24-22.65-1.08-10.67-1.1-21.46-1.55-32.19-.68-16.08-10.66-28.47-26.49-31.79-5.7-1.2-11.73-.92-17.61-1.09-2.05-.06-3.33-.22-4.05-2.57-2.84-9.25-12-17.97-24.8-17.15-12.57.81-20.31,6.98-23.18,20.74-2.1,10.07,4.35,22.78,13.77,26.71,12.63,5.26,29,.18,33.99-14.27.39-1.14,1.64-2.84,2.47-2.82,6.54.11,13.25-.24,19.57,1.12,10.29,2.21,16.12,11.38,16.34,23.58Zm-61.78-17.66c-8.86-.09-12.59-5.95-13.08-13.23-.48-7.11,5.94-12.97,13.39-12.98,7.92-.01,13.34,5.5,13.19,13.41-.13,7.43-5.81,12.88-13.5,12.8Z" />
+                        <path class="cls-2"
+                            d="m323.45,80.37c0-15.59-12.64-28.23-28.23-28.23h-75.28c-15.59,0-28.23,12.64-28.23,28.23v150.55c0,15.59,12.64,28.23,28.23,28.23h75.28c15.59,0,28.23-12.64,28.23-28.23V80.37Z" />
+                        <path class="cls-1"
+                            d="m276.4,221.52h-37.64c-5.19,0-9.41,4.22-9.41,9.41s4.22,9.41,9.41,9.41h37.64c5.19,0,9.41-4.22,9.41-9.41s-4.22-9.41-9.41-9.41Z" />
+                        <path class="cls-1"
+                            d="m215.24,193.29c-3.97,0-7.93-1.67-10.72-4.93l-28.23-32.93c-4.54-5.29-4.54-13.09,0-18.37l28.23-32.93c5.08-5.93,13.99-6.6,19.9-1.53,5.92,5.07,6.61,13.98,1.53,19.9l-20.35,23.75,20.35,23.75c5.08,5.92,4.38,14.83-1.53,19.9-2.66,2.28-5.93,3.4-9.18,3.4Z" />
+                        <path class="cls-1"
+                            d="m299.93,193.29c-3.26,0-6.52-1.12-9.18-3.4-5.92-5.07-6.61-13.98-1.53-19.9l20.35-23.75-20.35-23.75c-5.08-5.92-4.38-14.83,1.53-19.9,5.91-5.07,14.83-4.39,19.9,1.53l28.23,32.93c4.54,5.29,4.54,13.09,0,18.37l-28.23,32.93c-2.79,3.26-6.75,4.93-10.72,4.93Z" />
+                    </g>
+                </svg>
                 <div>
-                    <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Python Code Editor</h1>
-                    <p class="text-sm text-gray-600 dark:text-gray-400">pycod.ir - Python 3.13.5</p>
+                    <h1 class="text-3xl font-bold text-gray-800 dark:text-white">کد ادیتور آنلاین پایتون</h1>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">pycod.ir</p>
                 </div>
             </div>
 
@@ -165,7 +332,7 @@
                         <i class="fas fa-info-circle text-gray-600 dark:text-gray-300"></i>
                     </button>
                     <div id="shortcutsTooltip"
-                        class="tooltip absolute bottom-12 right-0 bg-gray-800 dark:bg-gray-700 text-white text-xs rounded-lg p-3 w-64 shadow-lg">
+                        class="tooltip absolute top-12 right-0 bg-gray-800 dark:bg-gray-700 text-white text-sm rounded-lg p-3 w-64 shadow-lg">
                         <div class="font-semibold mb-2">میانبرهای کیبورد:</div>
                         <div class="space-y-1">
                             <div>Ctrl+Enter: اجرای کد</div>
@@ -176,14 +343,6 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Theme Toggle -->
-                <button id="themeToggle"
-                    class="flex items-center space-x-2 space-x-reverse bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 px-4 py-2 rounded-lg transition-colors duration-200">
-                    <i id="sunIcon" class="fas fa-sun text-yellow-500 dark:hidden"></i>
-                    <i id="moonIcon" class="fas fa-moon text-blue-400 hidden dark:block"></i>
-                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">تغییر تم</span>
-                </button>
             </div>
         </header>
 
@@ -320,8 +479,8 @@
 
         <!-- Footer -->
         <footer class="mt-12 text-center py-6 border-t border-gray-200 dark:border-gray-700">
-            <p class="text-gray-600 dark:text-gray-400 text-sm">
-                © 2025 pycod.ir - All Rights Reserved
+            <p class="text-gray-600 dark:text-gray-400 text-md">
+                کلیه حقوق محتوای این سایت مرتبط با <a class="text-green-500" href="https://pycod.ir/">پایکد</a> میباشد ©
             </p>
         </footer>
 
@@ -331,7 +490,7 @@
             <div
                 class="bg-white dark:bg-gray-800 rounded-xl p-6 flex items-center space-x-4 space-x-reverse shadow-2xl">
                 <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-                <span class="text-gray-700 dark:text-gray-300 font-medium">در حال بارگذاری Pyodide...</span>
+                <span class="text-gray-700 dark:text-gray-300 font-medium">در حال بارگذاری...</span>
             </div>
         </div>
     </div>
@@ -350,7 +509,7 @@
     <script>
         let editor;
         let pyodide;
-        let isDarkMode = false;
+        let isDarkMode = true;
         let isFullscreen = false;
         let currentFileIndex = 0;
         let files = [
@@ -501,7 +660,7 @@ print("نمودار ایجاد شد!")`
         function initializeEditor() {
             editor = CodeMirror(document.getElementById('editor'), {
                 mode: 'python',
-                theme: isDarkMode ? 'monokai' : 'default',
+                theme: isDarkMode ? 'moxer' : 'default',
                 lineNumbers: true,
                 autoCloseBrackets: true,
                 matchBrackets: true,
@@ -553,8 +712,8 @@ print("نمودار ایجاد شد!")`
             files.forEach((file, index) => {
                 const tab = document.createElement('button');
                 tab.className = `px-3 py-1 rounded-lg text-sm transition-colors duration-200 ${index === currentFileIndex
-                        ? 'tab-active'
-                        : 'bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300'
+                    ? 'tab-active'
+                    : 'bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300'
                     }`;
                 tab.innerHTML = `
                     <span>${file.name}</span>
@@ -640,7 +799,14 @@ print("نمودار ایجاد شد!")`
                 // Install matplotlib for graphics
                 await pyodide.loadPackage(['matplotlib', 'numpy']);
 
-                console.log('Pyodide loaded successfully with Python 3.13.5 support');
+                console.log('Pyodide loaded successfully');
+
+                pyodide.runPython(`
+import matplotlib.pyplot as plt
+def show():
+    pass  # کاری انجام نده
+plt.show = show
+`);
             } catch (error) {
                 console.error('Failed to load Pyodide:', error);
                 showOutput('خطا در بارگذاری Pyodide: ' + error.message, 'error');
@@ -711,10 +877,43 @@ sys.stderr = sys.__stderr__
                 const errorMessage = error.message;
                 showOutput('خطا در اجرای کد:\n' + errorMessage, 'error');
                 highlightErrors(errorMessage);
-            } finally {
+            }
+            finally {
+                // پردازش و نمایش خروجی گرافیکی matplotlib
+                let imgStr = null;
+                try {
+                    const graphicsCode = `
+import io
+import base64
+import matplotlib.pyplot as plt
+
+if plt.get_fignums():
+    buf = io.BytesIO()
+    plt.savefig(buf, format='png', bbox_inches='tight', dpi=100)
+    buf.seek(0)
+    img_str = 'data:image/png;base64,' + base64.b64encode(buf.read()).decode('utf-8')
+    plt.close('all')  # بستن همه نمودارها برای پاکسازی
+else:
+    img_str = None
+`;
+                    pyodide.runPython(graphicsCode);
+                    imgStr = pyodide.runPython('img_str');
+                } catch (error) {
+                    console.error('Error capturing matplotlib output:', error);
+                }
+
+                // نمایش تصویر در بخش گرافیکی
+                const graphicsOutput = document.getElementById('graphicsOutput');
+                if (imgStr) {
+                    graphicsOutput.innerHTML = `<img src="${imgStr}" class="max-w-full h-auto mx-auto">`;
+                    // نمایش خودکار بخش گرافیکی اگر پنهان است
+                    document.getElementById('canvasContainer').classList.remove('hidden');
+                } else {
+                    graphicsOutput.innerHTML = '<span class="text-gray-500 dark:text-gray-400">هیچ خروجی گرافیکی وجود ندارد</span>';
+                }
                 // Re-enable button
                 runButton.disabled = false;
-                runButtonText.innerHTML = '<i class="fas fa-play mr-2"></i>اجرای کد';
+                runButtonText.innerHTML = 'اجرای کد';
             }
         }
 
@@ -772,44 +971,6 @@ sys.stderr = sys.__stderr__
             clearErrorHighlights();
         }
 
-        // Toggle theme
-        function toggleTheme() {
-            isDarkMode = !isDarkMode;
-            const html = document.documentElement;
-            const sunIcon = document.getElementById('sunIcon');
-            const moonIcon = document.getElementById('moonIcon');
-
-            if (isDarkMode) {
-                html.classList.add('dark');
-                sunIcon.classList.add('hidden');
-                moonIcon.classList.remove('hidden');
-                if (editor) {
-                    editor.setOption('theme', 'monokai');
-                }
-            } else {
-                html.classList.remove('dark');
-                sunIcon.classList.remove('hidden');
-                moonIcon.classList.add('hidden');
-                if (editor) {
-                    editor.setOption('theme', 'default');
-                }
-            }
-
-            // Save theme preference
-            localStorage.setItem('pycod_theme', isDarkMode ? 'dark' : 'light');
-        }
-
-        // Load theme preference
-        function loadTheme() {
-            const savedTheme = localStorage.getItem('pycod_theme');
-            if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                isDarkMode = true;
-                document.documentElement.classList.add('dark');
-                document.getElementById('sunIcon').classList.add('hidden');
-                document.getElementById('moonIcon').classList.remove('hidden');
-            }
-        }
-
         // Fullscreen mode
         function toggleFullscreen() {
             const editorContainer = document.getElementById('editorContainer');
@@ -856,13 +1017,11 @@ sys.stderr = sys.__stderr__
 
         // Event listeners
         document.addEventListener('DOMContentLoaded', function () {
-            loadTheme();
             initializeEditor();
             initializePyodide();
 
             // Button event listeners
             document.getElementById('runButton').addEventListener('click', runCode);
-            document.getElementById('themeToggle').addEventListener('click', toggleTheme);
             document.getElementById('clearOutput').addEventListener('click', clearOutput);
             document.getElementById('fullscreenBtn').addEventListener('click', toggleFullscreen);
             document.getElementById('downloadBtn').addEventListener('click', downloadCode);
