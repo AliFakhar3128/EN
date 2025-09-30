@@ -1,0 +1,2283 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mokhatab - خدمات تبلیغاتی</title>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        body {
+            box-sizing: border-box;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: morabba;
+        }
+
+        :root {
+            --logo: #007AFF;
+            --primary-bg: #f0f0f3;
+            --secondary-bg: #e6e6e9;
+            --text-primary: #2c2c2c;
+            --text-secondary: #666666;
+            --accent: #007AFF;
+            --accent-hover: #0056CC;
+            --shadow-light: #ffffff;
+            --shadow-dark: #d1d1d4;
+            --neo-shadow: 8px 8px 15px #d1d1d4, -8px -8px 15px #ffffff;
+            --neo-shadow-inset: inset 6px 6px 12px #d1d1d4, inset -6px -6px 12px #ffffff;
+            --neo-shadow-hover: 4px 4px 8px #d1d1d4, -4px -4px 8px #ffffff;
+            --neo-shadow-pressed: inset 4px 4px 8px #d1d1d4, inset -4px -4px 8px #ffffff;
+        }
+
+        [data-theme="dark"] {
+            --logo: #ffffff;
+            --primary-bg: #2c2c2c;
+            --secondary-bg: #3a3a3a;
+            --text-primary: #ffffff;
+            --text-secondary: #cccccc;
+            --shadow-light: #404040;
+            --shadow-dark: #1a1a1a;
+            --neo-shadow: 8px 8px 15px #1a1a1a, -8px -8px 15px #404040;
+            --neo-shadow-inset: inset 6px 6px 12px #1a1a1a, inset -6px -6px 12px #404040;
+            --neo-shadow-hover: 4px 4px 8px #1a1a1a, -4px -4px 8px #404040;
+            --neo-shadow-pressed: inset 4px 4px 8px #1a1a1a, inset -4px -4px 8px #404040;
+        }
+
+        body {
+            background: var(--primary-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            transition: all 0.3s ease;
+            overflow-x: hidden;
+        }
+
+        /* Loading Screen */
+        .loading-screen {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--primary-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+
+        .loading-screen svg {
+            width: 100px;
+            height: 100px;
+            margin: 20px;
+            /* opacity: .5; */
+        }
+
+        .loading-screen span {
+            font-size: 1.2rem;
+            font-weight: 900;
+            color: #007AFF;
+            margin-bottom: 20px;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--primary-bg);
+            box-shadow: var(--neo-shadow);
+            position: relative;
+            animation: spin 2s linear infinite;
+        }
+
+        .loading-spinner::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            border-radius: 50%;
+            background: var(--accent);
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 0.3;
+            }
+
+            50% {
+                opacity: 1;
+            }
+        }
+
+        /* Revolutionary Header */
+        .header {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 40px);
+            max-width: 1200px;
+            padding: 1rem 2rem;
+            z-index: 1000;
+            background: var(--primary-bg);
+            border-radius: 25px;
+            box-shadow: var(--neo-shadow);
+            transition: all 0.3s ease;
+        }
+
+        .header.scrolled {
+            top: 10px;
+            width: calc(100% - 80px);
+            padding: 0.8rem 1.5rem;
+            box-shadow: var(--neo-shadow-hover);
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            background: linear-gradient(135deg, var(--accent) 0%, #00D4FF 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+        }
+
+        .logo::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(135deg, var(--accent) 0%, #00D4FF 100%);
+            border-radius: 2px;
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover::after {
+            transform: scaleX(1);
+        }
+
+        .logo svg {
+            width: 50px;
+            height: 50px;
+            color: var(--logo);
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 500;
+            padding: 0.8rem 1.5rem;
+            border-radius: 15px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .nav-link:hover {
+            color: var(--accent);
+            box-shadow: var(--neo-shadow-inset);
+            transform: translateY(-1px);
+        }
+
+        /* Mega Menu */
+        .nav-item {
+            position: relative;
+        }
+
+        .mega-menu {
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            width: 600px;
+            background: var(--primary-bg);
+            border-radius: 25px;
+            box-shadow: var(--neo-shadow);
+            padding: 2rem;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+        }
+
+        .nav-item:hover .mega-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .mega-menu-content {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+
+        .mega-menu-section h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--accent);
+        }
+
+        .mega-menu-item {
+            display: block;
+            padding: 0.8rem 1rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 12px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-bottom: 0.5rem;
+        }
+
+        .mega-menu-item:hover {
+            color: var(--accent);
+            background: var(--secondary-bg);
+            box-shadow: var(--neo-shadow-inset);
+            transform: translateX(5px);
+        }
+
+        /* Revolutionary Theme Toggle */
+        .theme-toggle {
+            width: 60px;
+            height: 30px;
+            background: var(--primary-bg);
+            border-radius: 25px;
+            box-shadow: var(--neo-shadow-inset);
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle::before {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background: var(--primary-bg);
+            border-radius: 50%;
+            box-shadow: var(--neo-shadow);
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle.dark::before {
+            transform: translateX(30px);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.05);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--primary-bg);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 15px;
+            box-shadow: var(--neo-shadow);
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            z-index: 1001;
+        }
+
+        .mobile-menu-btn:hover {
+            box-shadow: var(--neo-shadow-hover);
+            transform: scale(1.05);
+        }
+
+        .mobile-menu-btn.active {
+            box-shadow: var(--neo-shadow-pressed);
+        }
+
+        .mobile-menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 999;
+        }
+
+        .mobile-menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 80%;
+            max-width: 400px;
+            height: 100%;
+            background: var(--primary-bg);
+            box-shadow: var(--neo-shadow);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .mobile-menu.active {
+            right: 0;
+        }
+
+        .mobile-menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--shadow-dark);
+        }
+
+        .mobile-menu-close {
+            background: var(--primary-bg);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            box-shadow: var(--neo-shadow);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .mobile-menu-close:hover {
+            box-shadow: var(--neo-shadow-pressed);
+        }
+
+        .mobile-nav-item {
+            margin-bottom: 1rem;
+        }
+
+        .mobile-nav-link {
+            display: block;
+            padding: 1rem 1.5rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            border-radius: 15px;
+            background: var(--primary-bg);
+            box-shadow: var(--neo-shadow);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 500;
+        }
+
+        .mobile-nav-link:hover {
+            box-shadow: var(--neo-shadow-inset);
+            color: var(--accent);
+            transform: translateX(5px);
+        }
+
+        .mobile-submenu {
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-top: 0.5rem;
+        }
+
+        .mobile-submenu.active {
+            max-height: 300px;
+        }
+
+        .mobile-submenu-item {
+            padding: 0.8rem 1rem;
+            margin: 0.5rem 0;
+            background: var(--secondary-bg);
+            border-radius: 12px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            display: block;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .mobile-submenu-item:hover {
+            color: var(--accent);
+            box-shadow: var(--neo-shadow-inset);
+            transform: translateX(10px);
+        }
+
+        /* Three.js Hero Background */
+        #hero-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            background: var(--primary-bg);
+        }
+
+        .hero-content {
+            max-width: 800px;
+            z-index: 2;
+            position: relative;
+            background: var(--primary-bg);
+            padding: 3rem;
+            border-radius: 30px;
+            box-shadow: var(--neo-shadow);
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1.2rem 2.5rem;
+            background: var(--primary-bg);
+            color: var(--accent);
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: var(--neo-shadow);
+            border: 2px solid var(--accent);
+        }
+
+        .cta-button:hover {
+            box-shadow: var(--neo-shadow-inset);
+            transform: translateY(-2px);
+        }
+
+        /* Neo-morphism Sections */
+        .section {
+            padding: 5rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 3rem;
+            color: var(--text-primary);
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 4rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* About Section */
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .about-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: var(--text-secondary);
+            background: var(--primary-bg);
+            padding: 2rem;
+            border-radius: 25px;
+            box-shadow: var(--neo-shadow-inset);
+        }
+
+        .about-image {
+            width: 100%;
+            height: 400px;
+            border-radius: 25px;
+            background: var(--primary-bg);
+            box-shadow: var(--neo-shadow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .about-image:hover {
+            box-shadow: var(--neo-shadow-hover);
+            transform: translateY(-5px);
+        }
+
+        /* Services Grid with Neo-morphism */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .service-card {
+            padding: 2rem;
+            text-align: center;
+            background: var(--primary-bg);
+            border-radius: 25px;
+            box-shadow: var(--neo-shadow);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .service-card:hover {
+            box-shadow: var(--neo-shadow-inset);
+            transform: translateY(-3px);
+        }
+
+        /* Portfolio Popup */
+        .portfolio-popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .portfolio-popup.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .portfolio-popup-content {
+            background: var(--primary-bg);
+            border-radius: 25px;
+            box-shadow: var(--neo-shadow);
+            max-width: 800px;
+            width: 90%;
+            max-height: 90%;
+            overflow-y: auto;
+            transform: scale(0.8) translateY(50px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .portfolio-popup.active .portfolio-popup-content {
+            transform: scale(1) translateY(0);
+        }
+
+        .portfolio-popup-header {
+            position: relative;
+            height: 300px;
+            border-radius: 25px 25px 0 0;
+            overflow: hidden;
+        }
+
+        .portfolio-popup-header img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .portfolio-popup-close {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 50px;
+            height: 50px;
+            background: var(--primary-bg);
+            border: none;
+            border-radius: 15px;
+            box-shadow: var(--neo-shadow);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .portfolio-popup-close:hover {
+            box-shadow: var(--neo-shadow-pressed);
+            transform: scale(1.1);
+        }
+
+        .portfolio-popup-body {
+            padding: 2rem;
+        }
+
+        .portfolio-popup-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .portfolio-popup-description {
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+        }
+
+        .portfolio-popup-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .portfolio-detail-item {
+            background: var(--secondary-bg);
+            padding: 1rem;
+            border-radius: 15px;
+            box-shadow: var(--neo-shadow-inset);
+        }
+
+        .portfolio-detail-label {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .portfolio-detail-value {
+            color: var(--text-secondary);
+        }
+
+        .service-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            background: var(--primary-bg);
+            border-radius: 20px;
+            box-shadow: var(--neo-shadow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .service-card:hover .service-icon {
+            box-shadow: var(--neo-shadow-inset);
+        }
+
+        .service-card h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .service-card p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Portfolio Grid */
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .portfolio-item {
+            height: 250px;
+            border-radius: 25px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            background: var(--primary-bg);
+            box-shadow: var(--neo-shadow);
+            transition: all 0.3s ease;
+        }
+
+        .portfolio-item:hover {
+            box-shadow: var(--neo-shadow-inset);
+            transform: translateY(-3px) scale(1.01);
+        }
+
+        .portfolio-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .portfolio-item:hover img {
+            transform: scale(1.05);
+        }
+
+        .portfolio-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 2rem;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+            color: white;
+            z-index: 2;
+        }
+
+        .portfolio-content h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Team Grid */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .team-member {
+            text-align: center;
+            padding: 2rem;
+            background: var(--primary-bg);
+            border-radius: 25px;
+            box-shadow: var(--neo-shadow);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .team-member:hover {
+            box-shadow: var(--neo-shadow-inset);
+            transform: translateY(-5px);
+        }
+
+        .member-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            background: var(--primary-bg);
+            box-shadow: var(--neo-shadow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .team-member:hover .member-avatar {
+            box-shadow: var(--neo-shadow-inset);
+        }
+
+        .member-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .member-role {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        /* Revolutionary Clients Slider */
+        .clients-section {
+            padding: 5rem 0;
+            background: var(--secondary-bg);
+            overflow: hidden;
+        }
+
+        .clients-slider {
+            display: flex;
+            justify-content: center;
+            animation: slide 20s linear infinite;
+            gap: 2rem;
+        }
+
+        .client-logo {
+            min-width: 200px;
+            height: 100px;
+            background: var(--primary-bg);
+            border-radius: 20px;
+            box-shadow: var(--neo-shadow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .client-logo:hover {
+            box-shadow: var(--neo-shadow-inset);
+            transform: translateY(-5px);
+        }
+
+        .client-logo svg {
+            width: 100px;
+            height: fit-content;
+            color: #a7a7a7;
+            transition: all 0.3s ease;
+        }
+
+        .client-logo:hover svg {
+            color: #0056CC;
+            transition: all 0.3s ease;
+        }
+
+        /* @keyframes slide {
+            0% {
+                transform: translateX(0);
+            }
+
+            50% {
+                transform: translateX(-50%);
+            }
+
+            100% {
+                transform: translateX(0);
+            }
+        } */
+
+        /* Revolutionary Contact Form */
+        .contact-section {
+            background: var(--secondary-bg);
+            padding: 5rem 2rem;
+            position: relative;
+        }
+
+        .contact-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--primary-bg);
+            border-radius: 30px;
+            box-shadow: var(--neo-shadow);
+            padding: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contact-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, var(--accent), transparent);
+            opacity: 0.1;
+            animation: rotate 10s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .contact-form {
+            position: relative;
+            z-index: 2;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            position: relative;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 1.2rem;
+            border: none;
+            border-radius: 15px;
+            background: var(--primary-bg);
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 1rem;
+            box-shadow: var(--neo-shadow-inset);
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            box-shadow: var(--neo-shadow-inset), 0 0 0 3px rgba(0, 122, 255, 0.2);
+        }
+
+        .form-group label {
+            position: absolute;
+            top: 1.2rem;
+            right: 1.2rem;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        .form-group input:focus+label,
+        .form-group input:not(:placeholder-shown)+label,
+        .form-group textarea:focus+label,
+        .form-group textarea:not(:placeholder-shown)+label {
+            top: -0.5rem;
+            right: 0.8rem;
+            font-size: 0.8rem;
+            color: var(--accent);
+            background: var(--primary-bg);
+            padding: 0 0.5rem;
+            border-radius: 4px;
+            border: 1px solid var(--accent);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1.2rem;
+            background: var(--primary-bg);
+            color: var(--accent);
+            border: 2px solid var(--accent);
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: var(--neo-shadow);
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            box-shadow: var(--neo-shadow-inset);
+            transform: translateY(-2px);
+        }
+
+        /* Revolutionary Footer */
+        .footer {
+            background: var(--secondary-bg);
+            padding: 3rem 2rem 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section {
+            background: var(--primary-bg);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: var(--neo-shadow);
+            transition: all 0.3s ease;
+        }
+
+        .footer-section:hover {
+            box-shadow: var(--neo-shadow-hover);
+            transform: translateY(-3px);
+        }
+
+        .footer-section h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .footer-section p,
+        .footer-section a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            line-height: 1.8;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section a:hover {
+            color: var(--accent);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-link {
+            width: 50px;
+            height: 50px;
+            border-radius: 15px;
+            background: var(--primary-bg);
+            box-shadow: var(--neo-shadow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .social-link:hover {
+            box-shadow: var(--neo-shadow-inset);
+            color: var(--accent);
+            transform: translateY(-3px);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid var(--shadow-dark);
+            color: var(--text-secondary);
+        }
+
+        /* Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .slide-up {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s ease;
+        }
+
+        .slide-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* SVG Icons */
+        .icon {
+            width: 40px;
+            height: 40px;
+            fill: var(--accent);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+
+            .header {
+                width: calc(100% - 20px);
+                top: 10px;
+                padding: 1rem 1.5rem;
+            }
+
+            .nav-menu {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .mega-menu {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .hero-content {
+                padding: 2rem;
+                margin: 1rem;
+            }
+
+            .section {
+                padding: 3rem 1rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .about-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .about-image {
+                height: 250px;
+            }
+
+            .about-image img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                border-radius: 25px;
+            }
+
+            .services-grid,
+            .portfolio-grid,
+            .team-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .contact-container {
+                padding: 2rem;
+                margin: 1rem;
+            }
+
+            .clients-slider {
+                animation-duration: 15s;
+            }
+
+            .client-logo {
+                min-width: 150px;
+                height: 80px;
+            }
+
+            .portfolio-popup-content {
+                width: 95%;
+                margin: 1rem;
+            }
+
+            .portfolio-popup-body {
+                padding: 1.5rem;
+            }
+
+            .portfolio-popup-title {
+                font-size: 1.5rem;
+            }
+
+            .portfolio-popup-details {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .clients-slider {
+                flex-direction: column;
+                gap: 3rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+
+            .header {
+                padding: 0.8rem 1rem;
+            }
+
+            .logo {
+                font-size: 1.5rem;
+            }
+
+            .theme-toggle {
+                width: 50px;
+                height: 25px;
+            }
+
+            .theme-toggle::before {
+                width: 19px;
+                height: 19px;
+                top: 3px;
+                left: 3px;
+            }
+
+            .theme-toggle.dark::before {
+                transform: translateX(25px);
+            }
+
+            .hero {
+                padding: 1rem;
+                min-height: 80vh;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero-content {
+                padding: 1.5rem;
+            }
+
+            .section {
+                padding: 2rem 1rem;
+            }
+
+            .section-title {
+                font-size: 1.8rem;
+            }
+
+            .service-card,
+            .team-member,
+            .portfolio-item {
+                padding: 1.5rem;
+            }
+
+            .mobile-menu {
+                width: 90%;
+                padding: 1.5rem;
+            }
+
+            .mobile-nav-link {
+                padding: 0.8rem 1rem;
+                font-size: 0.9rem;
+            }
+
+            .contact-container {
+                padding: 1.5rem;
+            }
+
+            .form-group input,
+            .form-group textarea {
+                padding: 1rem;
+                font-size: 0.9rem;
+            }
+
+            .submit-btn {
+                padding: 1rem;
+                font-size: 1rem;
+            }
+
+            .clients-slider {
+                flex-direction: column;
+                gap: 3rem;
+            }
+        }
+    </style>
+</head>
+
+<body class="body">
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <svg fill="#007AFF" width="698" height="580" viewBox="0 0 698 580" fill="none"
+            xmlns="http://www.w3.org/2000/svg">
+            <path
+                d="M205.294 124.421H118.199V460.979V578.556H195.962V381.971V337.18V239.51L356.465 410.588L626.458 120.688L657.563 151.793L698 0L548.695 37.3262L577.934 66.5651L356.465 288.034L205.294 124.421Z" />
+            <path
+                d="M82.1177 579.8H0L238.266 337.18L353.355 461.601L609.661 184.765V579.178H526.922V365.797L340.913 574.824L223.335 429.251L82.1177 579.8Z" />
+        </svg>
+        <span>مخاطب | متخصصان خلاق تبلیغات و بازاریابی</span>
+        <div class="loading-spinner"></div>
+    </div>
+
+    <!-- Revolutionary Header -->
+    <header class="header" id="header">
+        <nav class="nav">
+            <div class="logo">
+                <svg fill="currentColor" width="698" height="580" viewBox="0 0 698 580" fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M205.294 124.421H118.199V460.979V578.556H195.962V381.971V337.18V239.51L356.465 410.588L626.458 120.688L657.563 151.793L698 0L548.695 37.3262L577.934 66.5651L356.465 288.034L205.294 124.421Z" />
+                    <path
+                        d="M82.1177 579.8H0L238.266 337.18L353.355 461.601L609.661 184.765V579.178H526.922V365.797L340.913 574.824L223.335 429.251L82.1177 579.8Z" />
+                </svg>
+
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#home" class="nav-link">خانه</a></li>
+                <li><a href="#about" class="nav-link">درباره ما</a></li>
+                <li class="nav-item">
+                    <a href="#services" class="nav-link">خدمات</a>
+                    <div class="mega-menu">
+                        <div class="mega-menu-content">
+                            <div class="mega-menu-section">
+                                <h4>خدمات طراحی</h4>
+                                <a href="#" class="mega-menu-item">طراحی لوگو</a>
+                                <a href="#" class="mega-menu-item">هویت بصری</a>
+                                <a href="#" class="mega-menu-item">طراحی بروشور</a>
+                                <a href="#" class="mega-menu-item">طراحی کاتالوگ</a>
+                            </div>
+                            <div class="mega-menu-section">
+                                <h4>بازاریابی دیجیتال</h4>
+                                <a href="#" class="mega-menu-item">مدیریت شبکه‌های اجتماعی</a>
+                                <a href="#" class="mega-menu-item">تبلیغات آنلاین</a>
+                                <a href="#" class="mega-menu-item">سئو و بهینه‌سازی</a>
+                                <a href="#" class="mega-menu-item">تولید محتوا</a>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li><a href="#portfolio" class="nav-link">نمونه کارها</a></li>
+                <li><a href="#team" class="nav-link">تیم</a></li>
+                <li><a href="#contact" class="nav-link">تماس</a></li>
+            </ul>
+            <div class="theme-toggle" id="themeToggle"></div>
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                </svg>
+            </button>
+        </nav>
+    </header>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-header">
+            <div class="logo">
+                <svg fill="currentColor" width="698" height="580" viewBox="0 0 698 580" fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M205.294 124.421H118.199V460.979V578.556H195.962V381.971V337.18V239.51L356.465 410.588L626.458 120.688L657.563 151.793L698 0L548.695 37.3262L577.934 66.5651L356.465 288.034L205.294 124.421Z" />
+                    <path
+                        d="M82.1177 579.8H0L238.266 337.18L353.355 461.601L609.661 184.765V579.178H526.922V365.797L340.913 574.824L223.335 429.251L82.1177 579.8Z" />
+                </svg>
+            </div>
+            <button class="mobile-menu-close" id="mobileMenuClose">
+                <svg class="icon" style="width: 20px; height: 20px;" viewBox="0 0 24 24">
+                    <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                </svg>
+            </button>
+        </div>
+        <div class="mobile-nav-item">
+            <a href="#home" class="mobile-nav-link">خانه</a>
+        </div>
+        <div class="mobile-nav-item">
+            <a href="#about" class="mobile-nav-link">درباره ما</a>
+        </div>
+        <div class="mobile-nav-item">
+            <a href="#services" class="mobile-nav-link" onclick="toggleMobileSubmenu(event)">خدمات</a>
+            <div class="mobile-submenu">
+                <a href="#" class="mobile-submenu-item">طراحی لوگو</a>
+                <a href="#" class="mobile-submenu-item">هویت بصری</a>
+                <a href="#" class="mobile-submenu-item">بازاریابی دیجیتال</a>
+                <a href="#" class="mobile-submenu-item">تولید ویدیو</a>
+            </div>
+        </div>
+        <div class="mobile-nav-item">
+            <a href="#portfolio" class="mobile-nav-link">نمونه کارها</a>
+        </div>
+        <div class="mobile-nav-item">
+            <a href="#team" class="mobile-nav-link">تیم</a>
+        </div>
+        <div class="mobile-nav-item">
+            <a href="#contact" class="mobile-nav-link">تماس</a>
+        </div>
+    </div>
+
+    <!-- Portfolio Popup -->
+    <div class="portfolio-popup" id="portfolioPopup">
+        <div class="portfolio-popup-content">
+            <div class="portfolio-popup-header">
+                <img id="popupImage" src="" alt="">
+                <button class="portfolio-popup-close" id="portfolioPopupClose">
+                    <svg class="icon" style="width: 24px; height: 24px;" viewBox="0 0 24 24">
+                        <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                    </svg>
+                </button>
+            </div>
+            <div class="portfolio-popup-body">
+                <h2 class="portfolio-popup-title" id="popupTitle">عنوان پروژه</h2>
+                <p class="portfolio-popup-description" id="popupDescription">توضیحات کامل پروژه در اینجا قرار می‌گیرد...
+                </p>
+                <div class="portfolio-popup-details">
+                    <div class="portfolio-detail-item">
+                        <div class="portfolio-detail-label">مشتری</div>
+                        <div class="portfolio-detail-value" id="popupClient">نام مشتری</div>
+                    </div>
+                    <div class="portfolio-detail-item">
+                        <div class="portfolio-detail-label">تاریخ</div>
+                        <div class="portfolio-detail-value" id="popupDate">۱۴۰۳</div>
+                    </div>
+                    <div class="portfolio-detail-item">
+                        <div class="portfolio-detail-label">خدمات</div>
+                        <div class="portfolio-detail-value" id="popupServices">طراحی و توسعه</div>
+                    </div>
+                    <div class="portfolio-detail-item">
+                        <div class="portfolio-detail-label">مدت زمان</div>
+                        <div class="portfolio-detail-value" id="popupDuration">۳ ماه</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Hero Section with Three.js Background -->
+    <section class="hero" id="home">
+        <canvas id="hero-canvas"></canvas>
+        <div class="hero-content fade-in">
+            <h1>خدمات تبلیغاتی مخاطب</h1>
+            <p>ما در مخاطب، برندهای شما را با خلاقیت و نوآوری به اوج موفقیت می‌رسانیم. از طراحی گرافیک تا بازاریابی
+                دیجیتال، همه چیز را برای شما فراهم کرده‌ایم.</p>
+            <a href="#contact" class="cta-button">شروع همکاری</a>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="section" id="about">
+        <h2 class="section-title fade-in">درباره ما</h2>
+        <p class="section-subtitle fade-in">مخاطب، شرکتی پیشرو در زمینه خدمات تبلیغاتی و بازاریابی دیجیتال</p>
+        <div class="about-content">
+            <div class="about-text slide-up">
+                <p>شرکت مخاطب با بیش از ۱۰ سال تجربه در صنعت تبلیغات، یکی از معتبرترین ارائه‌دهندگان خدمات تبلیغاتی و
+                    بازاریابی دیجیتال در کشور محسوب می‌شود. ما با تیمی متخصص و خلاق، برندهای مختلف را در مسیر رشد و
+                    توسعه یاری می‌کنیم.</p>
+                <br>
+                <p>هدف ما ایجاد ارتباط مؤثر بین برندها و مخاطبان آن‌هاست. از طراحی هویت بصری گرفته تا اجرای کمپین‌های
+                    تبلیغاتی پیچیده، تمام خدمات ما بر اساس آخرین استandardهای جهانی و با در نظر گیری فرهنگ و بازار ایران
+                    ارائه می‌شود.</p>
+            </div>
+            <div class="about-image slide-up">
+                <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=400&h=400&fit=crop"
+                    alt="تیم مخاطب" onerror="this.src=''; this.alt='تصویر در دسترس نیست'; this.style.display='none';">
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="section" id="services">
+        <h2 class="section-title fade-in">خدمات ما</h2>
+        <p class="section-subtitle fade-in">مجموعه کاملی از خدمات تبلیغاتی و بازاریابی برای رشد کسب‌وکار شما</p>
+        <div class="services-grid">
+            <div class="service-card slide-up">
+                <div class="service-icon">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path
+                            d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+                            fill="var(--accent)" />
+                    </svg>
+                </div>
+                <h3>طراحی گرافیک</h3>
+                <p>طراحی لوگو، هویت بصری، بروشور، کاتالوگ و تمامی مواد تبلیغاتی با کیفیت بالا و خلاقیت منحصربه‌فرد</p>
+            </div>
+            <div class="service-card slide-up">
+                <div class="service-icon">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path
+                            d="M17 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zM7 4h10v16H7V4z"
+                            fill="var(--accent)" />
+                        <circle cx="12" cy="18" r="1" fill="var(--accent)" />
+                    </svg>
+                </div>
+                <h3>بازاریابی دیجیتال</h3>
+                <p>مدیریت شبکه‌های اجتماعی، تبلیغات آنلاین، سئو و تولید محتوای جذاب برای افزایش فروش</p>
+            </div>
+            <div class="service-card slide-up">
+                <div class="service-icon">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M23 7l-7 5 7 5V7z" fill="var(--accent)" />
+                        <rect x="1" y="5" width="15" height="14" rx="2" ry="2" fill="var(--accent)" />
+                    </svg>
+                </div>
+                <h3>تولید ویدیو</h3>
+                <p>ساخت تیزر تبلیغاتی، موشن گرافیک، انیمیشن و ویدیوهای معرفی محصول با کیفیت سینمایی</p>
+            </div>
+            <div class="service-card slide-up">
+                <div class="service-icon">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M3 3v18h18V3H3zm16 16H5V5h14v14z" fill="var(--accent)" />
+                        <path d="M11 7h2v2h-2zM7 7h2v2H7zM15 7h2v2h-2zM7 11h10v2H7z" fill="var(--accent)" />
+                    </svg>
+                </div>
+                <h3>مشاوره برندینگ</h3>
+                <p>تحلیل بازار، استراتژی برند، موقعیت‌یابی و ارائه راهکارهای مؤثر برای رشد برند شما</p>
+            </div>
+            <div class="service-card slide-up">
+                <div class="service-icon">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z"
+                            fill="var(--accent)" />
+                        <path d="M14 2v6h6" fill="var(--primary-bg)" />
+                    </svg>
+                </div>
+                <h3>طراحی وب‌سایت</h3>
+                <p>طراحی و توسعه وب‌سایت‌های مدرن، ریسپانسیو و بهینه‌شده برای موتورهای جستجو</p>
+            </div>
+            <div class="service-card slide-up">
+                <div class="service-icon">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path
+                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
+                            fill="var(--accent)" />
+                    </svg>
+                </div>
+                <h3>تبلیغات محیطی</h3>
+                <p>طراحی و اجرای تبلیغات بیلبورد، بنر، استند و سایر ابزارهای تبلیغاتی محیطی</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Portfolio Section -->
+    <section class="section" id="portfolio">
+        <h2 class="section-title fade-in">نمونه کارها</h2>
+        <p class="section-subtitle fade-in">نگاهی به برخی از پروژه‌های موفق ما</p>
+        <div class="portfolio-grid">
+            <div class="portfolio-item slide-up">
+                <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=250&fit=crop"
+                    alt="کمپین تبلیغاتی"
+                    onerror="this.src=''; this.alt='تصویر در دسترس نیست'; this.style.display='none';">
+                <div class="portfolio-content">
+                    <h3>کمپین تبلیغاتی رستوران سنتی</h3>
+                    <p>طراحی هویت بصری و کمپین دیجیتال</p>
+                </div>
+            </div>
+            <div class="portfolio-item slide-up">
+                <img src="https://images.unsplash.com/photo-1551434678-e076c223a692?w=400&h=250&fit=crop"
+                    alt="برندینگ شرکت"
+                    onerror="this.src=''; this.alt='تصویر در دسترس نیست'; this.style.display='none';">
+                <div class="portfolio-content">
+                    <h3>برندینگ شرکت فناوری</h3>
+                    <p>طراحی لوگو و وب‌سایت شرکتی</p>
+                </div>
+            </div>
+            <div class="portfolio-item slide-up">
+                <img src="https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=400&h=250&fit=crop"
+                    alt="تیزر تبلیغاتی"
+                    onerror="this.src=''; this.alt='تصویر در دسترس نیست'; this.style.display='none';">
+                <div class="portfolio-content">
+                    <h3>تیزر تبلیغاتی محصول</h3>
+                    <p>ساخت ویدیو معرفی و موشن گرافیک</p>
+                </div>
+            </div>
+            <div class="portfolio-item slide-up">
+                <img src="https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=400&h=250&fit=crop"
+                    alt="کمپین شبکه‌های اجتماعی"
+                    onerror="this.src=''; this.alt='تصویر در دسترس نیست'; this.style.display='none';">
+                <div class="portfolio-content">
+                    <h3>کمپین شبکه‌های اجتماعی</h3>
+                    <p>مدیریت محتوا و تبلیغات آنلاین</p>
+                </div>
+            </div>
+            <div class="portfolio-item slide-up">
+                <img src="https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=400&h=250&fit=crop"
+                    alt="طراحی بسته‌بندی"
+                    onerror="this.src=''; this.alt='تصویر در دسترس نیست'; this.style.display='none';">
+                <div class="portfolio-content">
+                    <h3>طراحی بسته‌بندی</h3>
+                    <p>طراحی خلاقانه بسته‌بندی محصولات</p>
+                </div>
+            </div>
+            <div class="portfolio-item slide-up">
+                <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400&h=250&fit=crop"
+                    alt="نمایشگاه تجاری"
+                    onerror="this.src=''; this.alt='تصویر در دسترس نیست'; this.style.display='none';">
+                <div class="portfolio-content">
+                    <h3>نمایشگاه تجاری</h3>
+                    <p>طراحی غرفه و مواد تبلیغاتی</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section class="section" id="team">
+        <h2 class="section-title fade-in">تیم ما</h2>
+        <p class="section-subtitle fade-in">متخصصان خلاق و با تجربه در خدمت شما</p>
+        <div class="team-grid">
+            <div class="team-member slide-up">
+                <div class="member-avatar">
+                    <svg class="icon" style="width: 60px; height: 60px;" viewBox="0 0 24 24">
+                        <path
+                            d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
+                            fill="var(--accent)" />
+                    </svg>
+                </div>
+                <h3 class="member-name">علی احمدی</h3>
+                <p class="member-role">مدیر عامل و مدیر خلاق</p>
+            </div>
+            <div class="team-member slide-up">
+                <div class="member-avatar">
+                    <svg class="icon" style="width: 60px; height: 60px;" viewBox="0 0 24 24">
+                        <path
+                            d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
+                            fill="var(--accent)" />
+                    </svg>
+                </div>
+                <h3 class="member-name">سارا محمدی</h3>
+                <p class="member-role">طراح ارشد گرافیک</p>
+            </div>
+            <div class="team-member slide-up">
+                <div class="member-avatar">
+                    <svg class="icon" style="width: 60px; height: 60px;" viewBox="0 0 24 24">
+                        <path
+                            d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
+                            fill="var(--accent)" />
+                    </svg>
+                </div>
+                <h3 class="member-name">محمد رضایی</h3>
+                <p class="member-role">متخصص بازاریابی دیجیتال</p>
+            </div>
+            <div class="team-member slide-up">
+                <div class="member-avatar">
+                    <svg class="icon" style="width: 60px; height: 60px;" viewBox="0 0 24 24">
+                        <path
+                            d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
+                            fill="var(--accent)" />
+                    </svg>
+                </div>
+                <h3 class="member-name">مریم کریمی</h3>
+                <p class="member-role">کارگردان و تدوینگر</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Revolutionary Clients Section -->
+    <section class="clients-section" id="clients">
+        <div class="section">
+            <h2 class="section-title fade-in">مشتریان ما</h2>
+            <p class="section-subtitle fade-in">برندهایی که به ما اعتماد کرده‌اند</p>
+            <div class="clients-slider">
+                <div class="client-logo">
+                    <svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 720 720">
+                        <path class="st0"
+                            d="M430.63,513.34c-.64-.5-1.24-1.09-1.94-1.47-8.75-4.75-13.46-11.93-13.76-22.01-.26-8.91,1.51-17.54,3.66-26.05,2.49-9.86,5.55-19.59,8.62-29.29,1.63-5.13,2.01-10.12.07-15.17-5.06-13.14-9.24-26.56-11.43-40.48-1.22-7.75-2.15-15.59-2.56-23.42-.43-8.23-.48-16.53.03-24.75.96-15.36,3.7-30.47,7.98-45.26,2.32-8,5.06-15.89,7.86-23.74.92-2.58,2.45-4.99,3.98-7.29,1.61-2.44,3.4-2.94,5.77-2.14,2.6.88,3.97,2.38,3.58,5.22-.52,3.79-1.54,7.53-2.55,11.23-2.97,10.83-4.95,21.81-5.34,33.04-.24,7.02-.56,14.06-.4,21.08.3,13.25,1.54,26.43,7.46,38.56,2.6,5.32,6.02,10.23,9.1,15.3.34.56.91.99,1.62,1.75,1.02-1.42,1.93-2.63,2.78-3.88,14.34-21.12,30.57-40.64,49.18-58.15,31.52-29.67,68.03-50.12,110.43-59.69,14.59-3.29,29.29-5.87,44.3-4.72,17.05,1.3,32.87,5.99,45.25,18.65,8.28,8.46,12.97,18.92,14.75,30.4,1.65,10.63,1.01,21.36-1.42,31.96-5.27,23.01-16.28,43.08-31.01,61.28-26.14,32.3-60.25,52.37-99.46,64.57-12.92,4.02-26.02,7.33-39.45,9.15-11.12,1.51-22.28,1.92-33.52,1.2-18.09-1.17-35.07-6.14-51.32-13.96-1.79-.86-3.74-1.48-5.67-1.97-3.47-.87-5.54.23-6.49,3.74-1.96,7.25-2.61,14.5-.2,21.88,1.38,4.22,2.42,8.62,3.02,13.02.94,6.96-2.56,12.02-8.02,15.88-2.01,1.43-4.21,2.6-6.29,3.93-.75.48-1.41,1.09-2.12,1.64h-6.5ZM532.94,423.11c4.17-.3,8.33-.63,12.49-.9,12.45-.8,24.65-3.07,36.66-6.35,29.18-7.98,55.71-21.58,80.64-38.44,12.04-8.14,22.32-18.13,29.57-30.9,4.23-7.45,6.51-15.41,4.82-23.99-2.27-11.49-9.83-18.44-20.48-22.27-9.23-3.31-18.87-3.53-28.57-3.37-13.26.22-26.09,2.84-38.63,6.84-32.07,10.22-61.51,25.45-87.69,46.72-16.6,13.49-31.1,28.97-43.54,46.36-4.49,6.27-3.56,9.97,3.18,13.64.07.04.14.07.21.1,16.07,8.5,33.53,11.28,51.36,12.56Z" />
+                        <path class="st0"
+                            d="M294.68,434.46c-3.81-.55-7.47-.98-11.09-1.61-7.57-1.31-14.67-3.81-20.6-8.91-5.72-4.92-8.74-11.25-9.54-18.72-1.2-11.27,2.12-21.73,6.02-31.98,9.21-24.22,25.21-42.84,47.55-55.95,6.15-3.61,12.83-5.65,20.09-5.53,8.17.13,15.37,3.14,22.19,7.28,3.21,1.95,6.29,4.14,9.83,6.49.09-1.28.21-2.22.21-3.15-.01-9.92,1.04-19.69,3.69-29.3,2.01-7.31,6.37-13.19,11.16-18.77,3.55-4.14,9.59-2.7,11.05,2.61.99,3.62,1.59,7.41,1.89,11.16.79,9.99,1.85,20,1.86,30.01.03,28.64-6.11,56.03-17.8,82.2-10.01,22.39-23.78,42.04-42.04,58.5-15.2,13.69-32.43,24.19-51.03,32.55-13.92,6.25-28.28,11.3-43.07,15.03-4.9,1.24-10.05,1.88-15.1,2.03-17.85.56-35.72.6-53.57,1.21-10.8.37-20.79-2.53-30.65-6.24-7.54-2.83-14.26-7-20.06-12.67-6.29-6.14-8.97-13.76-9.32-22.29-.22-5.17-.03-10.36-.04-15.54-.01-4.82-1.98-6.95-6.86-7.03-6.19-.1-12.38.19-18.56-.02-12.65-.42-25.11-1.99-36.86-7.09-21.69-9.42-35.32-25.73-41.22-48.5C-.03,379.36-.36,368.32.28,357.13c.97-16.9,4.52-33.14,11.04-48.74,8.38-20.05,20.9-37.27,36.29-52.5,5.73-5.67,11.52-11.24,18.89-14.82,2.45-1.19,4.87-2.74,7.45-.36,1.77,1.63,2.09,4.46-.07,7.69-3.21,4.79-6.72,9.43-10.53,13.76-15.83,17.94-28.64,37.63-35.69,60.68-3.26,10.65-5.54,21.48-5.45,32.74.18,21.73,14.28,39.83,35.38,45.23,9.84,2.52,19.78,4.4,29.94,4.41,10.28.02,20.5-.97,30.64-2.76,29.88-5.27,57.1-17.35,83.26-32.2,1.68-.95,3.42-1.8,5.09-2.78,1.13-.66,2.36-1.3,3.19-2.25.75-.87,1.29-2.14,1.34-3.26.02-.39-1.68-1.05-2.66-1.25-7.1-1.43-14.26-1.54-21.45-.79-9.36.98-18.75,1.77-28.08,2.96-8.34,1.06-16.63,2.53-24.93,3.87-9.31,1.51-18.65,3.14-28.09,2.41-4.62-.36-9.38-1.35-13.67-3.08-7.9-3.17-11.53-9.74-11.86-18.07-.38-9.68,2.93-18.53,6.7-27.2,5.85-13.48,14.42-25.19,24.2-36.03,17.53-19.42,37.3-36.12,60.11-49.11,16.34-9.31,33.61-16.36,51.81-21.12,1.26-.33,2.79-.27,4.04.11,22.5,6.9,35.92,22.14,40.64,44.99,1.32,6.39,1.98,12.96,2.36,19.48.53,9.18-3.78,16.22-11.07,21.47-8.29,5.98-17.83,8.73-27.79,10.25-12.91,1.96-25.72.51-38.51-1.29-5.27-.74-10.55-1.41-15.78-2.38-7.01-1.31-12.89-4.65-17.19-10.51-1.24-1.7-2.85-2.67-4.99-1.42-12.61,7.34-24.78,15.25-33.97,26.91-1.32,1.67-2.81,3.51-1.78,5.64,1.06,2.19,3.51,2.03,5.58,1.9,7.62-.5,15.27-.87,22.85-1.77,8.73-1.03,17.41-2.52,26.09-3.89,13.53-2.14,27.12-3.61,40.83-2.95,7.04.34,14.01,1.46,20.22,5.21,7.16,4.32,10.78,10.84,10.89,19.03.26,20.16-8.05,36.61-22.53,50.23-7.79,7.32-16.85,12.78-26.21,17.81-17.73,9.53-35.77,18.35-55.06,24.33-5.31,1.65-10.72,2.93-16.09,4.38-.59.16-1.22.26-1.77.5-2.4,1.05-2.85,2.73-1.16,4.71,5.84,6.87,12.94,12.2,21.62,14.59,8.38,2.31,17,3.88,25.61,5.15,7.24,1.07,14.6,1.61,21.92,1.68,7.7.08,15.43-.48,23.12-1.11,13.07-1.08,25.74-4.17,38.13-8.42,12.93-4.44,25.12-10.44,36.75-17.58,2.58-1.58,4.5-3.69,4.81-7.18ZM345.25,373.86c-.23-8.99-2.8-15.53-8.73-20.57-4.4-3.74-9.48-5.02-14.65-2.59-5.48,2.57-10.97,5.5-15.65,9.27-3.81,3.06-7.04,7.25-9.45,11.55-5.04,8.99-.53,19.64,9.28,22.77,5.82,1.86,11.8,2.97,17.94,1.3.81-.22,1.67-.26,2.52-.32,8.4-.52,14.92-5.45,17.28-13.45.89-3,1.14-6.19,1.45-7.96ZM189.09,275.32l.19,1.02c5.03.48,10.07,1.4,15.1,1.35,11.06-.1,21.69-2.74,32.07-6.41,3.89-1.38,7.09-3.73,9.37-7.23,1.41-2.16,1.78-4.46.6-6.79-1.24-2.44-3.44-3.5-6.11-3.44-2.08.05-4.16.24-6.21.55-16.03,2.39-30.27,8.87-42.91,18.95-.75.6-1.41,1.33-2.11,1.99Z" />
+                        <path class="st0"
+                            d="M499.57,218.11c8.36-.14,15.77,2.32,22.15,7.64,5.95,4.96,8.98,11.43,9.48,19.14.51,7.81-.87,15.09-5.94,21.32-5.61,6.89-12.86,10.68-21.74,11.29-7.15.49-14.12-.31-20.44-3.86-10.08-5.66-14.77-14.52-14.68-26,.1-13.58,8.84-24.97,22.02-28.33,2.96-.76,6.09-.82,9.15-1.21Z" />
+                        <path class="st0"
+                            d="M313.62,211.6c-1.14,1.31-2.37,2.56-3.39,3.95-1.53,2.1-2.97,4.27-4.33,6.49-.27.45-.21,1.49.13,1.82.32.32,1.31.29,1.82.04,3.81-1.89,7.57-3.86,11.34-5.82,16.84-8.75,35.85,4.24,38.93,17.75,2.38,10.45.27,20.04-6.88,28.1-7.74,8.72-17.71,13.39-29.36,12.95-18.02-.68-30.61-12.38-32.77-29.9-2.01-16.25,6.72-29.38,20.11-35.01,1.27-.53,2.68-.72,4.03-1.07.12.23.25.46.37.69ZM324.54,231.11v-.51c2.06,0,4.11-.06,6.16.01,6.27.23,10.17,3.53,11.05,9.69.33,2.32.22,4.77-.14,7.09-.98,6.39-5.49,11.18-11.87,12.41-6.44,1.25-12.74.67-18.73-2.3-.56-.28-1.4-.01-2.11,0,.13.66.04,1.61.44,1.94,2.16,1.74,4.29,3.59,6.7,4.92,12.55,6.89,27.43,1.53,32.31-11.74,3.36-9.15,2.04-17.76-4.66-25.02-6.55-7.1-18.05-7.96-27.14-2.43-6.17,3.75-8.7,9.38-7.67,16.35,1,6.77,5.42,10.94,11.75,13.06,4.6,1.54,8.76.2,12.28-2.87,6.33-5.52,4.32-16.25-3.51-19.15-1.58-.59-3.24-.98-4.86-1.46Z" />
+                    </svg>
+                </div>
+                <div class="client-logo">
+                    <svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" id="Layer_2" data-name="Layer 2"
+                        viewBox="0 0 1698.72 555.05">
+                        <g id="Layer_1-2" data-name="Layer 1">
+                            <g>
+                                <path class="cls-1"
+                                    d="m519.7,0c158.6,0,317.19,0,475.79,0,30.79,0,60.85,4.8,90,14.61,33.1,11.15,62.53,28.8,88.72,51.85,8.55,7.52,16.8,15.41,25.69,22.5,8.55,6.82,18.5,10.63,29.69,10.63,59.15.02,118.3-.08,177.45.19,19.07.09,38.18.52,57.19,1.9,25.51,1.86,50.92,5.03,75.87,10.91,18.6,4.39,36.84,10.11,53.96,18.71,21.05,10.56,39.89,24.25,55.76,41.78,9.97,11,17.22,23.83,24.29,36.77,9.72,17.78,15.09,36.97,18.44,56.76,2.22,13.08,4.24,26.25,5.33,39.46.72,8.76,1.5,17.68-.2,26.52-2.05,10.7-9.41,18.35-19.9,20.42-4.01.79-7.57-.64-11.2-1.95-6.6-2.39-13.14-4.99-19.86-6.97-17.53-5.15-35.51-4.85-53.54-4.01-30.67,1.44-58,13.21-84.58,27.18-25.49,13.4-49.02,29.88-71.65,47.57-13.77,10.77-26.84,22.44-40.07,33.88-16.97,14.67-33.6,29.75-50.74,44.22-19.42,16.4-41.43,28.49-65.06,37.79-15.04,5.92-30.05,11.86-45.79,15.67-14.64,3.55-29.45,6.26-44.49,7.37-9.09.67-18.21,1.22-27.31,1.22-196.55.07-393.1.06-589.65.02-5.35,0-10.75-.07-16.02-.83-12.63-1.82-23.9-15.44-22.29-27.55,1.62-12.22,9.23-23.42,24.09-25.11,5.39-.61,10.84-1,16.26-1,134.47-.05,268.93-.09,403.4.04,12.04.01,23.91-.91,35.65-3.31,11.21-2.3,22.48-4.56,33.44-7.77,18.24-5.34,35.15-13.62,50.98-24.3,19.48-13.14,36.35-28.97,51.38-46.9,16.13-19.24,28.51-40.66,36.75-64.36,6.36-18.29,10.95-37.11,12.69-56.38,1.09-12.03,1.02-24.27.22-36.34-1.43-21.55-6.56-42.46-13.92-62.71-9.31-25.61-23.63-48.27-41.82-68.58-10.1-11.28-20.89-21.81-32.97-30.84-13.56-10.14-28.47-18.13-43.73-25.52-17.17-8.31-35.52-12.07-54.01-15.74-16.89-3.36-33.91-3.38-51-3.38-306.97.04-613.95.03-920.92-.02-6.42,0-12.94-.12-19.24-1.17C10.78,51.26,2.47,42.75.32,30.87c-1.41-7.81,2-14.26,6.78-20.01C13.23,3.51,21.49.49,30.84.13,35.19-.04,39.55,0,43.91,0,202.5,0,361.1,0,519.7,0Zm849.4,155.84c-33.6,0-67.19,0-100.79,0-.75,0-1.51,0-2.26.03-9.34.52-15.66,7.09-15.23,16.43.18,3.95,1.13,7.93,2.23,11.75,2.35,8.19,5.06,16.28,7.57,24.43,5.42,17.61,8.28,35.67,8.7,54.04.31,13.63-.17,27.28-.56,40.91-.16,5.5-.7,11.03-1.62,16.45-4.83,28.38-13.92,55.43-26.4,81.32-6.69,13.88-14.36,27.22-23.5,39.69-4.41,6.01-7.69,12.51-7.89,20.25-.38,15.03,8.08,26.57,21.93,29.54,7.33,1.57,14.49.68,21.43-2.03,12.99-5.08,25.49-11.11,36.69-19.51,13.45-10.09,27.29-19.76,40-30.72,22.12-19.07,42.89-39.67,65.7-58.01,14.42-11.59,28.43-23.69,43.73-34.14,23.08-15.77,47.73-28.64,73.12-40.29,24.32-11.16,49.74-17.78,76.22-20.35,12.39-1.2,24.89-1.21,37.35-1.63,6.41-.22,11.47-2.77,15.1-8.03,5.77-8.36,5.39-17.19,1.99-26.3-6.46-17.31-16.63-31.92-29.82-44.98-17.55-17.39-38.18-29.05-61.53-35.99-10.78-3.2-22.03-4.85-33.09-7.06-19.16-3.83-38.52-5.81-58.07-5.8-30.33.02-60.66,0-90.99,0Z" />
+                                <path class="cls-1"
+                                    d="m319.33,97.12c38.37,0,76.74-.2,115.11.11,12.35.1,24.49,2.51,35.07,9.5,7.71,5.1,13.51,11.91,17.2,20.6,3.28,7.7,5.21,15.61,5.38,23.92.27,13.28.43,26.56.46,39.84,0,2.33-.5,4.78-1.31,6.98-1.76,4.75-5.84,6.4-10.47,6.42-29.24.08-58.48.13-87.71-.02-6.65-.03-10.66-3.45-11.98-10.51-.43-2.3-.99-4.71-2.1-6.72-1.65-2.98-5.02-3.22-7.92-3.23-36.11-.1-72.21-.16-108.32.02-5.92.03-8.66,2.37-8.95,9.21-.26,6.17-.47,12.35-.4,18.52.04,3.39.25,6.9,1.2,10.12,1.07,3.62,4.22,5.8,7.76,6.8,3.47.99,7.07,1.58,10.66,2.06,6.06.8,12.14,1.39,18.22,2.01,5.51.56,11.04.99,16.55,1.56,5.83.6,11.65,1.33,17.48,1.95,3.78.4,7.58.67,11.37,1.06,5.91.62,11.81,1.32,17.72,1.95,3.62.39,7.25.69,10.86,1.06,6.16.64,12.31,1.35,18.48,1.96,4.12.41,8.26.64,12.38,1.06,5.5.57,10.98,1.3,16.48,1.88,4.12.44,8.24.78,12.37,1.11,11.43.91,22.88,2.05,33.64,6.19,9.82,3.77,17.93,10.07,24.02,18.85,4.23,6.09,7.35,12.67,8.82,19.9.82,4.03,1.16,8.22,1.17,12.33.09,32.15.24,64.3-.06,96.45-.09,10.38-1.8,20.65-6.69,30.11-5.83,11.27-14.64,19.13-26.55,23.56-6.7,2.49-13.63,3.81-20.75,3.99-10.19.26-20.38.5-30.57.5-67.77.04-135.55.11-203.32-.07-10.56-.03-20.97-1.81-30.65-6.65-9.01-4.51-15.69-11.44-21.04-19.76-5.3-8.24-7.62-17.46-8.03-27.11-.42-9.92-.43-19.86-.54-29.79-.07-6.61-.15-13.23.02-19.84.17-6.48,3.31-11.31,10.44-11.7,2.57-.14,5.13-.47,7.69-.47,27.48-.03,54.96-.04,82.43.02,2.11,0,4.25.47,6.32.95,4.61,1.07,6.69,4.8,7.09,9.57.3,3.71.61,7.42,1.01,11.13.54,5.01,4.16,6.65,8.03,6.94.58.04,1.17.01,1.76.01,33.59,0,67.19-.02,100.78.04,3.76,0,6.71-1.56,9.44-3.82.38-.32.59-.99.65-1.52.4-3.13,1.01-6.27,1.02-9.41.05-7.6-.05-15.21-.36-22.8-.26-6.31-5.13-10.66-11.64-11.36-7.37-.79-14.71-1.97-22.06-2.91-4.58-.59-9.19-1.02-13.78-1.58-4.74-.58-9.47-1.28-14.21-1.86-4.75-.59-9.52-1.07-14.27-1.65-4.82-.6-9.63-1.3-14.46-1.89-4.67-.58-9.35-1.05-14.02-1.62-4.91-.61-9.8-1.32-14.71-1.92-4.67-.57-9.36-1.02-14.03-1.6-6.22-.77-12.42-1.65-18.63-2.42-4.75-.59-9.52-1.03-14.28-1.6-4.74-.57-9.48-1.21-14.21-1.86-4.98-.69-9.95-1.4-14.92-2.15-7.6-1.15-14.19-4.46-20.09-9.31-10-8.2-16.35-18.68-19.14-31.22-1.02-4.56-1.8-9.29-1.82-13.94-.16-28.88-.07-57.77-.09-86.65,0-7.89.98-15.71,3.22-23.21,1.96-6.54,5.54-12.41,9.88-17.8,4.6-5.7,9.99-10.34,16.62-13.49,6.59-3.13,13.49-5.26,20.8-5.71,7.72-.47,15.45-.96,23.18-.99,33.76-.11,67.52-.05,101.28-.05Z" />
+                                <path class="cls-1"
+                                    d="m706.05,97.12c38.54,0,77.07-.21,115.61.12,12.7.11,25.14,2.7,35.73,10.43,11.06,8.07,18.35,18.79,21.31,32.28,1.66,7.57,2.12,15.23,2.04,22.97-.13,12.89.03,25.79-.1,38.68-.02,2.23-.53,4.62-1.48,6.63-1.86,3.96-5.7,5.27-9.69,5.28-30.33.1-60.65.23-90.98-.07-7.39-.07-10.01-3.94-10.76-11.34-.35-3.36.07-7.03-3.14-9.26-1.64-1.14-3.65-1.92-5.61-2.36-2.17-.48-4.47-.5-6.71-.5-32.09-.03-64.17-.03-96.26,0-2.07,0-4.17.19-6.22.51-6.21,1-7.46,3.78-8.35,9.47-.1.65-.03,1.34-.03,2.01,0,50.49,0,100.97,0,151.46,0,3.37.21,6.85,3.13,9.07,1.56,1.19,3.64,2,5.59,2.34,2.85.49,5.8.54,8.71.54,30.41.03,60.82.03,91.23,0,3.08,0,6.16-.2,9.23-.48,5.14-.48,7.81-3.15,8.18-8.29.24-3.25.07-6.53.24-9.78.1-1.88.26-3.82.79-5.61,1.82-6.08,4.96-7.34,10.58-7.38,30.07-.19,60.15-.25,90.22.02,7.74.07,11.24,3.05,11.32,11.5.18,18.42.32,36.84-.03,55.26-.26,13.79-3.92,26.53-13.03,37.49-8.19,9.87-18.4,15.97-30.89,18.05-6.91,1.15-13.97,1.98-20.96,1.99-74.81.14-149.62.17-224.43,0-10.73-.02-21.32-1.87-31.09-6.9-9.49-4.89-16.4-12.36-21.67-21.45-3.99-6.87-6.13-14.34-6.61-22.27-.35-5.8-.95-11.6-.96-17.39-.06-77.44-.14-154.89.07-232.33.03-10.68,1.48-21.34,6.88-31.05,5.26-9.46,12.06-17.36,21.76-22.35,6.76-3.48,14.01-5.8,21.65-6.23,9.22-.53,18.47-.97,27.7-1,32.34-.12,64.67-.05,97.01-.05Z" />
+                                <path class="cls-1"
+                                    d="m1033.02,277.94c0,55.93-.01,111.85.01,167.78,0,10.36-4.28,12.36-12.67,12.44-24.63.23-49.26.08-73.89.08-5.28,0-10.56.05-15.83-.03-1.81-.03-3.65-.23-5.41-.64-4.27-.98-6.61-3.85-7.17-8.1-.34-2.54-.53-5.12-.53-7.69-.03-109.76-.03-219.52,0-329.28,0-2.31.14-4.66.57-6.93,1.14-6.06,4.96-8.37,11.33-8.4,25.89-.13,51.77-.05,77.66-.05,4.78,0,9.56-.14,14.32.03,7.83.29,11.6,3.28,11.6,11.5.02,56.43.01,112.86.01,169.29Z" />
+                                <path class="cls-1"
+                                    d="m1447.66,202.53c8.87,0,17.79-.52,26.61.15,8.88.67,17.7,2.38,26.5,3.92,11.44,2,22.94,3.85,33.82,8.13,3.25,1.28,6.48,2.79,9.37,4.73,5.04,3.39,5.83,8.39,2.13,13.21-5.84,7.6-13.48,12.89-22.23,16.69-8.16,3.54-16.59,3.78-25.33,2.84-20.02-2.16-38.01-10.19-55.87-18.62-9.15-4.31-18.16-8.92-27.15-13.56-2.35-1.21-4.61-2.79-6.5-4.63-3.21-3.11-2.95-7.57.88-9.84,2.68-1.6,6.04-2.72,9.14-2.84,9.53-.36,19.08-.13,28.63-.13,0-.01,0-.03,0-.04Z" />
+                            </g>
+                        </g>
+                    </svg>
+                </div>
+                <div class="client-logo">
+                    <svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 450.34 68.99">
+                        <g id="Layer_2" data-name="Layer 2">
+                            <g id="Layer_1-2" data-name="Layer 1">
+                                <path class="cls-1"
+                                    d="M23.19,2.69a3.11,3.11,0,0,1,1.37-1.57L25.93.39A2.75,2.75,0,0,1,27.29.05H97.36a2.45,2.45,0,0,1,1.32.34h0a2.89,2.89,0,0,1,1.56,2.54,3.1,3.1,0,0,1-.19,1L86.91,39.55a2.59,2.59,0,0,1-1.36,1.51l-1.22.69a2.76,2.76,0,0,1-1.37.34H37.21A2.88,2.88,0,0,0,34.52,44l-8.3,22.47A2.66,2.66,0,0,1,24.85,68l-1.27.63a2.36,2.36,0,0,1-1.31.34H3a2.91,2.91,0,0,1-1.37-.34l-.1-.05A2.93,2.93,0,0,1,0,66.06a4.19,4.19,0,0,1,.15-1ZM38,34.52a4.19,4.19,0,0,0-.15,1,2.74,2.74,0,0,0,1,2.19,2.86,2.86,0,0,0,1.8.69A3.76,3.76,0,0,0,42.19,38L66,24.12c.87-.54,1.31-1,1.36-1.51s.1-.78.1-.93a3.11,3.11,0,0,0-.68-1.9,2.61,2.61,0,0,0-2.25-1H45.85a2.88,2.88,0,0,0-2.69,1.9Z" />
+                                <path class="cls-1"
+                                    d="M100.34,42.09a2.91,2.91,0,0,1-1.41-.34,3,3,0,0,1-1.62-2.59,3.13,3.13,0,0,1,.2-1.12l13-35.31A2.88,2.88,0,0,1,112,1.12l1.32-.73A3,3,0,0,1,114.7.05h19a2.76,2.76,0,0,1,1.37.34A3,3,0,0,1,136.67,3a4.61,4.61,0,0,1-.15,1.12l-5.66,15.28a2.79,2.79,0,0,0-.2,1.08,2.93,2.93,0,0,0,.59,1.71,2.77,2.77,0,0,0,2.44,1.22h18.12a3,3,0,0,0,2.78-1.95l7-18.75A2.74,2.74,0,0,1,163,1.07l1.32-.68a2.75,2.75,0,0,1,1.36-.34h19.05a3,3,0,0,1,1.41.34A2.91,2.91,0,0,1,187.65,3a4.61,4.61,0,0,1-.15,1.12l-1.22,3.32-11.87,32A2.85,2.85,0,0,1,173,41.06l-1.27.69a3.09,3.09,0,0,1-1.42.34h-20.6A2.9,2.9,0,0,0,146.92,44l-8.25,22.32A2.88,2.88,0,0,1,137.26,68l-1.27.68a3,3,0,0,1-1.42.34H116.21a2.84,2.84,0,0,1-1.42-.34,3,3,0,0,1-1.61-2.59,3.13,3.13,0,0,1,.2-1.12l6.93-18.8a4.31,4.31,0,0,0,.15-1.12,2.88,2.88,0,0,0-2.93-2.93Z" />
+                                <path class="cls-1"
+                                    d="M220.61,18.75a3,3,0,0,0-2.79,1.9L208.3,46.34a2.61,2.61,0,0,0-.19,1,2.76,2.76,0,0,0,.58,1.71,2.73,2.73,0,0,0,2.39,1.27h19a3,3,0,0,0,2.78-2l1.27-3.61a2.74,2.74,0,0,1,1.42-1.62l1.32-.73a2.88,2.88,0,0,1,1.41-.34L256.59,42a2.76,2.76,0,0,1,1.37.34l.05,0A3,3,0,0,1,259.57,45a4.19,4.19,0,0,1-.15,1L252,66.36A2.78,2.78,0,0,1,250.63,68l-1.31.68a2.84,2.84,0,0,1-1.42.34h-70a2.78,2.78,0,0,1-1.37-.34h0a3,3,0,0,1-1.56-2.54,4.82,4.82,0,0,1,.2-1.12l23-62.3a2.77,2.77,0,0,1,1.42-1.62l1.32-.68a2.76,2.76,0,0,1,1.37-.34h70a2.93,2.93,0,0,1,1.41.34h.05a2.88,2.88,0,0,1,1.51,2.54,4.57,4.57,0,0,1-.14,1.12l-5,13.58a3,3,0,0,1-1.56,1.61q-10,4.61-23.44,10.59a3.4,3.4,0,0,1-1.32.25,2.59,2.59,0,0,1-1.9-.78,2.7,2.7,0,0,1-.93-2.1,4.78,4.78,0,0,1,.14-1.08l1.27-3.41a3,3,0,0,0,.2-1.13A2.8,2.8,0,0,0,242,20a2.72,2.72,0,0,0-2.39-1.22Z" />
+                                <path class="cls-1"
+                                    d="M285.79,2.64a2.89,2.89,0,0,1,1.37-1.57l1.37-.73A2.64,2.64,0,0,1,289.84,0h70.07a2.76,2.76,0,0,1,1.37.34,2.84,2.84,0,0,1,1.51,2.49A5.28,5.28,0,0,1,362.65,4L339.5,66.41A2.84,2.84,0,0,1,338.13,68l-1.22.68a2.74,2.74,0,0,1-1.36.34H265.48a2.6,2.6,0,0,1-1.32-.34l-.1-.05a2.87,2.87,0,0,1-1.56-2.49,4.82,4.82,0,0,1,.2-1.12Zm31.3,47.65a2.93,2.93,0,0,0,2.73-1.9l9.53-25.78a4.45,4.45,0,0,0,.19-1.08,2.85,2.85,0,0,0-.54-1.61,2.72,2.72,0,0,0-2.39-1.22H308.25a2.94,2.94,0,0,0-2.73,1.91L296,46.34a2.64,2.64,0,0,0-.2,1,2.77,2.77,0,0,0,.59,1.71,2.6,2.6,0,0,0,2.34,1.22Z" />
+                                <path class="cls-1"
+                                    d="M376,.44A2.91,2.91,0,0,1,377.39.1h70a2.76,2.76,0,0,1,1.37.34A3.08,3.08,0,0,1,450.34,3a4.7,4.7,0,0,1-.14,1.07L433,50.44A2.87,2.87,0,0,1,431.64,52L401.12,68.65a2.8,2.8,0,0,1-1.41.34H353a2.84,2.84,0,0,1-1.42-.34A3,3,0,0,1,350,66.06a4.44,4.44,0,0,1,.2-1.07L373.29,2.73a2.87,2.87,0,0,1,1.37-1.56Zm27.29,49.9a3.09,3.09,0,0,0,1.27-.29l1.66-.78a3.05,3.05,0,0,0,1.56-1.66L417,22.75a4.44,4.44,0,0,0,.2-1.07,2.93,2.93,0,0,0-.54-1.66,3.14,3.14,0,0,0-2.44-1.27l-18.36.05a2.88,2.88,0,0,0-2.73,1.9l-9.58,25.64a2.81,2.81,0,0,0-.19,1,2.71,2.71,0,0,0,.59,1.71,2.76,2.76,0,0,0,2.39,1.27Z" />
+                            </g>
+                        </g>
+                    </svg>
+                </div>
+                <div class="client-logo">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="800" width="1200"
+                        viewBox="-31.293585 -13.965075 271.21107 83.79045">
+                        <g stroke-width=".2646">
+                            <path fill="currentColor"
+                                d="M97.2346 21.8296V.0016h6.8745l.137 27.746 12.859-15.575h4.352c2.3936 0 4.3484.0893 4.344.1984-.004.1092-2.8574 3.6402-6.3399 7.8467-3.7892 4.5771-6.2562 7.7715-6.1435 7.9552.1036.1688 2.9268 3.611 6.2738 7.6494 3.347 4.0383 6.1251 7.4534 6.1736 7.589.0522.146-1.6967.2466-4.2883.2466h-4.3765l-12.855-15.56-.1402 15.56h-6.8713zm37.389 21.337c-2.8162-.9732-4.6488-2.7453-5.5052-5.3237-.3638-1.0954-.4134-2.5839-.3456-10.366l.0792-9.0868.7053-1.3229c.9134-1.7133 2.6572-3.3896 4.3218-4.1545 1.3115-.6027 1.4297-.6087 13.692-.6863l12.369-.0783v31.51l-11.972-.009c-10.808-.008-12.106-.0547-13.344-.4828zm18.375-15.185l-.0697-8.7974-6.8342-.0707c-4.0997-.0424-7.2395.0385-7.8472.2021-.598.161-1.3481.6544-1.831 1.2043l-.818.9316v6.3017c0 6.1003.019 6.3295.5954 7.1738 1.2127 1.7765 1.6058 1.852 9.6567 1.852h7.2176zm12.233-6.1516V.002h6.8792v43.656h-6.8792zm18.157 21.395c-2.407-.7391-4.0225-2.0972-5.271-4.4309-.57-1.0654-.5827-1.2997-.5827-10.746 0-9.5566.006-9.6702.6116-10.899.8509-1.7273 2.4761-3.3143 4.2421-4.1423l1.4963-.7015 24.739-.1566v31.51l-11.972-.0184c-9.843-.0152-12.202-.0889-13.262-.4146zm18.293-15.244l-.0697-8.7974h-7.4083c-10.456 0-9.9219-.4662-9.9219 8.6668 0 5.9989.0197 6.2327.5953 7.076 1.2126 1.7765 1.6058 1.852 9.6567 1.852h7.2176z" />
+                            <path fill="currentColor"
+                                d="M58.2396 52.5396c-1.3997-1.8264-2.5449-3.375-2.5449-3.4413 0-.0663 3.304-.1572 7.3422-.202 7.2005-.08 7.3589-.0934 8.2061-.6977 1.1282-.8047 1.6497-1.8562 1.6497-3.3264v-1.1907l-17.859-.1584-1.4781-.6931c-1.8788-.8811-3.2977-2.3-4.1788-4.1788l-.6932-1.4781v-9.2604c0-8.9322.0203-9.3043.5718-10.498.8098-1.7522 2.544-3.5246 4.2856-4.38l1.4926-.733 24.739-.1566v18.391c0 17.767-.018 18.439-.5313 19.811-.7556 2.0194-2.089 3.4508-4.1693 4.4757l-1.768.871-12.519.1665zm14.653-24.645v-8.882l-7.4868.0846c-8.2856.0936-8.3771.1118-9.4582 1.8849-.4703.7714-.5156 1.3643-.5165 6.7626-.0011 5.5855.0312 5.9744.5741 6.9404.358.6369.9824 1.2249 1.6536 1.5572 1.0005.4952 1.5907.5339 8.1561.534l7.0776.0003zm-66.688 15.401c-2.3635-.6374-4.5449-2.5326-5.6391-4.8989C.0219 37.2212 0 36.8142 0 27.9137v-9.2604l.6913-1.4552c.8794-1.8511 2.3524-3.3241 4.2035-4.2035l1.4552-.6913 8.9297-.0822 8.9297-.0821V0h6.8792v43.656l-11.84-.0179c-8.4727-.0128-12.182-.1102-13.044-.3425zm18.005-15.382V19.05l-6.9453.002c-3.8199.0008-7.3688.1191-7.8864.263-.5176.1437-1.2915.6269-1.7198 1.0736l-.7787.8122-.0804 6.1262c-.0442 3.3694-.0145 6.3887.066 6.7097.2333.9292 1.4398 2.1867 2.3515 2.4506.4609.1334 4.0229.2533 7.9156.2664l7.0776.024zm12.171 0v-15.743h6.8792v31.485h-6.8792zm48.683 0v-15.743h6.8792v31.485h-6.8792zm-48.683-24.474V0h6.8792v6.8792h-6.8792zm48.683 0V0h6.8792v6.8792h-6.8792z" />
+                        </g>
+                    </svg>
+                </div>
+                <div class="client-logo">
+                    <svg fill="currentColor" viewBox="0 0 24 24" role="img" xmlns="http://www.w3.org/2000/svg">
+                        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                        <g id="SVGRepo_iconCarrier">
+                            <path
+                                d="M2.014 8.556c-1.05 0-1.808.695-1.808 1.76 0 1.015.563 1.238 1.419 1.481.292.084.827.216.827.598 0 .369-.34.529-.66.529-.466 0-.87-.244-1.21-.543L0 13.473a.01.01 0 0 0 .003.012 3.236 3.236 0 0 0 1.837.593c.528 0 1.078-.146 1.488-.494.417-.354.543-.89.543-1.411 0-.849-.564-1.218-1.294-1.433l-.348-.104c-.236-.077-.605-.195-.605-.501 0-.292.334-.438.584-.438.124 0 .246.019.362.053a.755.755 0 0 0 .887-.378l.194-.377a.01.01 0 0 0-.004-.012 3.59 3.59 0 0 0-1.634-.427zm19.455.14v.065h.105v.277h.082v-.277h.105v-.066zm.334 0v.342h.074v-.277h.002l.1.277h.044l.1-.277h.001v.277h.075v-.343h-.12L22 8.898l-.077-.203zm.897 0-.857 3.294h.713a.757.757 0 0 0 .733-.568L24 8.695zM6.535 10.252c-.492 0-.846.145-1.138.573-.002.002-.004.004-.008.004a.009.009 0 0 1-.009-.009v-.44a.009.009 0 0 0-.009-.01H4.124a.009.009 0 0 0-.01.01v3.55c0 .004.005.008.01.008h.503a.754.754 0 0 0 .753-.753v-1.097c0-.445.146-.828.661-.828.626 0 .57.598.57.94v1.73c0 .004.004.008.01.008h.503a.754.754 0 0 0 .753-.754v-1.45c0-.877-.382-1.482-1.342-1.482zm3.37 0c-1.057 0-1.787.876-1.787 1.899 0 1.022.744 1.906 1.801 1.906.416 0 .852-.16 1.076-.511.002-.003.004-.004.007-.004.005 0 .009.004.009.009v.378c0 .005.004.01.009.01h.503a.754.754 0 0 0 .754-.754V10.38a.009.009 0 0 0-.01-.009H11.02a.009.009 0 0 0-.01.01v.314c0 .008-.01.012-.015.006-.265-.3-.688-.448-1.09-.448zm5.117 0c-.416 0-.845.166-1.075.518-.002.002-.005.004-.008.004a.009.009 0 0 1-.01-.01v-.394h-1.265v5.073h.512a.754.754 0 0 0 .754-.754v-1.088c0-.001 0-.002.002-.001.271.311.694.457 1.104.457 1.057 0 1.787-.863 1.787-1.892 0-1.023-.737-1.913-1.801-1.913zm4.396 0c-.416 0-.845.166-1.076.518-.002.002-.004.004-.008.004a.009.009 0 0 1-.009-.01v-.385a.009.009 0 0 0-.009-.009H17.07a.009.009 0 0 0-.01.01v5.054c0 .005.005.01.01.01h.503a.754.754 0 0 0 .754-.755v-1.068c0-.008.01-.012.015-.006.272.3.688.441 1.09.441 1.058 0 1.788-.862 1.788-1.891 0-1.023-.737-1.913-1.801-1.913zm-9.179 1.099c.515 0 .814.369.814.807 0 .452-.299.8-.814.8-.514 0-.813-.348-.813-.8 0-.438.299-.807.813-.807zm4.463 0c.515 0 .814.369.814.807 0 .452-.299.8-.814.8-.515 0-.814-.348-.814-.8 0-.438.3-.807.814-.807zm4.396 0c.515 0 .814.369.814.807 0 .452-.3.8-.814.8-.515 0-.814-.348-.814-.8 0-.438.3-.807.814-.807zm3.173 1.104a.801.801 0 1 0 0 1.602.801.801 0 0 0 0-1.602z">
+                            </path>
+                        </g>
+                    </svg>
+                </div>
+                <div class="client-logo">
+                    <svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 193.09 68.33">
+                        <path class="cls-1"
+                            d="M8.61,53q0,.76-.55.76H3.49V53A1.75,1.75,0,0,0,3,51.77a1.65,1.65,0,0,0-1.24-.51,1.74,1.74,0,0,0-1.27.49,1.77,1.77,0,0,0,1.27,3,2.81,2.81,0,0,0,.67,0q-.13.46-.76.45H1.59v.87H1.7q1.58,0,1.77-1.28H8.29a1.29,1.29,0,0,0,1.06-.47,1.56,1.56,0,0,0,.34-1v-2H8.61Zm-6.2.76H1.77q-.67,0-.67-.78t.63-.73q.67,0,.67.76Z" />
+                        <rect class="cls-1" x="7.19" y="55.18" width="0.96" height="0.9" />
+                        <rect class="cls-1" x="8.65" y="55.18" width="0.97" height="0.9" />
+                        <rect class="cls-1" x="16.69" y="55.18" width="0.97" height="0.9" />
+                        <rect class="cls-1" x="15.23" y="55.18" width="0.96" height="0.9" />
+                        <path class="cls-1"
+                            d="M16.64,53q0,.76-.55.76H14.48a2.26,2.26,0,0,0-1.61-2.33,4.92,4.92,0,0,0-1.45-.15v.91q2,0,2,1.57H10.57v1h5.75a1.29,1.29,0,0,0,1.06-.47,1.56,1.56,0,0,0,.34-1v-2H16.64Z" />
+                        <path class="cls-1"
+                            d="M20.36,51.26a1.69,1.69,0,0,0-1.26.49A1.75,1.75,0,0,0,18.61,53a1.78,1.78,0,0,0,.5,1.29,1.68,1.68,0,0,0,1.25.51.83.83,0,0,0,.77-.36.63.63,0,0,1-.27.52.93.93,0,0,1-.6.2H20.2v.87h.11q1.78,0,1.78-1.44V53.05a1.79,1.79,0,0,0-.49-1.28A1.64,1.64,0,0,0,20.36,51.26Zm0,2.57q-.68,0-.68-.8t.64-.79q.66,0,.66.81T20.38,53.83Z" />
+                        <path class="cls-1"
+                            d="M28.54,51.38h-.6l1-1.48H27.63l-1.55,2.48h2a1.47,1.47,0,0,1,1.06.43,1.72,1.72,0,0,1,.52,1.06H25.38a2.22,2.22,0,0,1-1.08-.2,1,1,0,0,1-.44-.95H22.78q0,2.18,2.58,2.18h5.43v-.4Q30.79,51.61,28.54,51.38Z" />
+                        <rect class="cls-1" x="31.39" y="49.89" width="1.09" height="5.02" />
+                        <rect class="cls-1" x="37.01" y="49.9" width="0.96" height="0.9" />
+                        <rect class="cls-1" x="38.48" y="49.9" width="0.96" height="0.9" />
+                        <rect class="cls-1" x="45.65" y="48.61" width="0.96" height="0.9" />
+                        <rect class="cls-1" x="46.39" y="49.9" width="0.96" height="0.9" />
+                        <path class="cls-1"
+                            d="M47.82,53.16q0,.7-.55.7h-.69a2.26,2.26,0,0,0,.13-.79v-1.7H45.62v1.78q0,.7-.55.7h-.69a2.26,2.26,0,0,0,.13-.79v-1.7h-1.1v1.73q0,.75-.55.75H39.39a2.34,2.34,0,0,0,.13-.79v-1.7h-1.1v1.73q0,.75-.55.75H34.72V51.38H33.63v2.9q0,1-1.07,1v.88q1.85,0,2.11-1.28H47.31a1.47,1.47,0,0,0,1.14-.52,1.92,1.92,0,0,0,.46-1.32V51.38H47.82Z" />
+                        <rect class="cls-1" x="44.93" y="49.9" width="0.97" height="0.9" />
+                        <rect class="cls-1" x="49.93" y="49.89" width="1.09" height="5.02" />
+                        <path class="cls-1"
+                            d="M40.82,35.6c0,5.43-6,4.61-6,4.61H11c-3.72,0-4.57-2.93-4.57-5.6V30.66l-6.24,5V37c0,6.77,3.38,9.22,10.93,9.22H37.42c5.08,0,9.61-3.47,9.61-8.44v-13l-6.22,5.95Z" />
+                        <polygon class="cls-1" points="49.86 46.24 56.19 46.24 56.19 17.13 49.86 23.07 49.86 46.24" />
+                        <path class="cls-1"
+                            d="M63.28,42.63c0,4-2.18,6.2-6.34,6.2L61,54.94c2.31,0,8.62-1.65,8.62-12.84V24.3l-6.35,6.36Z" />
+                        <path class="cls-1"
+                            d="M79.89,46.25H90.27a7.57,7.57,0,0,0,6.24-2.76,9,9,0,0,0,1.94-6V25.79l-6.33,5.86v4.12q0,4.43-3.2,4.43H78.52s.07-3,.07-4.7V16.66l-6.33,5.95V38.79Q72.26,46.25,79.89,46.25Z" />
+                        <polygon class="cls-1"
+                            points="101.05 46.24 107.38 46.24 107.38 16.8 101.05 22.4 101.05 46.24" />
+                        <path class="cls-1"
+                            d="M104,8.31c-9.37,0-11.85,6.31-11.85,8.62l6.3,4c0-4.16,1.05-6.24,5-6.24h6.21L116,8.31Z" />
+                        <polygon class="cls-1" points="21.65 24.31 6.41 24.31 6.41 30.64 27.6 30.64 21.65 24.31" />
+                        <path class="cls-1"
+                            d="M91.61,56.79l5.31-5c-.06-.08-.1-.16-.16-.23a7.57,7.57,0,0,0-6.24-2.76l-17.4,0,6.43,6h8.87A3.9,3.9,0,0,1,91.61,56.79Z" />
+                        <path class="cls-1" d="M84.16,55.81h4a3.36,3.36,0,0,1,2.69,1.65l-2.45,2.45Z" />
+                        <path class="cls-1"
+                            d="M154.25,2,148,.36A10.58,10.58,0,0,0,135,7.87l-1.58,5.93A32.4,32.4,0,0,1,154.25,2Z" />
+                        <path class="cls-1"
+                            d="M126.66,39.33l-1.54,5.8a10.58,10.58,0,0,0,7.51,12.94l6,1.6A32.41,32.41,0,0,1,126.66,39.33Z" />
+                        <path class="cls-1"
+                            d="M185.22,10.25l-6.74-1.79a32.4,32.4,0,0,1,12.4,21.7l1.85-7A10.58,10.58,0,0,0,185.22,10.25Z" />
+                        <path class="cls-1"
+                            d="M163.45,66.26,169.89,68a10.58,10.58,0,0,0,12.94-7.51l1.82-6.84A32.42,32.42,0,0,1,163.45,66.26Z" />
+                        <path class="cls-2"
+                            d="M158.92,4.54a29.63,29.63,0,1,0,29.63,29.63A29.63,29.63,0,0,0,158.92,4.54ZM142.15,19.32a8.46,8.46,0,1,1,6.71,9.91A8.46,8.46,0,0,1,142.15,19.32Zm12.31,25.6A8.46,8.46,0,1,1,147.75,35,8.46,8.46,0,0,1,154.46,44.92Zm3.59-6.85a3.76,3.76,0,1,1,4.41-3A3.76,3.76,0,0,1,158.05,38.07ZM175.7,49A8.46,8.46,0,1,1,169,39.1,8.46,8.46,0,0,1,175.7,49Zm-5.6-15.68A8.46,8.46,0,1,1,180,26.61,8.46,8.46,0,0,1,170.1,33.33Z" />
+                    </svg>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Revolutionary Contact Section -->
+    <section class="contact-section" id="contact">
+        <div class="section">
+            <h2 class="section-title fade-in">تماس با ما</h2>
+            <p class="section-subtitle fade-in">آماده همکاری و پاسخگویی به سوالات شما هستیم</p>
+            <div class="contact-container slide-up">
+                <form class="contact-form" id="contactForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <input type="text" id="name" name="name" placeholder=" " required>
+                            <label for="name">نام و نام خانوادگی</label>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" id="email" name="email" placeholder=" " required>
+                            <label for="email">ایمیل</label>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <input type="tel" id="phone" name="phone" placeholder=" ">
+                            <label for="phone">شماره تماس</label>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" id="subject" name="subject" placeholder=" " required>
+                            <label for="subject">موضوع</label>
+                        </div>
+                    </div>
+                    <div class="form-group full-width">
+                        <textarea id="message" name="message" placeholder=" " required></textarea>
+                        <label for="message">پیام</label>
+                    </div>
+                    <button type="submit" class="submit-btn">ارسال پیام</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Revolutionary Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>مخاطب</h3>
+                <p>شرکت خدمات تبلیغاتی مخاطب، همراه شما در مسیر موفقیت</p>
+                <div class="social-links">
+                    <a href="#" class="social-link">
+                        <svg class="icon" style="width: 20px; height: 20px;" viewBox="0 0 24 24">
+                            <path
+                                d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"
+                                fill="currentColor" />
+                        </svg>
+                    </a>
+                    <a href="#" class="social-link">
+                        <svg class="icon" style="width: 20px; height: 20px;" viewBox="0 0 24 24">
+                            <path
+                                d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.174-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.12.112.225.085.347-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.402.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.357-.629-2.746-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24.009 12.017 24.009c6.624 0 11.99-5.367 11.99-11.988C24.007 5.367 18.641.001.017.001z"
+                                fill="currentColor" />
+                        </svg>
+                    </a>
+                    <a href="#" class="social-link">
+                        <svg class="icon" style="width: 20px; height: 20px;" viewBox="0 0 24 24">
+                            <path
+                                d="M12.056 0C5.5 0 .056 5.5.056 12s5.444 12 12 12 12-5.5 12-12-5.444-12-12-12zm5.5 8.5c0 .1 0 .2-.1.3-.1.2-.2.3-.4.3h-2.2v6.5c0 .3-.2.5-.5.5h-2.5c-.3 0-.5-.2-.5-.5V9.1H9.556c-.3 0-.5-.2-.5-.5V6.1c0-.3.2-.5.5-.5h1.8V4.1c0-1.1.9-2 2-2h2.2c.3 0 .5.2.5.5v2.5c0 .3-.2.5-.5.5h-1.7c-.3 0-.5.2-.5.5v1.4h2.2c.1 0 .3.1.4.2.1.1.1.3.1.4l-.4 2.5z"
+                                fill="currentColor" />
+                        </svg>
+                    </a>
+                    <a href="#" class="social-link">
+                        <svg class="icon" style="width: 20px; height: 20px;" viewBox="0 0 24 24">
+                            <path
+                                d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"
+                                fill="currentColor" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h3>خدمات</h3>
+                <p><a href="#services">طراحی گرافیک</a></p>
+                <p><a href="#services">بازاریابی دیجیتال</a></p>
+                <p><a href="#services">تولید ویدیو</a></p>
+                <p><a href="#services">طراحی وب‌سایت</a></p>
+            </div>
+            <div class="footer-section">
+                <h3>تماس</h3>
+                <p>
+                    <svg class="icon" style="width: 16px; height: 16px; display: inline; margin-left: 8px;"
+                        viewBox="0 0 24 24">
+                        <path
+                            d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"
+                            fill="currentColor" />
+                    </svg>
+                    031-36123456
+                </p>
+                <p>
+                    <svg class="icon" style="width: 16px; height: 16px; display: inline; margin-left: 8px;"
+                        viewBox="0 0 24 24">
+                        <path
+                            d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"
+                            fill="currentColor" />
+                    </svg>
+                    info@mokhatab.com
+                </p>
+                <p>
+                    <svg class="icon" style="width: 16px; height: 16px; display: inline; margin-left: 8px;"
+                        viewBox="0 0 24 24">
+                        <path
+                            d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"
+                            fill="currentColor" />
+                    </svg>
+                    اصفهان، خیابان شیخ صدوق
+                </p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 1404 شرکت مخاطب. تمامی حقوق محفوظ است. طراحی و توسعه توسط <a
+                    href="https://en-gamma.vercel.app/aateam" target="_blank"
+                    style="color:  #F31F25; text-decoration: none; font-weight: 700;">AATeam</a></p>
+        </div>
+    </footer>
+
+    <script>
+        // Loading Screen
+        window.addEventListener('load', function () {
+            setTimeout(() => {
+                document.getElementById('loadingScreen').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('loadingScreen').style.display = 'none';
+                }, 500);
+            }, 2000);
+        });
+
+        // Three.js Hero Background
+        function initThreeJS() {
+            const canvas = document.getElementById('hero-canvas');
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true });
+
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setClearColor(0x000000, 0);
+
+            // Create floating particles
+            const geometry = new THREE.BufferGeometry();
+            const particleCount = 100;
+            const positions = new Float32Array(particleCount * 3);
+            const colors = new Float32Array(particleCount * 3);
+
+            for (let i = 0; i < particleCount * 3; i += 3) {
+                positions[i] = (Math.random() - 0.5) * 20;
+                positions[i + 1] = (Math.random() - 0.5) * 20;
+                positions[i + 2] = (Math.random() - 0.5) * 20;
+
+                colors[i] = 0.0;
+                colors[i + 1] = 0.48;
+                colors[i + 2] = 1.0;
+            }
+
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+            const material = new THREE.PointsMaterial({
+                size: 0.1,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.6
+            });
+
+            const particles = new THREE.Points(geometry, material);
+            scene.add(particles);
+
+            camera.position.z = 5;
+
+            function animate() {
+                requestAnimationFrame(animate);
+
+                particles.rotation.x += 0.001;
+                particles.rotation.y += 0.002;
+
+                renderer.render(scene, camera);
+            }
+
+            animate();
+
+            // Handle resize
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        }
+
+        // Initialize Three.js after page load
+        window.addEventListener('load', initThreeJS);
+
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+
+        themeToggle.addEventListener('click', function () {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+            document.documentElement.setAttribute('data-theme', newTheme);
+            themeToggle.classList.toggle('dark', newTheme === 'dark');
+
+            localStorage.setItem('theme', newTheme);
+        });
+
+        // Load saved theme
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        themeToggle.classList.toggle('dark', savedTheme === 'dark');
+
+        // Smooth Scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Header Scroll Effect
+        window.addEventListener('scroll', function () {
+            const header = document.getElementById('header');
+            if (window.scrollY > 100) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // Intersection Observer for Animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function (entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        // Observe all animated elements
+        document.querySelectorAll('.fade-in, .slide-up').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Revolutionary Contact Form
+        document.getElementById('contactForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const submitBtn = this.querySelector('.submit-btn');
+            const originalText = submitBtn.textContent;
+
+            submitBtn.textContent = 'در حال ارسال...';
+            submitBtn.disabled = true;
+            submitBtn.style.background = 'var(--accent)';
+            submitBtn.style.color = 'white';
+
+            setTimeout(() => {
+                submitBtn.textContent = 'ارسال شد ✓';
+                setTimeout(() => {
+                    alert('پیام شما با موفقیت ارسال شد. به زودی با شما تماس خواهیم گرفت.');
+                    this.reset();
+                    submitBtn.textContent = originalText;
+                    submitBtn.disabled = false;
+                    submitBtn.style.background = 'var(--primary-bg)';
+                    submitBtn.style.color = 'var(--accent)';
+                }, 1000);
+            }, 2000);
+        });
+
+        // Mobile Menu Functionality
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
+        const mobileMenuClose = document.getElementById('mobileMenuClose');
+
+        function openMobileMenu() {
+            mobileMenu.classList.add('active');
+            mobileMenuOverlay.classList.add('active');
+            mobileMenuBtn.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMobileMenu() {
+            mobileMenu.classList.remove('active');
+            mobileMenuOverlay.classList.remove('active');
+            mobileMenuBtn.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        mobileMenuBtn.addEventListener('click', openMobileMenu);
+        mobileMenuClose.addEventListener('click', closeMobileMenu);
+        mobileMenuOverlay.addEventListener('click', closeMobileMenu);
+
+        // Mobile Submenu Toggle
+        function toggleMobileSubmenu(event) {
+            event.preventDefault();
+            const submenu = event.target.nextElementSibling;
+            submenu.classList.toggle('active');
+        }
+
+        // Portfolio Popup Functionality
+        const portfolioPopup = document.getElementById('portfolioPopup');
+        const portfolioPopupClose = document.getElementById('portfolioPopupClose');
+
+        const portfolioData = [
+            {
+                title: 'کمپین تبلیغاتی رستوران سنتی',
+                description: 'طراحی کامل هویت بصری و اجرای کمپین دیجیتال برای رستوران سنتی با هدف افزایش فروش و جذب مشتریان جدید. این پروژه شامل طراحی لوگو، منو، بروشور و مدیریت شبکه‌های اجتماعی بود.',
+                client: 'رستوران کهن',
+                date: '۱۴۰۳',
+                services: 'طراحی گرافیک، بازاریابی دیجیتال',
+                duration: '۴ ماه',
+                image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=400&fit=crop'
+            },
+            {
+                title: 'برندینگ شرکت فناوری',
+                description: 'ایجاد هویت بصری کامل برای استارتاپ فناوری شامل طراحی لوگو، وب‌سایت، کارت ویزیت و تمامی مواد تبلیغاتی. هدف ایجاد تصویری مدرن و قابل اعتماد از برند بود.',
+                client: 'تک‌نوآوران',
+                date: '۱۴۰۲',
+                services: 'برندینگ، طراحی وب‌سایت',
+                duration: '۶ ماه',
+                image: 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=800&h=400&fit=crop'
+            },
+            {
+                title: 'تیزر تبلیغاتی محصول',
+                description: 'تولید ویدیو معرفی محصول جدید با استفاده از موشن گرافیک و انیمیشن. این تیزر در شبکه‌های اجتماعی و تلویزیون پخش شد و بازخورد بسیار مثبتی دریافت کرد.',
+                client: 'شرکت پارس',
+                date: '۱۴۰۳',
+                services: 'تولید ویدیو، موشن گرافیک',
+                duration: '۲ ماه',
+                image: 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=800&h=400&fit=crop'
+            },
+            {
+                title: 'کمپین شبکه‌های اجتماعی',
+                description: 'مدیریت کامل شبکه‌های اجتماعی برای برند مد و پوشاک شامل تولید محتوا، طراحی پست‌ها، مدیریت تبلیغات و تعامل با مخاطبان. نتیجه افزایش ۳۰۰٪ فالوور و ۱۵۰٪ فروش.',
+                client: 'برند مد آریا',
+                date: '۱۴۰۳',
+                services: 'مدیریت شبکه‌های اجتماعی، تولید محتوا',
+                duration: '۱۲ ماه',
+                image: 'https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=800&h=400&fit=crop'
+            },
+            {
+                title: 'طراحی بسته‌بندی',
+                description: 'طراحی خلاقانه بسته‌بندی محصولات غذایی ارگانیک با تأکید بر طبیعی بودن و کیفیت محصولات. طراحی شامل جعبه، برچسب و کیسه‌های مختلف بود.',
+                client: 'غذای ارگانیک سبز',
+                date: '۱۴۰۲',
+                services: 'طراحی بسته‌بندی، طراحی گرافیک',
+                duration: '۳ ماه',
+                image: 'https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=800&h=400&fit=crop'
+            },
+            {
+                title: 'نمایشگاه تجاری',
+                description: 'طراحی و اجرای غرفه نمایشگاهی برای شرکت ساختمانی شامل طراحی فضا، تابلوها، بروشورها و مواد تبلیغاتی. غرفه توانست بیشترین بازدیدکننده را جذب کند.',
+                client: 'ساختمان سازان',
+                date: '۱۴۰۳',
+                services: 'طراحی غرفه، مواد تبلیغاتی',
+                duration: '۱ ماه',
+                image: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&h=400&fit=crop'
+            }
+        ];
+
+        // Portfolio Item Click
+        document.querySelectorAll('.portfolio-item').forEach((item, index) => {
+            item.addEventListener('click', function () {
+                const data = portfolioData[index];
+                document.getElementById('popupTitle').textContent = data.title;
+                document.getElementById('popupDescription').textContent = data.description;
+                document.getElementById('popupClient').textContent = data.client;
+                document.getElementById('popupDate').textContent = data.date;
+                document.getElementById('popupServices').textContent = data.services;
+                document.getElementById('popupDuration').textContent = data.duration;
+                document.getElementById('popupImage').src = data.image;
+
+                portfolioPopup.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close Portfolio Popup
+        portfolioPopupClose.addEventListener('click', function () {
+            portfolioPopup.classList.remove('active');
+            document.body.style.overflow = '';
+        });
+
+        portfolioPopup.addEventListener('click', function (e) {
+            if (e.target === portfolioPopup) {
+                portfolioPopup.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        });
+
+        // // Team Member Click
+        // document.querySelectorAll('.team-member').forEach(member => {
+        //     member.addEventListener('click', function () {
+        //         const name = this.querySelector('.member-name').textContent;
+        //         const role = this.querySelector('.member-role').textContent;
+        //         alert(`${name}\n${role}\n\nبرای اطلاعات بیشتر با ما تماس بگیرید.`);
+        //     });
+        // });
+
+        // // Client Logo Click
+        // document.querySelectorAll('.client-logo').forEach(logo => {
+        //     logo.addEventListener('click', function () {
+        //         alert('مشاهده مطالعه موردی این پروژه');
+        //     });
+        // });
+
+        // Add parallax effect to hero section
+        window.addEventListener('scroll', function () {
+            const scrolled = window.pageYOffset;
+            const hero = document.querySelector('.hero');
+            if (hero) {
+                hero.style.transform = `translateY(${scrolled * 0.3}px)`;
+            }
+        });
+
+        // // Mobile menu functionality
+        // document.querySelector('.mobile-menu-btn').addEventListener('click', function () {
+        //     const navMenu = document.querySelector('.nav-menu');
+        //     navMenu.style.display = navMenu.style.display === 'flex' ? 'none' : 'flex';
+        // });
+    </script>
+    <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'987692e7b1bc25d8',t:'MTc1OTI2NTIzMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
+</body>
+
+</html>
